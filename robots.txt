@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://exauce2025kossi-png.github.io/prayer-channels-seo/sitemap.xml
