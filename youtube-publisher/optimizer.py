@@ -8,50 +8,51 @@ Usage:
 from auth import get_youtube
 
 
-CHANNEL_DESCRIPTION = """🙏 Bienvenue sur la chaîne officielle de KODJOVI SOKE KOSSI
+CHANNEL_DESCRIPTION = """🎵 Welcome to the official Kids Songs & Nursery Rhymes channel by KODJOVI SOKE KOSSI!
 
-Cette chaîne est consacrée à la prière quotidienne, à la délivrance spirituelle et au combat spirituel.
-Chaque jour, une nouvelle prière puissante pour ta protection, ta guérison, ta bénédiction et ta libération.
+Fun, colorful, and educational songs for babies, toddlers, and preschoolers — a new video every single day!
 
-📌 Au programme chaque jour :
-✅ Prières de délivrance puissantes
-✅ Combat spirituel et intercession
-✅ Prières de protection divine
-✅ Prières pour la guérison et la santé
-✅ Prières de bénédiction et de prospérité
-✅ Louanges et adoration
+🌈 What you'll find here:
+✅ Classic nursery rhymes (Wheels on the Bus, Twinkle Twinkle, ABC Song...)
+✅ Fun learning songs (numbers, colors, shapes, animals)
+✅ Dinosaur songs & toy songs kids LOVE
+✅ Baby Shark, Finger Family, and viral kids hits
+✅ Lullabies & bedtime songs
+✅ 30-minute+ compilations for uninterrupted playtime
 
-🔥 Pourquoi s'abonner ?
-• 1 vidéo publiée CHAQUE JOUR
-• Des prières testées et approuvées
-• Contenu 100% gratuit et accessible
+🔥 Why subscribe?
+• 1 new video published EVERY DAY
+• Safe, ad-friendly content for the whole family
+• 100% free — no app required
 
-🔔 Abonnez-vous et activez la cloche 🔔 pour ne jamais manquer une prière !
+🔔 Subscribe and hit the bell 🔔 so you never miss a song!
 
-📧 Contact / Partenariat : [votre email]
+📧 Contact / Partnership : [your email]
 
-#priere #delivrance #combatspirituel #prieredujour #bénédiction
+#kidssongs #nurseryhymes #kidsmusic #babyshark #abcsong #toddlersongs #learningforkids
 """
 
 CHANNEL_KEYWORDS = [
-    "prière",
-    "délivrance",
-    "combat spirituel",
-    "prière puissante",
-    "prière du matin",
-    "prière de protection",
-    "prière de guérison",
-    "prière chrétienne",
-    "intercession",
-    "bénédiction",
-    "prière quotidienne",
-    "prière miracle",
-    "prière nuit",
+    "kids songs",
+    "nursery rhymes",
+    "children songs",
+    "baby songs",
+    "toddler songs",
+    "ABC song",
+    "wheels on the bus",
+    "baby shark",
+    "finger family",
+    "dinosaur song",
+    "learning songs",
+    "preschool songs",
+    "educational songs",
+    "kids music",
+    "cartoon songs",
+    "lullaby",
+    "counting songs",
+    "colors for kids",
     "Kodjovi Soke Kossi",
-    "prayer",
-    "deliverance prayer",
-    "spiritual warfare",
-    "daily prayer",
+    "daily kids video",
 ]
 
 
@@ -74,8 +75,8 @@ def optimize_channel():
     branding.setdefault("channel", {})
     branding["channel"]["description"] = CHANNEL_DESCRIPTION
     branding["channel"]["keywords"]    = " ".join(f'"{k}"' for k in CHANNEL_KEYWORDS)
-    branding["channel"]["country"]     = "TG"   # Togo — change si besoin
-    branding["channel"]["defaultLanguage"] = "fr"
+    branding["channel"]["country"]     = "TG"
+    branding["channel"]["defaultLanguage"] = "en"
 
     youtube.channels().update(
         part="brandingSettings",
