@@ -1,0 +1,6 @@
+
+# YouTube Publisher — fichiers sensibles
+youtube-publisher/client_secret.json
+youtube-publisher/token.pickle
+youtube-publisher/publish.log
+youtube-publisher/videos/
