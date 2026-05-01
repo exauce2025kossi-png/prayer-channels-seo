@@ -1,8 +1,14 @@
 import os
 import pickle
+import ssl
+import httplib2
+import google_auth_httplib2
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
+
+# Bypass SSL self-signed cert in sandboxed environments
+ssl._create_default_https_context = ssl._create_unverified_context
 
 SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
@@ -12,6 +18,10 @@ SCOPES = [
 
 CLIENT_SECRET = os.path.join(os.path.dirname(__file__), "client_secret.json")
 TOKEN_FILE    = os.path.join(os.path.dirname(__file__), "token.pickle")
+
+
+def _build_http():
+    return httplib2.Http(disable_ssl_certificate_validation=True)
 
 
 def get_youtube():
@@ -24,7 +34,7 @@ def get_youtube():
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+            creds.refresh(Request(_build_http()))
         else:
             flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET, SCOPES)
             flow.redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
@@ -46,4 +56,5 @@ def get_youtube():
             pickle.dump(creds, f)
         print("✅ Authentification réussie — token sauvegardé.")
 
-    return build("youtube", "v3", credentials=creds)
+    authed_http = google_auth_httplib2.AuthorizedHttp(creds, http=_build_http())
+    return build("youtube", "v3", http=authed_http)
