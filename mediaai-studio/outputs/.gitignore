@@ -1,0 +1,10 @@
+# Ignore generated media files
+videos/*.mp4
+scripts/*.txt
+scripts/*.json
+thumbnails/*.png
+thumbnails/*.jpg
+
+# Keep directory structure
+!.gitkeep
+!*/.gitkeep
