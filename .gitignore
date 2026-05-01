@@ -4,3 +4,4 @@ youtube-publisher/client_secret.json
 youtube-publisher/token.pickle
 youtube-publisher/publish.log
 youtube-publisher/videos/
+youtube-publisher/*TEMP_MPY*
