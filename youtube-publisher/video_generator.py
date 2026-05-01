@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-video_generator.py — Génère les 30 vidéos MP4 de chansons pour enfants.
+video_generator.py — Génère les vidéos MP4 de chansons pour enfants.
 
-Installe d'abord : pip install moviepy Pillow gTTS numpy
 Usage :
-    python video_generator.py              # génère toutes les vidéos manquantes
+    python video_generator.py              # génère toutes les vidéos courtes manquantes
+    python video_generator.py --long       # génère toutes les compilations longues
+    python video_generator.py --all        # génère tout (courtes + longues)
     python video_generator.py --song jour01_wheels_on_the_bus.mp4
-    python video_generator.py --all        # force la régénération de toutes les vidéos
-    python video_generator.py --list       # liste les vidéos disponibles
+    python video_generator.py --list       # liste toutes les vidéos
 """
 
 import argparse
@@ -256,50 +256,151 @@ def generate_video(filename, song_data, output_path, force=False):
     return True
 
 
+# ── Compilation longue ─────────────────────────────────────────────────────
+
+def generate_compilation_video(filename, comp_data, all_songs, output_path, force=False):
+    """Concatène plusieurs vidéos courtes en une longue compilation."""
+    try:
+        from moviepy import VideoFileClip
+    except ImportError:
+        from moviepy.editor import VideoFileClip
+
+    if output_path.exists() and not force:
+        print(f"  ⏭  Déjà générée : {filename}")
+        return True
+
+    title = comp_data["title"]
+    songs_list = comp_data["songs"]
+    total_clips = sum(s.get("repeats", 1) for s in songs_list)
+    print(f"  🎬 Compilation : {title} ({total_clips} clips)")
+
+    clips = []
+    for song_entry in songs_list:
+        fname  = song_entry["file"]
+        repeats = song_entry.get("repeats", 1)
+        song_path = VIDEOS_DIR / fname
+
+        # Génère la vidéo courte si elle n'existe pas
+        if not song_path.exists():
+            if fname in all_songs:
+                print(f"     → Génération de {fname}...")
+                try:
+                    generate_video(fname, all_songs[fname], song_path)
+                except Exception as e:
+                    print(f"     ⚠️  Impossible de générer {fname} : {e}")
+                    continue
+            else:
+                print(f"     ⚠️  Ignoré (introuvable) : {fname}")
+                continue
+
+        for _ in range(repeats):
+            try:
+                clips.append(VideoFileClip(str(song_path)))
+            except Exception as e:
+                print(f"     ⚠️  Clip ignoré {fname} : {e}")
+
+    if not clips:
+        print("  ❌ Aucun clip disponible pour cette compilation.")
+        return False
+
+    total_sec = sum(c.duration for c in clips)
+    print(f"     ⏱  Durée totale : {total_sec/60:.1f} min ({int(total_sec)}s)")
+    print(f"     💾 Encodage MP4 en cours (patience)...")
+
+    try:
+        video = concatenate_videoclips(clips)
+        video.write_videofile(
+            str(output_path),
+            fps=FPS,
+            codec="libx264",
+            audio_codec="aac",
+            logger=None,
+        )
+        print(f"     ✅ {output_path.name} — {total_sec/60:.1f} min !")
+        return True
+    except Exception as e:
+        print(f"  ❌ Erreur encodage : {e}")
+        return False
+    finally:
+        for c in clips:
+            try:
+                c.close()
+            except Exception:
+                pass
+
+
 # ── CLI ────────────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(description="Générateur de vidéos kids songs")
-    parser.add_argument("--song", help="Nom du fichier MP4 à générer (ex: jour01_wheels_on_the_bus.mp4)")
-    parser.add_argument("--all",  action="store_true", help="Régénère toutes les vidéos (même existantes)")
-    parser.add_argument("--list", action="store_true", help="Liste les vidéos disponibles")
+    parser.add_argument("--song",  help="Nom du fichier MP4 à générer")
+    parser.add_argument("--long",  action="store_true", help="Génère uniquement les compilations longues")
+    parser.add_argument("--all",   action="store_true", help="Génère tout (courtes + longues), même si existantes")
+    parser.add_argument("--list",  action="store_true", help="Liste toutes les vidéos disponibles")
     args = parser.parse_args()
 
     with open(CONTENT_FILE, encoding="utf-8") as f:
         content = json.load(f)
 
-    songs = content["songs"]
+    songs        = content["songs"]
+    compilations = content.get("compilations", {})
     VIDEOS_DIR.mkdir(exist_ok=True)
 
     if args.list:
-        print(f"\n{'FICHIER':<45} {'TITRE'}")
-        print("-" * 80)
+        print(f"\n{'TYPE':<12} {'FICHIER':<50} {'TITRE'}")
+        print("-" * 100)
         for fname, data in songs.items():
             exists = "✅" if (VIDEOS_DIR / fname).exists() else "⬜"
-            print(f"{exists} {fname:<43} {data['title'][:40]}")
+            print(f"{exists} {'Court':<10} {fname:<48} {data['title'][:40]}")
+        for fname, data in compilations.items():
+            exists = "✅" if (VIDEOS_DIR / fname).exists() else "⬜"
+            dur = f"~{data.get('duration_min', '?')} min"
+            print(f"{exists} {'Long '+dur:<10} {fname:<48} {data['title'][:40]}")
         print()
         return
 
+    # Vidéo unique spécifique
     if args.song:
-        if args.song not in songs:
-            print(f"❌ '{args.song}' non trouvé dans songs_content.json")
+        if args.song in songs:
+            generate_video(args.song, songs[args.song],
+                           VIDEOS_DIR / args.song, force=True)
+        elif args.song in compilations:
+            generate_compilation_video(args.song, compilations[args.song],
+                                       songs, VIDEOS_DIR / args.song, force=True)
+        else:
+            print(f"❌ '{args.song}' introuvable dans songs_content.json")
             sys.exit(1)
-        generate_video(args.song, songs[args.song],
-                       VIDEOS_DIR / args.song, force=True)
         return
 
-    # Génère tout
-    total = len(songs)
-    done  = 0
-    for i, (fname, data) in enumerate(songs.items(), 1):
-        print(f"\n[{i}/{total}] {fname}")
-        try:
-            ok = generate_video(fname, data, VIDEOS_DIR / fname, force=args.all)
-            if ok:
-                done += 1
-        except Exception as e:
-            print(f"  ❌ Erreur : {e}")
+    done = 0
 
-    print(f"\n✅ {done}/{total} vidéos générées dans {VIDEOS_DIR}/")
+    # Vidéos courtes (sauf si --long seul)
+    if not args.long:
+        total = len(songs)
+        for i, (fname, data) in enumerate(songs.items(), 1):
+            print(f"\n[{i}/{total}] {fname}")
+            try:
+                if generate_video(fname, data, VIDEOS_DIR / fname, force=args.all):
+                    done += 1
+            except Exception as e:
+                print(f"  ❌ Erreur : {e}")
+        print(f"\n✅ {done}/{total} vidéos courtes prêtes.")
+        done = 0
+
+    # Compilations longues
+    if args.long or args.all:
+        total = len(compilations)
+        print(f"\n{'='*50}")
+        print(f" 🎬 GÉNÉRATION DES {total} COMPILATIONS LONGUES")
+        print(f"{'='*50}")
+        for i, (fname, data) in enumerate(compilations.items(), 1):
+            print(f"\n[{i}/{total}] {fname}")
+            try:
+                if generate_compilation_video(fname, data, songs,
+                                               VIDEOS_DIR / fname, force=args.all):
+                    done += 1
+            except Exception as e:
+                print(f"  ❌ Erreur : {e}")
+        print(f"\n✅ {done}/{total} compilations longues prêtes dans {VIDEOS_DIR}/")
 
 
 if __name__ == "__main__":

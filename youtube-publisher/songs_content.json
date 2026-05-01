@@ -604,5 +604,152 @@
         {"text": "Thank you for watching — subscribe! 🎵", "duration": 3.5}
       ]
     }
+  },
+  "compilations": {
+    "long01_best_dinosaur_songs.mp4": {
+      "title": "Best Dinosaur & Animal Songs — 20 Min",
+      "emoji": "🦕",
+      "colors": ["#56AB2F", "#A8E063"],
+      "duration_min": 20,
+      "songs": [
+        {"file": "jour03_dinosaur_song.mp4",  "repeats": 6},
+        {"file": "jour07_baby_shark.mp4",      "repeats": 5},
+        {"file": "jour18_animal_zoo_song.mp4", "repeats": 5},
+        {"file": "jour10_five_little_ducks.mp4","repeats": 4},
+        {"file": "jour11_old_macdonald.mp4",   "repeats": 4}
+      ]
+    },
+    "long02_vehicles_and_toys.mp4": {
+      "title": "Vehicles & Toys Songs — 20 Min",
+      "emoji": "🚗",
+      "colors": ["#C94B4B", "#4B134F"],
+      "duration_min": 20,
+      "songs": [
+        {"file": "jour01_wheels_on_the_bus.mp4","repeats": 6},
+        {"file": "jour08_toy_train_song.mp4",   "repeats": 5},
+        {"file": "jour20_toy_car_song.mp4",     "repeats": 5},
+        {"file": "jour13_fire_truck_song.mp4",  "repeats": 5},
+        {"file": "jour25_merry_go_round.mp4",   "repeats": 4}
+      ]
+    },
+    "long03_abc_and_numbers.mp4": {
+      "title": "ABC & Numbers Learning Songs — 20 Min",
+      "emoji": "🔤",
+      "colors": ["#4ECDC4", "#44A08D"],
+      "duration_min": 20,
+      "songs": [
+        {"file": "jour02_abc_song.mp4",         "repeats": 7},
+        {"file": "jour04_counting_1_10.mp4",    "repeats": 6},
+        {"file": "jour28_shapes_song.mp4",      "repeats": 5},
+        {"file": "jour24_ants_go_marching.mp4", "repeats": 4},
+        {"file": "jour23_exercise_song.mp4",    "repeats": 3}
+      ]
+    },
+    "long04_bedtime_lullabies.mp4": {
+      "title": "Bedtime Lullabies & Calm Songs — 25 Min",
+      "emoji": "🌙",
+      "colors": ["#0F2027", "#2C5364"],
+      "duration_min": 25,
+      "songs": [
+        {"file": "jour06_twinkle_twinkle.mp4",  "repeats": 7},
+        {"file": "jour27_goodnight_lullaby.mp4","repeats": 7},
+        {"file": "jour21_rain_rain_go_away.mp4","repeats": 6},
+        {"file": "jour26_under_the_sea.mp4",    "repeats": 5},
+        {"file": "jour05_colors_song.mp4",      "repeats": 4}
+      ]
+    },
+    "long05_colors_and_shapes.mp4": {
+      "title": "Colors, Shapes & Learning Songs — 20 Min",
+      "emoji": "🌈",
+      "colors": ["#f953c6", "#b91d73"],
+      "duration_min": 20,
+      "songs": [
+        {"file": "jour05_colors_song.mp4",      "repeats": 7},
+        {"file": "jour28_shapes_song.mp4",      "repeats": 6},
+        {"file": "jour04_counting_1_10.mp4",    "repeats": 5},
+        {"file": "jour19_ball_pit_fun.mp4",     "repeats": 4},
+        {"file": "jour12_candy_machine_song.mp4","repeats": 4}
+      ]
+    },
+    "long06_classic_nursery_rhymes.mp4": {
+      "title": "Classic Nursery Rhymes — 20 Min",
+      "emoji": "⭐",
+      "colors": ["#FC5C7D", "#6A82FB"],
+      "duration_min": 20,
+      "songs": [
+        {"file": "jour22_humpty_dumpty.mp4",    "repeats": 6},
+        {"file": "jour16_johny_johny.mp4",      "repeats": 6},
+        {"file": "jour09_finger_family.mp4",    "repeats": 5},
+        {"file": "jour15_if_youre_happy.mp4",   "repeats": 6},
+        {"file": "jour14_happy_birthday.mp4",   "repeats": 4}
+      ]
+    },
+    "long07_fun_party_songs.mp4": {
+      "title": "Fun Party & Happy Songs — 20 Min",
+      "emoji": "🎉",
+      "colors": ["#FF6B6B", "#FFE66D"],
+      "duration_min": 20,
+      "songs": [
+        {"file": "jour14_happy_birthday.mp4",   "repeats": 5},
+        {"file": "jour15_if_youre_happy.mp4",   "repeats": 6},
+        {"file": "jour12_candy_machine_song.mp4","repeats": 5},
+        {"file": "jour17_ice_cream_song.mp4",   "repeats": 5},
+        {"file": "jour29_family_song.mp4",      "repeats": 4}
+      ]
+    },
+    "long08_ocean_and_nature.mp4": {
+      "title": "Ocean & Nature Songs — 20 Min",
+      "emoji": "🐠",
+      "colors": ["#1A2980", "#26D0CE"],
+      "duration_min": 20,
+      "songs": [
+        {"file": "jour26_under_the_sea.mp4",    "repeats": 7},
+        {"file": "jour21_rain_rain_go_away.mp4","repeats": 6},
+        {"file": "jour10_five_little_ducks.mp4","repeats": 5},
+        {"file": "jour11_old_macdonald.mp4",    "repeats": 5},
+        {"file": "jour06_twinkle_twinkle.mp4",  "repeats": 4}
+      ]
+    },
+    "long09_baby_and_toddler_songs.mp4": {
+      "title": "Baby & Toddler Favourite Songs — 22 Min",
+      "emoji": "👶",
+      "colors": ["#84FAB0", "#8FD3F4"],
+      "duration_min": 22,
+      "songs": [
+        {"file": "jour07_baby_shark.mp4",       "repeats": 6},
+        {"file": "jour09_finger_family.mp4",    "repeats": 6},
+        {"file": "jour16_johny_johny.mp4",      "repeats": 6},
+        {"file": "jour06_twinkle_twinkle.mp4",  "repeats": 5},
+        {"file": "jour27_goodnight_lullaby.mp4","repeats": 4}
+      ]
+    },
+    "long10_one_hour_mega_compilation.mp4": {
+      "title": "1 Hour Best Kids Songs — Mega Compilation",
+      "emoji": "🏆",
+      "colors": ["#FF0099", "#493240"],
+      "duration_min": 60,
+      "songs": [
+        {"file": "jour01_wheels_on_the_bus.mp4", "repeats": 3},
+        {"file": "jour02_abc_song.mp4",          "repeats": 3},
+        {"file": "jour03_dinosaur_song.mp4",     "repeats": 3},
+        {"file": "jour04_counting_1_10.mp4",     "repeats": 2},
+        {"file": "jour05_colors_song.mp4",       "repeats": 2},
+        {"file": "jour06_twinkle_twinkle.mp4",   "repeats": 3},
+        {"file": "jour07_baby_shark.mp4",        "repeats": 3},
+        {"file": "jour08_toy_train_song.mp4",    "repeats": 2},
+        {"file": "jour09_finger_family.mp4",     "repeats": 2},
+        {"file": "jour10_five_little_ducks.mp4", "repeats": 2},
+        {"file": "jour11_old_macdonald.mp4",     "repeats": 2},
+        {"file": "jour12_candy_machine_song.mp4","repeats": 2},
+        {"file": "jour13_fire_truck_song.mp4",   "repeats": 2},
+        {"file": "jour14_happy_birthday.mp4",    "repeats": 2},
+        {"file": "jour15_if_youre_happy.mp4",    "repeats": 2},
+        {"file": "jour16_johny_johny.mp4",       "repeats": 2},
+        {"file": "jour17_ice_cream_song.mp4",    "repeats": 2},
+        {"file": "jour18_animal_zoo_song.mp4",   "repeats": 2},
+        {"file": "jour26_under_the_sea.mp4",     "repeats": 2},
+        {"file": "jour27_goodnight_lullaby.mp4", "repeats": 2}
+      ]
+    }
   }
 }
