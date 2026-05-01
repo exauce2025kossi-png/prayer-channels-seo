@@ -31,9 +31,14 @@ class YouTubeManagerAgent(BaseAgent):
         if not self._channels:
             print("  Aucune chaîne. Utilisez add_channel() pour en ajouter.")
             return
+        print(f"  {'NOM':<28} {'NICHE':<14} {'LANG':<6} {'ABONNÉS':>8} {'VIDÉOS':>7}  CHANNEL ID")
+        print(f"  {'─'*28} {'─'*14} {'─'*6} {'─'*8} {'─'*7}  {'─'*24}")
         for name, ch in self._channels.items():
-            status = "🟢 Actif" if ch.get("active") else "🔴 Inactif"
-            print(f"  {status}  {name:<30} {ch['id']:<30} {ch.get('niche','')}")
+            status = "🟢" if ch.get("active") else "🔴"
+            subs   = ch.get("subscribers", "?")
+            vids   = ch.get("videos", "?")
+            lang   = ch.get("language", "?")
+            print(f"  {status} {name:<27} {ch.get('niche',''):<14} {lang:<6} {str(subs):>8} {str(vids):>7}  {ch['id']}")
 
     # ── Upload vidéo ────────────────────────────────────────────────────────
     def upload_video(self, channel_name: str, video_path: str, metadata: dict) -> str:

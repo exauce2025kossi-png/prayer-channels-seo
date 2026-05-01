@@ -160,8 +160,15 @@ class CEOAgent(BaseAgent):
     # ── Status ───────────────────────────────────────────────────────────────
     def status(self):
         self.header("Statut MediaAI Corp")
+        total_subs  = sum(ch.get("subscribers", 0) for ch in self.youtube._channels.values())
+        total_views = sum(ch.get("views", 0) for ch in self.youtube._channels.values())
+        total_vids  = sum(ch.get("videos", 0) for ch in self.youtube._channels.values())
         print(f"  📺 Chaînes YouTube : {len(self.youtube._channels)}")
+        print(f"     👥 Total abonnés : {total_subs:,}")
+        print(f"     👁️  Total vues    : {total_views:,}")
+        print(f"     🎬 Total vidéos  : {total_vids}")
         print(f"  🛒 Boutiques       : {len(self.ecommerce._stores)}")
+        self.youtube.list_channels()
         self.video_director.list_outputs()
 
     def help(self):
