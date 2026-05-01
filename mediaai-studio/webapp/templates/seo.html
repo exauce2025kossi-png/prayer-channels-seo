@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% block title %}SEO & Analytics{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h4>📊 SEO & Analytics</h4>
+  <p>Optimisez vos titres, analysez vos scores et explorez les mots-clés tendance</p>
+</div>
+
+<div class="row g-4">
+
+  <!-- Title Analyzer -->
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-search me-2"></i>Analyser un titre</div>
+      <div class="card-body">
+        <input type="text" class="form-control mb-3" id="analyze-title"
+               placeholder="Entrez votre titre YouTube...">
+        <button class="btn btn-primary w-100 mb-3" onclick="analyzeTitle()">
+          <i class="bi bi-bar-chart-fill me-2"></i>Analyser
+        </button>
+        <div id="analyze-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Title Optimizer -->
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-magic me-2"></i>Optimiser un titre</div>
+      <div class="card-body">
+        <input type="text" class="form-control mb-2" id="opt-title"
+               placeholder="Titre original à optimiser...">
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <select class="form-select" id="opt-style">
+              <option value="kids">🎵 Kids</option>
+              <option value="disney">✨ Disney</option>
+              <option value="african">🌍 African</option>
+              <option value="3d">🎮 3D</option>
+              <option value="music">🎤 Music</option>
+              <option value="motivational">💪 Motivational</option>
+              <option value="news">📰 News</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <select class="form-select" id="opt-lang">
+              <option value="en">English</option>
+              <option value="fr">Français</option>
+              <option value="es">Español</option>
+              <option value="yo">Yorùbá</option>
+              <option value="sw">Swahili</option>
+              <option value="ar">العربية</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary w-100 mb-3" onclick="optimizeTitle()">
+          <i class="bi bi-stars me-2"></i>Optimiser
+        </button>
+        <div id="opt-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trending Keywords -->
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-fire text-danger me-2"></i>Mots-clés tendance par niche</div>
+      <div class="card-body">
+        <div class="d-flex gap-2 flex-wrap mb-3">
+          {% for niche in ['kids','african','disney','3d','music','motivational','news','ecommerce'] %}
+          <button class="btn btn-outline-secondary" onclick="loadKeywords('{{ niche }}')">
+            {{ niche }}
+          </button>
+          {% endfor %}
+        </div>
+        <div id="keywords-result" style="display:none">
+          <div style="font-size:0.8rem;color:#6b7280;margin-bottom:0.5rem" id="kw-label"></div>
+          <div id="kw-tags"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Translate tool -->
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-translate me-2"></i>Traduction rapide</div>
+      <div class="card-body">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-6">
+            <label class="form-label">Texte à traduire</label>
+            <textarea class="form-control" id="trans-text" rows="2"
+                      placeholder="Hello children, welcome to our channel!"></textarea>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Langue cible</label>
+            <select class="form-select" id="trans-lang">
+              <option value="fr">🇫🇷 Français</option>
+              <option value="es">🇪🇸 Español</option>
+              <option value="yo">🇳🇬 Yorùbá</option>
+              <option value="sw">🇰🇪 Swahili</option>
+              <option value="ar">🇸🇦 العربية</option>
+              <option value="ha">🇳🇬 Hausa</option>
+              <option value="zh">🇨🇳 中文</option>
+              <option value="de">🇩🇪 Deutsch</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-primary w-100" onclick="translateText()">
+              <i class="bi bi-translate me-2"></i>Traduire
+            </button>
+          </div>
+        </div>
+        <div id="trans-result" class="mt-3" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function analyzeTitle() {
+  const title = document.getElementById('analyze-title').value.trim();
+  if (!title) return;
+  const r = await fetch('/api/seo-analyze', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({title})
+  });
+  const d = await r.json();
+  const color = d.score >= 70 ? '#10b981' : d.score >= 40 ? '#f59e0b' : '#ef4444';
+  document.getElementById('analyze-result').innerHTML = `
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <div style="font-size:1.8rem;font-weight:800;color:${color}">${d.score}</div>
+      <div class="flex-grow-1">
+        <div style="font-size:0.75rem;color:#6b7280;margin-bottom:4px">Score SEO / 100</div>
+        <div class="progress" style="height:8px">
+          <div class="progress-bar" style="width:${d.score}%;background:${color};transition:width 0.8s"></div>
+        </div>
+      </div>
+    </div>
+    ${d.feedback.map(f => `<div style="font-size:0.82rem;padding:0.3rem 0;border-bottom:1px solid #1f2937;color:#94a3b8">${f}</div>`).join('')}`;
+}
+
+async function optimizeTitle() {
+  const title = document.getElementById('opt-title').value.trim();
+  if (!title) return;
+  const r = await fetch('/api/seo-optimize', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      title,
+      style: document.getElementById('opt-style').value,
+      language: document.getElementById('opt-lang').value,
+    })
+  });
+  const d = await r.json();
+  document.getElementById('opt-result').innerHTML = `
+    <div class="p-3 rounded mb-2" style="background:rgba(124,58,237,0.1);border:1px solid #4c1d95">
+      <div style="font-size:0.72rem;color:#6b7280;margin-bottom:4px">✅ Titre optimisé</div>
+      <div style="font-weight:600;color:#c4b5fd">${d.title}</div>
+    </div>
+    <div style="font-size:0.8rem;color:#6b7280">SEO Score : <strong style="color:#a78bfa">${d.seo_score}/100</strong></div>
+    <div style="font-size:0.78rem;color:#4b5563;margin-top:0.4rem">
+      Tags : ${d.tags.slice(0,8).map(t => `<span class="badge me-1" style="background:#1f2937;color:#94a3b8">${t}</span>`).join('')}
+    </div>`;
+}
+
+async function loadKeywords(niche) {
+  const r = await fetch(`/api/keywords/${niche}`);
+  const d = await r.json();
+  document.getElementById('keywords-result').style.display = '';
+  document.getElementById('kw-label').textContent = `Tendances "${niche}" :`;
+  document.getElementById('kw-tags').innerHTML =
+    d.keywords.map(k => `<span class="badge me-2 mb-1" style="background:rgba(239,68,68,0.15);color:#fca5a5;font-size:0.8rem;padding:0.4rem 0.7rem">🔥 ${k}</span>`).join('');
+}
+
+async function translateText() {
+  const text = document.getElementById('trans-text').value.trim();
+  const lang = document.getElementById('trans-lang').value;
+  if (!text) return;
+  const r = await fetch('/api/translate', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({text, lang})
+  });
+  const d = await r.json();
+  const box = document.getElementById('trans-result');
+  box.style.display = '';
+  box.innerHTML = `
+    <div class="p-3 rounded" style="background:rgba(6,182,212,0.1);border:1px solid #0e7490">
+      <div style="font-size:0.72rem;color:#6b7280;margin-bottom:4px">Traduction [${lang}]</div>
+      <div style="color:#67e8f9">${d.translated}</div>
+    </div>`;
+}
+</script>
+{% endblock %}

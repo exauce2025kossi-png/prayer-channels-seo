@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h4>📊 Dashboard</h4>
+  <p>Vue d'ensemble de votre empire média — {{ channels|length }} chaînes actives</p>
+</div>
+
+<!-- Stats -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card stat-purple p-3">
+      <div class="text-white-50 small mb-1">Chaînes</div>
+      <div class="fs-2 fw-bold text-white">{{ channels|length }}</div>
+      <div class="small text-white-50">📺 YouTube</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stat-cyan p-3">
+      <div class="text-white-50 small mb-1">Abonnés totaux</div>
+      <div class="fs-2 fw-bold text-white">{{ "{:,}".format(total_subs) }}</div>
+      <div class="small text-white-50">👥 subscribers</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stat-green p-3">
+      <div class="text-white-50 small mb-1">Vues totales</div>
+      <div class="fs-2 fw-bold text-white">{{ "{:,}".format(total_views) }}</div>
+      <div class="small text-white-50">👁️ views</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card stat-amber p-3">
+      <div class="text-white-50 small mb-1">Vidéos publiées</div>
+      <div class="fs-2 fw-bold text-white">{{ total_vids }}</div>
+      <div class="small text-white-50">🎬 videos</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Channels table -->
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-youtube text-danger me-2"></i>Mes Chaînes YouTube</span>
+        <a href="/create" class="btn btn-primary btn-sm px-3">
+          <i class="bi bi-plus me-1"></i>Créer vidéo
+        </a>
+      </div>
+      <div class="p-0">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th class="ps-4">Chaîne</th>
+              <th>Style</th>
+              <th class="text-end">Abonnés</th>
+              <th class="text-end pe-4">Vidéos</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% set niche_emoji = {'kids':'🎵','3d':'🎮','motivational':'💪','african':'🌍','disney':'✨','music':'🎤','news':'📰'} %}
+          {% for ch in channels %}
+          <tr>
+            <td class="ps-4">
+              <div class="d-flex align-items-center gap-2">
+                <span class="text-success" style="font-size:0.6rem">●</span>
+                <div>
+                  <div class="fw-600" style="font-size:0.875rem">{{ ch.name }}</div>
+                  <div style="font-size:0.7rem;color:#4b5563">{{ ch.id[:20] }}...</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge" style="background:rgba(124,58,237,0.2);color:#a78bfa;font-size:0.72rem">
+                {{ niche_emoji.get(ch.niche,'🎬') }} {{ ch.niche }}
+              </span>
+              <span class="badge ms-1" style="background:#1f2937;color:#6b7280;font-size:0.68rem">{{ ch.language }}</span>
+            </td>
+            <td class="text-end fw-600">{{ "{:,}".format(ch.get('subscribers',0)) }}</td>
+            <td class="text-end pe-4 fw-600">{{ ch.get('videos',0) }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick actions + recent videos -->
+  <div class="col-lg-5">
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Actions rapides</div>
+      <div class="card-body d-grid gap-2">
+        <a href="/create" class="btn btn-primary">
+          <i class="bi bi-camera-video-fill me-2"></i>Créer une vidéo
+        </a>
+        <a href="/series" class="btn btn-outline-primary">
+          <i class="bi bi-collection-play me-2"></i>Lancer une série
+        </a>
+        <a href="/seo" class="btn btn-outline-secondary">
+          <i class="bi bi-graph-up-arrow me-2"></i>Analyser SEO
+        </a>
+        <a href="/channels" class="btn btn-outline-secondary">
+          <i class="bi bi-youtube me-2"></i>Gérer les chaînes
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="bi bi-film me-2"></i>Vidéos produites récemment</div>
+      <div class="card-body p-0">
+        {% if produced %}
+          {% for v in produced[:8] %}
+          <div class="d-flex align-items-center px-3 py-2" style="border-bottom:1px solid #1f2937;font-size:0.8rem">
+            <span class="me-2">🎬</span>
+            <span style="color:#94a3b8;word-break:break-all">{{ v }}</span>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center py-4">
+            <div style="font-size:2rem">🎬</div>
+            <p style="color:#4b5563;font-size:0.85rem;margin:0.5rem 0">Aucune vidéo produite</p>
+            <a href="/create" class="btn btn-primary btn-sm mt-1">Créer ma première vidéo</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
