@@ -1,0 +1,45 @@
+{
+  "company": {
+    "name": "MediaAI Corp",
+    "version": "1.0.0",
+    "motto": "Your AI-Powered Media Empire"
+  },
+  "agents": {
+    "ceo":          { "name": "CEO",            "emoji": "🤖", "role": "Orchestrator principal" },
+    "script_writer":{ "name": "Script Writer",  "emoji": "✍️",  "role": "Rédaction scripts & paroles" },
+    "video_director":{"name": "Video Director", "emoji": "🎬", "role": "Production vidéo" },
+    "thumbnail":    { "name": "Thumb Creator",  "emoji": "🖼️",  "role": "Création miniatures" },
+    "youtube":      { "name": "YT Manager",     "emoji": "📺", "role": "Gestion chaînes YouTube" },
+    "ecommerce":    { "name": "E-Com Manager",  "emoji": "🛒", "role": "Boutiques en ligne" },
+    "translator":   { "name": "Translator",     "emoji": "🌍", "role": "Traduction multilingue" },
+    "seo":          { "name": "SEO Agent",      "emoji": "📊", "role": "Optimisation & analytics" }
+  },
+  "video_styles": {
+    "kids":    { "name": "Kids Songs",     "emoji": "🎵", "desc": "Chansons éducatives pour enfants" },
+    "disney":  { "name": "Disney Style",   "emoji": "✨", "desc": "Animation style Disney/Pixar" },
+    "african": { "name": "African Movies", "emoji": "🌍", "desc": "Films & clips africains" },
+    "3d":      { "name": "3D Animation",   "emoji": "🎮", "desc": "Animation 3D moderne" },
+    "music":   { "name": "Music Video",    "emoji": "🎤", "desc": "Clips musicaux professionnels" },
+    "news":    { "name": "News/Explainer", "emoji": "📰", "desc": "Vidéos explicatives & actualités" },
+    "comedy":  { "name": "Comedy/Skit",   "emoji": "😂", "desc": "Sketchs & vidéos humoristiques" },
+    "motivational":{"name":"Motivational", "emoji": "💪", "desc": "Vidéos motivationnelles" }
+  },
+  "languages": {
+    "en": "English", "fr": "Français", "es": "Español", "de": "Deutsch",
+    "pt": "Português", "ar": "العربية", "sw": "Kiswahili", "yo": "Yoruba",
+    "ha": "Hausa", "ig": "Igbo", "tw": "Twi", "ln": "Lingala",
+    "zh": "中文", "ja": "日本語", "ko": "한국어", "hi": "हिन्दी",
+    "ru": "Русский", "it": "Italiano", "nl": "Nederlands", "tr": "Türkçe"
+  },
+  "platforms": {
+    "youtube":  { "name": "YouTube",   "emoji": "▶️",  "api": "youtube_v3" },
+    "tiktok":   { "name": "TikTok",    "emoji": "🎵", "api": "tiktok_v2" },
+    "instagram":{ "name": "Instagram", "emoji": "📸", "api": "instagram_graph" },
+    "shopify":  { "name": "Shopify",   "emoji": "🛍️",  "api": "shopify_rest" },
+    "amazon":   { "name": "Amazon",    "emoji": "📦", "api": "amazon_sp" },
+    "etsy":     { "name": "Etsy",      "emoji": "🎨", "api": "etsy_v3" },
+    "woocommerce":{"name":"WooCommerce","emoji": "🛒", "api": "wc_rest" }
+  },
+  "channels": [],
+  "stores": []
+}
