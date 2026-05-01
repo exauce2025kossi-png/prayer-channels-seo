@@ -23,6 +23,26 @@ echo "✅ Dépendances installées."
 mkdir -p videos
 echo "✅ Dossier videos/ créé."
 
+# 3b. Génération automatique des vidéos
+echo ""
+echo "======================================================"
+echo " 🎬 GÉNÉRATION DES VIDÉOS (30 chansons pour enfants)"
+echo "======================================================"
+echo " → Cela peut prendre 5-10 minutes..."
+echo " → Les vidéos seront créées dans le dossier videos/"
+echo "======================================================"
+echo ""
+
+# Installer espeak-ng si absent (Linux)
+if ! command -v espeak-ng &>/dev/null; then
+  if command -v apt-get &>/dev/null; then
+    sudo apt-get install -y espeak-ng --quiet
+  fi
+fi
+
+python3 video_generator.py
+echo "✅ Vidéos générées !"
+
 # 4. Authentification (ouvrira le navigateur)
 echo ""
 echo "======================================================"
@@ -61,9 +81,8 @@ echo " ✅ INSTALLATION TERMINÉE !"
 echo "======================================================"
 echo ""
 echo " 📋 Prochaines étapes :"
-echo "   1. Ajoutez vos vidéos MP4 dans le dossier : videos/"
-echo "      Nommez-les comme dans schedule.json :"
-echo "      ex: jour01_priere_matin.mp4"
+echo "   1. Les vidéos ont été générées automatiquement dans videos/"
+echo "      (30 chansons pour enfants : ABC Song, Baby Shark, Dinosaur Song...)"
 echo ""
 echo "   2. Voir le planning :"
 echo "      python3 publisher.py --list"

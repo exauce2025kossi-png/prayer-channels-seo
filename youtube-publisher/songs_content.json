@@ -1,0 +1,608 @@
+{
+  "songs": {
+    "jour01_wheels_on_the_bus.mp4": {
+      "title": "The Wheels on the Bus",
+      "emoji": "🚌",
+      "colors": ["#FF6B6B", "#FF8E53"],
+      "lyrics": [
+        {"text": "The wheels on the bus go round and round", "duration": 2.8},
+        {"text": "Round and round, round and round!", "duration": 2.5},
+        {"text": "The wheels on the bus go round and round", "duration": 2.8},
+        {"text": "All through the town!", "duration": 2.5},
+        {"text": "The horn on the bus goes beep beep beep", "duration": 2.8},
+        {"text": "Beep beep beep, beep beep beep!", "duration": 2.5},
+        {"text": "The horn on the bus goes beep beep beep", "duration": 2.8},
+        {"text": "All through the town!", "duration": 2.5},
+        {"text": "The wipers on the bus go swish swish swish", "duration": 2.8},
+        {"text": "Swish swish swish, swish swish swish!", "duration": 2.5},
+        {"text": "The wipers on the bus go swish swish swish", "duration": 2.8},
+        {"text": "All through the town!", "duration": 2.5},
+        {"text": "The babies on the bus go waa waa waa", "duration": 2.8},
+        {"text": "Waa waa waa, waa waa waa!", "duration": 2.5},
+        {"text": "The mommies on the bus go shh shh shh", "duration": 2.8},
+        {"text": "All through the town!", "duration": 2.5},
+        {"text": "The wheels on the bus go round and round", "duration": 2.8},
+        {"text": "Round and round, round and round!", "duration": 2.5},
+        {"text": "All through the town! 🚌", "duration": 3.0}
+      ]
+    },
+    "jour02_abc_song.mp4": {
+      "title": "ABC Song",
+      "emoji": "🔤",
+      "colors": ["#4ECDC4", "#44A08D"],
+      "lyrics": [
+        {"text": "A B C D E F G", "duration": 3.0},
+        {"text": "H I J K LMNOP", "duration": 3.0},
+        {"text": "Q R S", "duration": 2.0},
+        {"text": "T U V", "duration": 2.0},
+        {"text": "W X", "duration": 2.0},
+        {"text": "Y and Z!", "duration": 2.5},
+        {"text": "Now I know my ABCs", "duration": 2.8},
+        {"text": "Next time won't you sing with me?", "duration": 2.8},
+        {"text": "A B C D E F G", "duration": 3.0},
+        {"text": "H I J K LMNOP", "duration": 3.0},
+        {"text": "Q R S, T U V", "duration": 3.0},
+        {"text": "W X, Y and Z!", "duration": 2.8},
+        {"text": "Now I know my ABCs", "duration": 2.8},
+        {"text": "Next time won't you sing with me? 🎵", "duration": 3.0}
+      ]
+    },
+    "jour03_dinosaur_song.mp4": {
+      "title": "Dinosaur Song",
+      "emoji": "🦕",
+      "colors": ["#56AB2F", "#A8E063"],
+      "lyrics": [
+        {"text": "Oh I'm a big dinosaur, ROAR ROAR ROAR!", "duration": 3.0},
+        {"text": "I stomp my feet upon the floor!", "duration": 2.8},
+        {"text": "I've got big teeth and a long long tail", "duration": 2.8},
+        {"text": "I'm a dinosaur — hear me wail!", "duration": 2.8},
+        {"text": "T-Rex, T-Rex, stomp stomp stomp!", "duration": 2.8},
+        {"text": "Through the jungle, chomp chomp chomp!", "duration": 2.8},
+        {"text": "Triceratops has three big horns", "duration": 2.8},
+        {"text": "Since before you were born!", "duration": 2.5},
+        {"text": "Brachiosaurus, neck so tall", "duration": 2.8},
+        {"text": "Biggest dinosaur of all!", "duration": 2.5},
+        {"text": "Pterodactyl flies up high", "duration": 2.8},
+        {"text": "Swooping through the ancient sky!", "duration": 2.8},
+        {"text": "Oh I'm a big dinosaur, ROAR ROAR ROAR!", "duration": 3.0},
+        {"text": "I stomp my feet upon the floor!", "duration": 2.8},
+        {"text": "Dinosaurs were here before — ROAR! 🦕", "duration": 3.0}
+      ]
+    },
+    "jour04_counting_1_10.mp4": {
+      "title": "Counting 1 to 10",
+      "emoji": "🔢",
+      "colors": ["#F7971E", "#FFD200"],
+      "lyrics": [
+        {"text": "Let's count together, one by one!", "duration": 2.8},
+        {"text": "ONE! One little star in the sky", "duration": 2.8},
+        {"text": "TWO! Two little birds flying high", "duration": 2.8},
+        {"text": "THREE! Three little fish in the sea", "duration": 2.8},
+        {"text": "FOUR! Four little frogs, can you see?", "duration": 2.8},
+        {"text": "FIVE! Five little fingers on your hand", "duration": 2.8},
+        {"text": "SIX! Six little flowers in the land", "duration": 2.8},
+        {"text": "SEVEN! Seven colors in the rainbow", "duration": 2.8},
+        {"text": "EIGHT! Eight little spiders in a row", "duration": 2.8},
+        {"text": "NINE! Nine little balloons in the air", "duration": 2.8},
+        {"text": "TEN! Ten little toes — it's fair!", "duration": 2.8},
+        {"text": "1, 2, 3, 4, 5!", "duration": 2.5},
+        {"text": "6, 7, 8, 9, 10!", "duration": 2.5},
+        {"text": "Let's count again and again!", "duration": 2.8},
+        {"text": "Great job counting to TEN! 🔢", "duration": 3.0}
+      ]
+    },
+    "jour05_colors_song.mp4": {
+      "title": "Colors Song",
+      "emoji": "🌈",
+      "colors": ["#f953c6", "#b91d73"],
+      "lyrics": [
+        {"text": "Red, red, RED — an apple is red!", "duration": 2.8},
+        {"text": "Orange, orange, ORANGE — a carrot is orange!", "duration": 2.8},
+        {"text": "Yellow, yellow, YELLOW — the sun is yellow!", "duration": 2.8},
+        {"text": "Green, green, GREEN — the grass is green!", "duration": 2.8},
+        {"text": "Blue, blue, BLUE — the sky is blue!", "duration": 2.8},
+        {"text": "Purple, purple, PURPLE — grapes are purple!", "duration": 2.8},
+        {"text": "Pink, pink, PINK — flowers are pink!", "duration": 2.8},
+        {"text": "Brown, brown, BROWN — chocolate is brown!", "duration": 2.8},
+        {"text": "Black and white like a zebra!", "duration": 2.8},
+        {"text": "Colors, colors everywhere!", "duration": 2.5},
+        {"text": "Red and blue and green!", "duration": 2.5},
+        {"text": "Orange, yellow, in between!", "duration": 2.5},
+        {"text": "Purple, pink and brown!", "duration": 2.5},
+        {"text": "Colors all around the town! 🌈", "duration": 3.0}
+      ]
+    },
+    "jour06_twinkle_twinkle.mp4": {
+      "title": "Twinkle Twinkle Little Star",
+      "emoji": "⭐",
+      "colors": ["#141E30", "#243B55"],
+      "lyrics": [
+        {"text": "Twinkle twinkle little star", "duration": 3.0},
+        {"text": "How I wonder what you are!", "duration": 3.0},
+        {"text": "Up above the world so high", "duration": 3.0},
+        {"text": "Like a diamond in the sky!", "duration": 3.0},
+        {"text": "Twinkle twinkle little star", "duration": 3.0},
+        {"text": "How I wonder what you are!", "duration": 3.0},
+        {"text": "When the blazing sun is gone", "duration": 3.0},
+        {"text": "When he nothing shines upon", "duration": 3.0},
+        {"text": "Then you show your little light", "duration": 3.0},
+        {"text": "Twinkle twinkle through the night!", "duration": 3.0},
+        {"text": "In the dark blue sky so deep", "duration": 3.0},
+        {"text": "Through my curtains often peep", "duration": 3.0},
+        {"text": "As you never shut your eye", "duration": 3.0},
+        {"text": "Till the sun is in the sky!", "duration": 3.0},
+        {"text": "Twinkle twinkle little star", "duration": 3.0},
+        {"text": "How I wonder what you are! ⭐", "duration": 3.5}
+      ]
+    },
+    "jour07_baby_shark.mp4": {
+      "title": "Baby Shark",
+      "emoji": "🦈",
+      "colors": ["#1A6DFF", "#C822FF"],
+      "lyrics": [
+        {"text": "Baby shark, doo doo doo doo doo doo", "duration": 2.8},
+        {"text": "Baby shark, doo doo doo doo doo doo!", "duration": 2.8},
+        {"text": "Baby shark!", "duration": 2.0},
+        {"text": "Mommy shark, doo doo doo doo doo doo", "duration": 2.8},
+        {"text": "Mommy shark, doo doo doo doo doo doo!", "duration": 2.8},
+        {"text": "Mommy shark!", "duration": 2.0},
+        {"text": "Daddy shark, doo doo doo doo doo doo", "duration": 2.8},
+        {"text": "Daddy shark, doo doo doo doo doo doo!", "duration": 2.8},
+        {"text": "Daddy shark!", "duration": 2.0},
+        {"text": "Grandma shark, doo doo doo doo doo doo", "duration": 2.8},
+        {"text": "Grandma shark!", "duration": 2.0},
+        {"text": "Let's go hunt, doo doo doo doo doo doo", "duration": 2.8},
+        {"text": "Let's go hunt!", "duration": 2.0},
+        {"text": "Run away, doo doo doo doo doo doo", "duration": 2.8},
+        {"text": "Run away!", "duration": 2.0},
+        {"text": "Safe at last, doo doo doo doo doo doo", "duration": 2.8},
+        {"text": "Safe at last! 🦈", "duration": 2.5}
+      ]
+    },
+    "jour08_toy_train_song.mp4": {
+      "title": "Toy Train Song",
+      "emoji": "🚂",
+      "colors": ["#C94B4B", "#4B134F"],
+      "lyrics": [
+        {"text": "Chugga chugga choo choo!", "duration": 2.5},
+        {"text": "Here comes the little train!", "duration": 2.8},
+        {"text": "Chugga chugga choo choo!", "duration": 2.5},
+        {"text": "Going down the lane!", "duration": 2.5},
+        {"text": "Over the bridge and through the tunnel", "duration": 2.8},
+        {"text": "Round the bend we go!", "duration": 2.5},
+        {"text": "Red and yellow, green and blue", "duration": 2.8},
+        {"text": "Watch the colors flow!", "duration": 2.5},
+        {"text": "Toot toot! The whistle blows!", "duration": 2.8},
+        {"text": "All aboard, let's ride!", "duration": 2.5},
+        {"text": "Mountains, rivers, fields of green", "duration": 2.8},
+        {"text": "Rolling side by side!", "duration": 2.5},
+        {"text": "Chugga chugga choo choo!", "duration": 2.5},
+        {"text": "Here comes the little train!", "duration": 2.8},
+        {"text": "Chugga chugga choo choo! 🚂", "duration": 3.0}
+      ]
+    },
+    "jour09_finger_family.mp4": {
+      "title": "Finger Family",
+      "emoji": "👋",
+      "colors": ["#FF5F6D", "#FFC371"],
+      "lyrics": [
+        {"text": "Daddy finger, daddy finger, where are you?", "duration": 3.0},
+        {"text": "Here I am, here I am! How do you do?", "duration": 3.0},
+        {"text": "Mommy finger, mommy finger, where are you?", "duration": 3.0},
+        {"text": "Here I am, here I am! How do you do?", "duration": 3.0},
+        {"text": "Brother finger, brother finger, where are you?", "duration": 3.0},
+        {"text": "Here I am, here I am! How do you do?", "duration": 3.0},
+        {"text": "Sister finger, sister finger, where are you?", "duration": 3.0},
+        {"text": "Here I am, here I am! How do you do?", "duration": 3.0},
+        {"text": "Baby finger, baby finger, where are you?", "duration": 3.0},
+        {"text": "Here I am, here I am! How do you do?", "duration": 3.0},
+        {"text": "Finger family, finger family!", "duration": 2.8},
+        {"text": "Everyone together — yay! 👋", "duration": 3.0}
+      ]
+    },
+    "jour10_five_little_ducks.mp4": {
+      "title": "Five Little Ducks",
+      "emoji": "🐥",
+      "colors": ["#F0C27F", "#FC4A1A"],
+      "lyrics": [
+        {"text": "Five little ducks went out one day", "duration": 2.8},
+        {"text": "Over the hill and far away!", "duration": 2.8},
+        {"text": "Mother duck said quack quack quack", "duration": 2.8},
+        {"text": "But only four little ducks came back!", "duration": 2.8},
+        {"text": "Four little ducks went out one day", "duration": 2.8},
+        {"text": "Over the hill and far away!", "duration": 2.8},
+        {"text": "Mother duck said quack quack quack", "duration": 2.8},
+        {"text": "But only three little ducks came back!", "duration": 2.8},
+        {"text": "Three... two... one little duck went out one day", "duration": 2.8},
+        {"text": "No little ducks came back!", "duration": 2.5},
+        {"text": "Sad mother duck said QUACK QUACK QUACK", "duration": 2.8},
+        {"text": "And all five little ducks came back! 🐥", "duration": 3.0}
+      ]
+    },
+    "jour11_old_macdonald.mp4": {
+      "title": "Old MacDonald Had a Farm",
+      "emoji": "🐄",
+      "colors": ["#56CCF2", "#2F80ED"],
+      "lyrics": [
+        {"text": "Old MacDonald had a farm, E-I-E-I-O!", "duration": 3.0},
+        {"text": "And on his farm he had a COW, E-I-E-I-O!", "duration": 3.0},
+        {"text": "With a moo moo here, and a moo moo there", "duration": 2.8},
+        {"text": "Here a moo, there a moo, everywhere a moo moo!", "duration": 2.8},
+        {"text": "Old MacDonald had a farm, E-I-E-I-O!", "duration": 3.0},
+        {"text": "And on his farm he had a PIG, E-I-E-I-O!", "duration": 3.0},
+        {"text": "With an oink oink here, and an oink oink there!", "duration": 2.8},
+        {"text": "Old MacDonald had a farm, E-I-E-I-O!", "duration": 3.0},
+        {"text": "And on his farm he had a DUCK, E-I-E-I-O!", "duration": 3.0},
+        {"text": "With a quack quack here, quack quack there!", "duration": 2.8},
+        {"text": "Old MacDonald had a farm, E-I-E-I-O! 🐄", "duration": 3.5}
+      ]
+    },
+    "jour12_candy_machine_song.mp4": {
+      "title": "Candy Machine Song",
+      "emoji": "🍬",
+      "colors": ["#FF61D2", "#FE9090"],
+      "lyrics": [
+        {"text": "Put a coin in the candy machine!", "duration": 2.8},
+        {"text": "Turn the knob and what do you see?", "duration": 2.8},
+        {"text": "Red candy, blue candy, yellow candy too!", "duration": 2.8},
+        {"text": "Candies coming out for me and you!", "duration": 2.8},
+        {"text": "Gumballs rolling, round and round", "duration": 2.8},
+        {"text": "Lollipops and gummies found!", "duration": 2.5},
+        {"text": "Chocolate, caramel, so sweet!", "duration": 2.5},
+        {"text": "Candy machine — such a treat!", "duration": 2.5},
+        {"text": "Put another coin, turn again!", "duration": 2.8},
+        {"text": "Sharing candy with my friends!", "duration": 2.8},
+        {"text": "Red and pink and purple too", "duration": 2.5},
+        {"text": "The candy machine loves me and you! 🍬", "duration": 3.0}
+      ]
+    },
+    "jour13_fire_truck_song.mp4": {
+      "title": "Fire Truck Song",
+      "emoji": "🚒",
+      "colors": ["#FF0000", "#FF6B00"],
+      "lyrics": [
+        {"text": "Wee woo wee woo, the fire truck goes!", "duration": 2.8},
+        {"text": "Red and shiny, down the road it flows!", "duration": 2.8},
+        {"text": "The firefighters brave and strong", "duration": 2.8},
+        {"text": "Rushing to the fire all day long!", "duration": 2.8},
+        {"text": "Wee woo wee woo — watch out, make way!", "duration": 2.8},
+        {"text": "Heroes saving lives each day!", "duration": 2.5},
+        {"text": "Water hose goes swoosh swoosh swoosh", "duration": 2.8},
+        {"text": "Putting out the fire — woosh!", "duration": 2.5},
+        {"text": "Ladder tall goes up up up", "duration": 2.8},
+        {"text": "Rescue mission — don't give up!", "duration": 2.5},
+        {"text": "Wee woo wee woo, job well done!", "duration": 2.8},
+        {"text": "Firefighters — number one! 🚒", "duration": 3.0}
+      ]
+    },
+    "jour14_happy_birthday.mp4": {
+      "title": "Happy Birthday Song",
+      "emoji": "🎂",
+      "colors": ["#FC5C7D", "#6A82FB"],
+      "lyrics": [
+        {"text": "Happy birthday to you!", "duration": 3.0},
+        {"text": "Happy birthday to you!", "duration": 3.0},
+        {"text": "Happy birthday dear friend!", "duration": 3.0},
+        {"text": "Happy birthday to you!", "duration": 3.0},
+        {"text": "How old are you today?", "duration": 2.8},
+        {"text": "Blow the candles — hooray!", "duration": 2.8},
+        {"text": "Make a wish and close your eyes", "duration": 2.8},
+        {"text": "What a birthday surprise!", "duration": 2.8},
+        {"text": "Cake and balloons everywhere", "duration": 2.8},
+        {"text": "Friends and family all there!", "duration": 2.8},
+        {"text": "Happy happy birthday song", "duration": 2.8},
+        {"text": "Let's all sing and dance along!", "duration": 2.8},
+        {"text": "Happy birthday to you! 🎂", "duration": 3.5}
+      ]
+    },
+    "jour15_if_youre_happy.mp4": {
+      "title": "If You're Happy and You Know It",
+      "emoji": "😊",
+      "colors": ["#FDDB92", "#D1FDFF"],
+      "lyrics": [
+        {"text": "If you're happy and you know it, clap your hands!", "duration": 3.0},
+        {"text": "If you're happy and you know it, clap your hands!", "duration": 3.0},
+        {"text": "If you're happy and you know it", "duration": 2.5},
+        {"text": "Then your face will surely show it!", "duration": 2.5},
+        {"text": "If you're happy and you know it, clap your hands!", "duration": 3.0},
+        {"text": "If you're happy and you know it, stomp your feet!", "duration": 3.0},
+        {"text": "If you're happy and you know it, shout HOORAY!", "duration": 3.0},
+        {"text": "HOORAY!", "duration": 2.0},
+        {"text": "If you're happy and you know it, do all three!", "duration": 3.0},
+        {"text": "Clap clap! Stomp stomp! HOORAY! 😊", "duration": 3.0}
+      ]
+    },
+    "jour16_johny_johny.mp4": {
+      "title": "Johny Johny Yes Papa",
+      "emoji": "👶",
+      "colors": ["#84FAB0", "#8FD3F4"],
+      "lyrics": [
+        {"text": "Johny Johny?", "duration": 2.0},
+        {"text": "Yes Papa!", "duration": 2.0},
+        {"text": "Eating sugar?", "duration": 2.0},
+        {"text": "No Papa!", "duration": 2.0},
+        {"text": "Telling lies?", "duration": 2.0},
+        {"text": "No Papa!", "duration": 2.0},
+        {"text": "Open your mouth!", "duration": 2.0},
+        {"text": "Ha ha ha!", "duration": 2.0},
+        {"text": "Johny Johny?", "duration": 2.0},
+        {"text": "Yes Papa!", "duration": 2.0},
+        {"text": "Eating cookies?", "duration": 2.0},
+        {"text": "No Papa!", "duration": 2.0},
+        {"text": "Open your mouth!", "duration": 2.0},
+        {"text": "Ha ha ha! 👶", "duration": 2.5}
+      ]
+    },
+    "jour17_ice_cream_song.mp4": {
+      "title": "Ice Cream Song",
+      "emoji": "🍦",
+      "colors": ["#A18CD1", "#FBC2EB"],
+      "lyrics": [
+        {"text": "Ice cream, ice cream, yummy yummy!", "duration": 2.8},
+        {"text": "Dripping down and filling my tummy!", "duration": 2.8},
+        {"text": "Chocolate, vanilla, strawberry too", "duration": 2.8},
+        {"text": "Which one would you choose, me or you?", "duration": 2.8},
+        {"text": "One scoop, two scoops, three scoops tall!", "duration": 2.8},
+        {"text": "Be careful now, don't let it fall!", "duration": 2.8},
+        {"text": "Rainbow sprinkles on the top", "duration": 2.5},
+        {"text": "Licking fast so it won't drop!", "duration": 2.5},
+        {"text": "Ice cream, ice cream, cold and sweet", "duration": 2.8},
+        {"text": "Summer's most delicious treat!", "duration": 2.8},
+        {"text": "Share with friends and share with me", "duration": 2.8},
+        {"text": "Happy as can be! 🍦", "duration": 3.0}
+      ]
+    },
+    "jour18_animal_zoo_song.mp4": {
+      "title": "Animal Zoo Song",
+      "emoji": "🦁",
+      "colors": ["#F9D423", "#FF4E50"],
+      "lyrics": [
+        {"text": "Let's go to the zoo today!", "duration": 2.8},
+        {"text": "See the animals come and play!", "duration": 2.8},
+        {"text": "The lion says ROAR ROAR ROAR!", "duration": 2.8},
+        {"text": "The elephant says PAWOO!", "duration": 2.8},
+        {"text": "The monkey swings from tree to tree", "duration": 2.8},
+        {"text": "Oh EE OO AH is what says he!", "duration": 2.8},
+        {"text": "The giraffe has a very long neck", "duration": 2.8},
+        {"text": "Eating leaves — what the heck!", "duration": 2.5},
+        {"text": "The penguin waddles, black and white", "duration": 2.8},
+        {"text": "What a funny, funny sight!", "duration": 2.5},
+        {"text": "Hippo, zebra, parrot too", "duration": 2.8},
+        {"text": "I love animals at the zoo! 🦁", "duration": 3.0}
+      ]
+    },
+    "jour19_ball_pit_fun.mp4": {
+      "title": "Ball Pit Fun",
+      "emoji": "🎱",
+      "colors": ["#FF6CAB", "#7366FF"],
+      "lyrics": [
+        {"text": "Jump into the ball pit — SPLASH!", "duration": 2.8},
+        {"text": "Red balls, blue balls, what a bash!", "duration": 2.8},
+        {"text": "Yellow balls and green ones too", "duration": 2.8},
+        {"text": "This ball pit was made for you!", "duration": 2.8},
+        {"text": "Throw a ball up in the air!", "duration": 2.8},
+        {"text": "Balls and balls everywhere!", "duration": 2.5},
+        {"text": "Dive down deep, come back up!", "duration": 2.8},
+        {"text": "Playing in my ball pit cup!", "duration": 2.5},
+        {"text": "Orange, purple, pink and white", "duration": 2.8},
+        {"text": "Ball pit fun from morning till night!", "duration": 2.8},
+        {"text": "Laughing, splashing, having fun", "duration": 2.8},
+        {"text": "Ball pit games have just begun! 🎱", "duration": 3.0}
+      ]
+    },
+    "jour20_toy_car_song.mp4": {
+      "title": "Toy Car Song",
+      "emoji": "🚗",
+      "colors": ["#00C9FF", "#92FE9D"],
+      "lyrics": [
+        {"text": "Vroom vroom vroom, my toy car goes!", "duration": 2.8},
+        {"text": "Down the track and round the bends!", "duration": 2.8},
+        {"text": "Red car, blue car, yellow car!", "duration": 2.5},
+        {"text": "Racing all the way to the stars!", "duration": 2.8},
+        {"text": "Push it fast along the floor", "duration": 2.8},
+        {"text": "Under tables, out the door!", "duration": 2.5},
+        {"text": "Beep beep beep, coming through!", "duration": 2.5},
+        {"text": "Little car, I love you!", "duration": 2.5},
+        {"text": "Loop the loop and skid and slide", "duration": 2.8},
+        {"text": "Toy car, what a ride!", "duration": 2.5},
+        {"text": "Vroom vroom vroom my toy car goes", "duration": 2.8},
+        {"text": "Fastest little car — everyone knows! 🚗", "duration": 3.0}
+      ]
+    },
+    "jour21_rain_rain_go_away.mp4": {
+      "title": "Rain Rain Go Away",
+      "emoji": "🌧️",
+      "colors": ["#4B6CB7", "#182848"],
+      "lyrics": [
+        {"text": "Rain rain go away", "duration": 2.8},
+        {"text": "Come again another day!", "duration": 2.8},
+        {"text": "Little children want to play", "duration": 2.8},
+        {"text": "Rain rain go away!", "duration": 2.8},
+        {"text": "Pitter patter on the roof", "duration": 2.8},
+        {"text": "Drip drip drip — that's the proof!", "duration": 2.8},
+        {"text": "Puddles forming on the ground", "duration": 2.8},
+        {"text": "Splashing is the only sound!", "duration": 2.8},
+        {"text": "But when the rain goes away", "duration": 2.8},
+        {"text": "Rainbow lights up the day!", "duration": 2.8},
+        {"text": "Rain rain go away", "duration": 2.8},
+        {"text": "Come again another day! 🌧️", "duration": 3.0}
+      ]
+    },
+    "jour22_humpty_dumpty.mp4": {
+      "title": "Humpty Dumpty",
+      "emoji": "🥚",
+      "colors": ["#F8CDDA", "#1D2B64"],
+      "lyrics": [
+        {"text": "Humpty Dumpty sat on a wall", "duration": 3.0},
+        {"text": "Humpty Dumpty had a great fall!", "duration": 3.0},
+        {"text": "All the king's horses", "duration": 2.5},
+        {"text": "And all the king's men", "duration": 2.5},
+        {"text": "Couldn't put Humpty together again!", "duration": 3.0},
+        {"text": "Humpty Dumpty was an egg", "duration": 2.8},
+        {"text": "Sitting on the wall, so bold!", "duration": 2.8},
+        {"text": "Watch out Humpty, don't fall down!", "duration": 2.8},
+        {"text": "Careful now — you'll hit the ground!", "duration": 2.8},
+        {"text": "Humpty Dumpty sat on a wall", "duration": 3.0},
+        {"text": "Be careful you don't fall! 🥚", "duration": 3.5}
+      ]
+    },
+    "jour23_exercise_song.mp4": {
+      "title": "Exercise Song for Kids",
+      "emoji": "🏃",
+      "colors": ["#11998E", "#38EF7D"],
+      "lyrics": [
+        {"text": "Let's exercise and move our body!", "duration": 2.8},
+        {"text": "Jump up high — feel so good!", "duration": 2.5},
+        {"text": "Touch your toes, 1 2 3!", "duration": 2.5},
+        {"text": "Move your body, healthy and free!", "duration": 2.8},
+        {"text": "Shake your hands up in the air!", "duration": 2.8},
+        {"text": "Wiggle wiggle everywhere!", "duration": 2.5},
+        {"text": "Run in place — go go go!", "duration": 2.5},
+        {"text": "Touch your nose and say HELLO!", "duration": 2.5},
+        {"text": "Squat down low, stand up tall", "duration": 2.8},
+        {"text": "Spin around, don't fall!", "duration": 2.5},
+        {"text": "Breathe in deep, breathe out slow", "duration": 2.8},
+        {"text": "Feel the energy flow!", "duration": 2.5},
+        {"text": "Let's exercise every day", "duration": 2.8},
+        {"text": "Keep the doctor away! 🏃", "duration": 3.0}
+      ]
+    },
+    "jour24_ants_go_marching.mp4": {
+      "title": "The Ants Go Marching",
+      "emoji": "🐜",
+      "colors": ["#373B44", "#4286f4"],
+      "lyrics": [
+        {"text": "The ants go marching one by one, hurrah hurrah!", "duration": 3.0},
+        {"text": "The ants go marching one by one, hurrah hurrah!", "duration": 3.0},
+        {"text": "The little one stops to suck his thumb", "duration": 2.8},
+        {"text": "And they all go marching down in the ground — BOOM!", "duration": 3.0},
+        {"text": "The ants go marching two by two, hurrah hurrah!", "duration": 3.0},
+        {"text": "The little one stops to tie his shoe", "duration": 2.8},
+        {"text": "And they all go marching down — BOOM!", "duration": 2.8},
+        {"text": "The ants go marching three by three, hurrah hurrah!", "duration": 3.0},
+        {"text": "The little one stops to climb a tree", "duration": 2.8},
+        {"text": "And they all go marching down — BOOM!", "duration": 2.8},
+        {"text": "Marching, marching, one by one", "duration": 2.8},
+        {"text": "Until the marching's done! 🐜", "duration": 3.0}
+      ]
+    },
+    "jour25_merry_go_round.mp4": {
+      "title": "Merry Go Round",
+      "emoji": "🎠",
+      "colors": ["#F953C6", "#B91D73"],
+      "lyrics": [
+        {"text": "Round and round the merry go round!", "duration": 2.8},
+        {"text": "Horses jumping up and down!", "duration": 2.8},
+        {"text": "Pink horse, white horse, golden too", "duration": 2.8},
+        {"text": "Which one do you want to ride — I choose you!", "duration": 2.8},
+        {"text": "Music playing, bells ring clear", "duration": 2.8},
+        {"text": "Merry go round, oh what fun here!", "duration": 2.8},
+        {"text": "Hold on tight and don't let go", "duration": 2.8},
+        {"text": "Watch the world spin fast then slow!", "duration": 2.8},
+        {"text": "Faster faster — wheee wheee wheee!", "duration": 2.8},
+        {"text": "Merry go round, spin with me!", "duration": 2.8},
+        {"text": "Round and round we go again", "duration": 2.8},
+        {"text": "Best ride at the fair — amen! 🎠", "duration": 3.0}
+      ]
+    },
+    "jour26_under_the_sea.mp4": {
+      "title": "Under the Sea",
+      "emoji": "🐠",
+      "colors": ["#1A2980", "#26D0CE"],
+      "lyrics": [
+        {"text": "Under the sea, under the sea!", "duration": 2.8},
+        {"text": "Where the fish swim wild and free!", "duration": 2.8},
+        {"text": "Starfish, jellyfish, coral bright", "duration": 2.8},
+        {"text": "Glowing in the ocean light!", "duration": 2.8},
+        {"text": "Little clownfish, orange and white", "duration": 2.8},
+        {"text": "Swimming left and swimming right!", "duration": 2.8},
+        {"text": "Dolphins leaping, whales sing low", "duration": 2.8},
+        {"text": "Watch the seahorses gently flow!", "duration": 2.8},
+        {"text": "Blue and green and purple too", "duration": 2.8},
+        {"text": "Ocean world, deep and true!", "duration": 2.5},
+        {"text": "Bubbles rising, fish swim by", "duration": 2.8},
+        {"text": "Under the sea, oh my oh my! 🐠", "duration": 3.0}
+      ]
+    },
+    "jour27_goodnight_lullaby.mp4": {
+      "title": "Goodnight Lullaby",
+      "emoji": "🌙",
+      "colors": ["#0F2027", "#203A43"],
+      "lyrics": [
+        {"text": "Close your eyes, the day is done", "duration": 3.0},
+        {"text": "Time to sleep, my little one", "duration": 3.0},
+        {"text": "Stars are shining, moon is bright", "duration": 3.0},
+        {"text": "Goodnight baby, sleep tight!", "duration": 3.0},
+        {"text": "Dream of butterflies and streams", "duration": 3.0},
+        {"text": "Float away on fluffy dreams", "duration": 3.0},
+        {"text": "Teddy bear beside you near", "duration": 3.0},
+        {"text": "Nothing here for you to fear", "duration": 3.0},
+        {"text": "Hush now baby, hush now dear", "duration": 3.0},
+        {"text": "Morning sun will soon be here", "duration": 3.0},
+        {"text": "Close your eyes, the day is done", "duration": 3.0},
+        {"text": "Goodnight baby, little one 🌙", "duration": 4.0}
+      ]
+    },
+    "jour28_shapes_song.mp4": {
+      "title": "Shapes Song",
+      "emoji": "🔷",
+      "colors": ["#FC466B", "#3F5EFB"],
+      "lyrics": [
+        {"text": "A circle is round like the sun!", "duration": 2.8},
+        {"text": "A square has four equal sides — fun!", "duration": 2.8},
+        {"text": "A triangle has three sides, see?", "duration": 2.8},
+        {"text": "Shapes shapes shapes — one two three!", "duration": 2.8},
+        {"text": "A rectangle is long and wide", "duration": 2.8},
+        {"text": "Two long and two short sides inside!", "duration": 2.8},
+        {"text": "A star has points, one two three four five!", "duration": 2.8},
+        {"text": "Stars in the sky — they're alive!", "duration": 2.8},
+        {"text": "A heart is the shape of our love", "duration": 2.8},
+        {"text": "Round at the top, point below!", "duration": 2.8},
+        {"text": "Circle square triangle star", "duration": 2.8},
+        {"text": "Shapes are everywhere you are! 🔷", "duration": 3.0}
+      ]
+    },
+    "jour29_family_song.mp4": {
+      "title": "Family Song",
+      "emoji": "👨‍👩‍👧‍👦",
+      "colors": ["#F7B733", "#FC4A1A"],
+      "lyrics": [
+        {"text": "Mama, Daddy, sister, brother", "duration": 2.8},
+        {"text": "We all love and care for each other!", "duration": 2.8},
+        {"text": "Grandma, Grandpa, aunt and uncle too", "duration": 2.8},
+        {"text": "Our family loves me and you!", "duration": 2.8},
+        {"text": "We share our meals, we share our days", "duration": 2.8},
+        {"text": "We love each other in so many ways!", "duration": 2.8},
+        {"text": "Hugs and kisses, laughter too", "duration": 2.8},
+        {"text": "Family is me and you!", "duration": 2.5},
+        {"text": "When I'm sad, they dry my tears", "duration": 2.8},
+        {"text": "Family chases away my fears!", "duration": 2.8},
+        {"text": "Mama, Daddy, sis and bro", "duration": 2.8},
+        {"text": "I love my family so! 👨‍👩‍👧‍👦", "duration": 3.0}
+      ]
+    },
+    "jour30_best_kids_songs_compilation.mp4": {
+      "title": "Best Kids Songs — 30 Min Compilation",
+      "emoji": "🎵",
+      "colors": ["#FF0099", "#493240"],
+      "lyrics": [
+        {"text": "Welcome to our BEST SONGS compilation!", "duration": 3.0},
+        {"text": "Singing, dancing, so much fun!", "duration": 2.8},
+        {"text": "The Wheels on the Bus — round and round!", "duration": 2.8},
+        {"text": "A B C D E F G!", "duration": 2.8},
+        {"text": "Dinosaur ROAR — stomp stomp stomp!", "duration": 2.8},
+        {"text": "1, 2, 3, 4, 5 — let's count alive!", "duration": 2.8},
+        {"text": "Red orange yellow green blue!", "duration": 2.8},
+        {"text": "Twinkle twinkle little star!", "duration": 2.8},
+        {"text": "Baby Shark — doo doo doo!", "duration": 2.8},
+        {"text": "Chugga chugga choo choo train!", "duration": 2.8},
+        {"text": "Daddy finger, where are you?", "duration": 2.8},
+        {"text": "Five little ducks — quack quack!", "duration": 2.8},
+        {"text": "Old MacDonald E-I-E-I-O!", "duration": 2.8},
+        {"text": "Happy Birthday — hooray hooray!", "duration": 2.8},
+        {"text": "Clap your hands if you're happy!", "duration": 2.8},
+        {"text": "Thank you for watching — subscribe! 🎵", "duration": 3.5}
+      ]
+    }
+  }
+}
