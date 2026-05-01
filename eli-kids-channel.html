@@ -1,548 +1,802 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Eli Kids – Cartoons & Songs | Nursery Rhymes & Kids Songs</title>
-  <meta name="description" content="Eli Kids - Cartoons & Songs: 20M subscribers, 8.9B views. Watch the best nursery rhymes, kids songs, ABC phonics, dinosaur songs, and educational cartoons for children." />
-  <meta name="keywords" content="Eli Kids, nursery rhymes, kids songs, cartoons for kids, educational songs, ABC phonics, children music, baby songs" />
+  <title>Eli Kids – Cartoons & Songs | 20M Subscribers | Nursery Rhymes & Kids Songs</title>
+  <meta name="description" content="Eli Kids – 20M abonnés, 8.9 milliards de vues. Regardez les meilleures comptines, chansons ABC, dinosaures, bébé et dessins animés éducatifs pour enfants." />
+  <meta name="keywords" content="Eli Kids, nursery rhymes, kids songs, educational cartoons, ABC phonics, dinosaur songs, baby songs, children music, Abi stories" />
   <meta name="robots" content="index, follow" />
-  <!-- Open Graph -->
   <meta property="og:title" content="Eli Kids – Cartoons & Songs" />
-  <meta property="og:description" content="20M subscribers · 8.9B views · Nursery rhymes, ABC songs, dinosaur songs & more!" />
+  <meta property="og:description" content="20M abonnés · 8.9B vues · Comptines, chansons ABC, dinosaures et plus!" />
   <meta property="og:image" content="https://yt3.ggpht.com/ytc/AIdro_njfSblKWPsnVC-76o1NyiTGwq3bwEycmDNmAXm-7hWXKY=s240-c-k-c0x00ffffff-no-rj" />
   <style>
     :root {
-      --primary: #ff5252;
-      --secondary: #ff9800;
-      --accent: #4caf50;
+      --red: #ff4444;
+      --orange: #ff9800;
+      --green: #4caf50;
       --blue: #2196f3;
       --purple: #9c27b0;
-      --bg: #fff8f0;
-      --card-bg: #ffffff;
-      --text: #222;
-      --muted: #666;
+      --yellow: #ffd600;
+      --dark: #0f0f0f;
+      --dark2: #1a1a2e;
+      --card: #fff;
+      --bg: #f9f9f9;
       --border: #e0e0e0;
+      --text: #222;
+      --muted: #777;
+      --nav-h: 56px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); }
 
-    /* ─── BANNER ─────────────────────────────────────── */
-    .banner {
-      background: linear-gradient(135deg, #ff5252 0%, #ff9800 40%, #4caf50 70%, #2196f3 100%);
-      height: 180px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
+    /* ── NAVBAR ─────────────────────────────────────── */
+    .navbar {
+      position: sticky; top: 0; z-index: 200;
+      background: var(--dark); height: var(--nav-h);
+      display: flex; align-items: center; padding: 0 24px; gap: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.4);
     }
-    .banner::before {
-      content: "🌟 🎵 🦕 🚌 🎈 🎶 🌈 🐥 🎠 🎪";
-      position: absolute;
-      font-size: 2.5rem;
-      opacity: 0.25;
-      letter-spacing: 12px;
+    .nav-logo { color: #fff; font-size: 1.2rem; font-weight: 900; white-space: nowrap; }
+    .nav-logo span { color: var(--red); }
+    .nav-links { display: flex; gap: 4px; margin-left: auto; }
+    .nav-links a {
+      color: #ccc; text-decoration: none; font-size: 0.85rem; padding: 6px 14px;
+      border-radius: 20px; transition: background .2s;
+    }
+    .nav-links a:hover { background: rgba(255,255,255,.1); color: #fff; }
+    .nav-sub {
+      background: var(--red); color: #fff; font-weight: 700; font-size: 0.85rem;
+      padding: 8px 18px; border-radius: 20px; text-decoration: none; white-space: nowrap;
+      transition: opacity .2s;
+    }
+    .nav-sub:hover { opacity: .85; }
+
+    /* ── BANNER ─────────────────────────────────────── */
+    .channel-banner {
+      height: 160px;
+      background: linear-gradient(135deg, #ff5252 0%, #ff9800 25%, #ffd600 50%, #4caf50 75%, #2196f3 100%);
+      display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
+    }
+    .banner-emoji {
+      font-size: 3rem; letter-spacing: 16px; opacity: .25; position: absolute;
       white-space: nowrap;
     }
-    .banner-text {
-      font-size: 2.8rem;
-      font-weight: 900;
-      color: #fff;
-      text-shadow: 2px 4px 12px rgba(0,0,0,0.3);
-      z-index: 1;
-      letter-spacing: 1px;
+    .banner-title {
+      color: #fff; font-size: 2.4rem; font-weight: 900;
+      text-shadow: 2px 4px 12px rgba(0,0,0,.35); z-index: 1;
     }
 
-    /* ─── CHANNEL HEADER ─────────────────────────────── */
+    /* ── CHANNEL HEADER ─────────────────────────────── */
     .channel-header {
-      background: #fff;
-      border-bottom: 2px solid var(--border);
-      padding: 20px 40px;
-      display: flex;
-      align-items: center;
-      gap: 24px;
+      background: #fff; border-bottom: 1px solid var(--border);
+      padding: 16px 32px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
     }
-    .channel-avatar {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      border: 4px solid var(--primary);
-      object-fit: cover;
-      flex-shrink: 0;
+    .ch-avatar {
+      width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--red);
+      object-fit: cover; flex-shrink: 0;
     }
-    .channel-info h1 {
-      font-size: 1.7rem;
-      font-weight: 800;
-      color: var(--text);
+    .ch-info { flex: 1; min-width: 200px; }
+    .ch-info h1 { font-size: 1.5rem; font-weight: 800; }
+    .ch-handle { color: var(--muted); font-size: .85rem; margin: 3px 0 10px; }
+    .ch-stats { display: flex; gap: 12px; flex-wrap: wrap; }
+    .stat {
+      background: var(--bg); border: 1.5px solid var(--border); border-radius: 20px;
+      padding: 3px 12px; font-size: .8rem; font-weight: 600;
     }
-    .channel-info .handle {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin: 4px 0 8px;
+    .stat b { color: var(--red); }
+    .ch-actions { display: flex; gap: 10px; align-items: center; margin-left: auto; }
+    .btn-sub {
+      background: var(--red); color: #fff; font-weight: 700; font-size: .9rem;
+      padding: 10px 22px; border-radius: 20px; text-decoration: none; transition: opacity .2s;
     }
-    .channel-stats {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
+    .btn-sub:hover { opacity: .85; }
+    .btn-yt {
+      background: #fff; color: var(--text); font-weight: 600; font-size: .85rem;
+      padding: 10px 18px; border-radius: 20px; border: 1.5px solid var(--border);
+      text-decoration: none; transition: background .2s;
     }
-    .stat-badge {
-      background: var(--bg);
-      border-radius: 20px;
-      padding: 4px 14px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      border: 1.5px solid var(--border);
-    }
-    .stat-badge span { color: var(--primary); }
-    .subscribe-btn {
-      margin-left: auto;
-      background: var(--primary);
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 700;
-      padding: 12px 28px;
-      border-radius: 50px;
-      text-decoration: none;
-      transition: opacity 0.2s;
-      white-space: nowrap;
-    }
-    .subscribe-btn:hover { opacity: 0.88; }
+    .btn-yt:hover { background: var(--bg); }
 
-    /* ─── FEATURED VIDEO ─────────────────────────────── */
-    .featured-section {
-      max-width: 1100px;
-      margin: 36px auto 0;
-      padding: 0 24px;
+    /* ── TABS ───────────────────────────────────────── */
+    .tabs {
+      background: #fff; border-bottom: 2px solid var(--border);
+      display: flex; padding: 0 24px; overflow-x: auto; gap: 4px;
     }
-    .section-title {
-      font-size: 1.3rem;
-      font-weight: 800;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .tab-btn {
+      background: none; border: none; cursor: pointer; padding: 14px 18px;
+      font-size: .9rem; font-weight: 600; color: var(--muted); white-space: nowrap;
+      border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color .2s;
     }
-    .section-title::before {
-      content: '';
-      display: inline-block;
-      width: 5px;
-      height: 22px;
-      background: var(--primary);
-      border-radius: 4px;
-    }
-    .featured-wrapper {
-      background: #000;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-      aspect-ratio: 16/9;
-      max-height: 480px;
-    }
-    .featured-wrapper iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-    }
-    .featured-meta {
-      margin-top: 14px;
-      padding: 0 4px;
-    }
-    .featured-meta h2 {
-      font-size: 1.2rem;
-      font-weight: 700;
-      line-height: 1.4;
-    }
-    .featured-meta .vmeta {
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-top: 6px;
-    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--text); border-bottom-color: var(--text); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
 
-    /* ─── VIDEO GRID ─────────────────────────────────── */
-    .videos-section {
-      max-width: 1100px;
-      margin: 40px auto 60px;
-      padding: 0 24px;
+    /* ── CONTENT WRAPPER ────────────────────────────── */
+    .content { max-width: 1200px; margin: 0 auto; padding: 28px 24px 60px; }
+
+    /* ── SECTION TITLES ─────────────────────────────── */
+    .sec-title {
+      font-size: 1.15rem; font-weight: 800; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px; justify-content: space-between;
     }
-    .video-grid {
+    .sec-title span { display: flex; align-items: center; gap: 8px; }
+    .sec-title span::before {
+      content: ''; display: inline-block; width: 4px; height: 20px;
+      background: var(--red); border-radius: 3px;
+    }
+    .see-all {
+      font-size: .8rem; color: var(--blue); text-decoration: none; font-weight: 600;
+    }
+    .see-all:hover { text-decoration: underline; }
+
+    /* ── VIDEO GRID ─────────────────────────────────── */
+    .vgrid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 18px; margin-bottom: 40px;
     }
-    .video-card {
-      background: var(--card-bg);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-      transition: transform 0.2s, box-shadow 0.2s;
-      text-decoration: none;
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
+    .vcard {
+      background: var(--card); border-radius: 12px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07); cursor: pointer;
+      transition: transform .2s, box-shadow .2s; position: relative;
     }
-    .video-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+    .vcard:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.13); }
+    .vthumb { position: relative; aspect-ratio: 16/9; background: #111; overflow: hidden; }
+    .vthumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s; }
+    .vcard:hover .vthumb img { transform: scale(1.05); }
+    .play-btn {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0); transition: background .2s;
     }
-    .thumb-wrapper {
-      position: relative;
-      aspect-ratio: 16/9;
-      background: #222;
-      overflow: hidden;
+    .vcard:hover .play-btn { background: rgba(0,0,0,.28); }
+    .play-circle {
+      width: 50px; height: 50px; background: var(--red); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .2s; flex-shrink: 0;
     }
-    .thumb-wrapper img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.3s;
-    }
-    .video-card:hover .thumb-wrapper img { transform: scale(1.05); }
-    .play-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-    .video-card:hover .play-overlay { background: rgba(0,0,0,0.25); }
-    .play-icon {
-      width: 48px;
-      height: 48px;
-      background: var(--primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .video-card:hover .play-icon { opacity: 1; }
-    .play-icon::after {
-      content: '';
-      border-left: 18px solid #fff;
-      border-top: 11px solid transparent;
-      border-bottom: 11px solid transparent;
+    .vcard:hover .play-circle { opacity: 1; }
+    .play-circle::after {
+      content: ''; border-left: 18px solid #fff;
+      border-top: 11px solid transparent; border-bottom: 11px solid transparent;
       margin-left: 4px;
     }
-    .video-info {
-      padding: 12px 14px 16px;
-      flex: 1;
+    .ext-link {
+      position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,.6);
+      color: #fff; font-size: .7rem; padding: 3px 7px; border-radius: 6px;
+      text-decoration: none; opacity: 0; transition: opacity .2s;
     }
-    .video-info h3 {
-      font-size: 0.88rem;
-      font-weight: 700;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+    .vcard:hover .ext-link { opacity: 1; }
+    .vinfo { padding: 10px 12px 14px; }
+    .vinfo h3 {
+      font-size: .85rem; font-weight: 700; line-height: 1.4;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
-    .video-info .pub-date {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 6px;
+    .vdate { font-size: .72rem; color: var(--muted); margin-top: 5px; }
+
+    /* ── SHORTS GRID ────────────────────────────────── */
+    .sgrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 14px; margin-bottom: 40px;
+    }
+    .scard {
+      background: var(--card); border-radius: 12px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07); cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .scard:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.13); }
+    .sthumb { position: relative; aspect-ratio: 9/16; background: #111; overflow: hidden; }
+    .sthumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s; }
+    .scard:hover .sthumb img { transform: scale(1.05); }
+    .sthumb .play-btn { display: flex; }
+    .shorts-badge {
+      position: absolute; bottom: 8px; left: 8px; background: var(--red);
+      color: #fff; font-size: .65rem; font-weight: 800; padding: 2px 7px; border-radius: 4px;
+    }
+    .sinfo { padding: 8px 10px 12px; }
+    .sinfo h3 {
+      font-size: .78rem; font-weight: 700; line-height: 1.35;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
 
-    /* ─── COLOR DOTS (decorative per card) ─────────── */
-    .video-card:nth-child(4n+1) .video-info h3 { color: #d32f2f; }
-    .video-card:nth-child(4n+2) .video-info h3 { color: #e65100; }
-    .video-card:nth-child(4n+3) .video-info h3 { color: #2e7d32; }
-    .video-card:nth-child(4n+4) .video-info h3 { color: #1565c0; }
-
-    /* ─── ABOUT STRIP ────────────────────────────────── */
-    .about-strip {
-      background: linear-gradient(90deg, #fff3e0, #e3f2fd);
-      border-top: 2px solid var(--border);
-      border-bottom: 2px solid var(--border);
-      padding: 28px 40px;
-      text-align: center;
+    /* ── FEATURED VIDEO ─────────────────────────────── */
+    .featured { margin-bottom: 36px; }
+    .featured iframe {
+      width: 100%; aspect-ratio: 16/9; max-height: 460px;
+      border: none; border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.15);
     }
-    .about-strip p {
-      max-width: 700px;
-      margin: 0 auto;
-      font-size: 0.97rem;
-      line-height: 1.7;
-      color: #444;
-    }
+    .feat-meta { margin-top: 12px; }
+    .feat-meta h2 { font-size: 1.1rem; font-weight: 700; }
+    .feat-meta p { color: var(--muted); font-size: .82rem; margin-top: 5px; }
 
-    /* ─── FOOTER ─────────────────────────────────────── */
-    footer {
-      background: #222;
-      color: #aaa;
-      text-align: center;
+    /* ── CATEGORY CARDS ─────────────────────────────── */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px; margin-bottom: 40px;
+    }
+    .cat-card {
+      border-radius: 14px; padding: 24px 20px; text-decoration: none;
+      color: #fff; font-weight: 700; font-size: 1.05rem;
+      display: flex; align-items: center; gap: 14px;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    }
+    .cat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,.2); }
+    .cat-icon { font-size: 2.2rem; }
+    .cat-label { display: flex; flex-direction: column; }
+    .cat-label small { font-size: .75rem; font-weight: 500; opacity: .85; }
+    .cat-dino { background: linear-gradient(135deg, #388e3c, #66bb6a); }
+    .cat-veh  { background: linear-gradient(135deg, #1565c0, #42a5f5); }
+    .cat-bebe { background: linear-gradient(135deg, #c62828, #ef5350); }
+    .cat-abc  { background: linear-gradient(135deg, #e65100, #ffa726); }
+    .cat-fete { background: linear-gradient(135deg, #6a1b9a, #ab47bc); }
+
+    /* ── LIVE CARD ──────────────────────────────────── */
+    .live-card {
+      background: var(--card); border-radius: 14px; overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,.1); max-width: 600px; cursor: pointer;
+    }
+    .live-thumb { position: relative; aspect-ratio: 16/9; }
+    .live-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .live-badge {
+      position: absolute; top: 12px; left: 12px; background: var(--red);
+      color: #fff; font-size: .75rem; font-weight: 800; padding: 4px 10px;
+      border-radius: 6px; display: flex; align-items: center; gap: 5px;
+    }
+    .live-badge::before { content: ''; width: 7px; height: 7px; background: #fff; border-radius: 50%; }
+    .live-info { padding: 14px 18px 18px; }
+    .live-info h3 { font-size: 1rem; font-weight: 700; }
+    .live-info p { color: var(--muted); font-size: .82rem; margin-top: 5px; }
+
+    /* ── ABOUT TAB ──────────────────────────────────── */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .about-box {
+      background: var(--card); border-radius: 14px; padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    }
+    .about-box h3 { font-size: 1rem; font-weight: 800; margin-bottom: 14px; color: var(--red); }
+    .about-box p { line-height: 1.7; font-size: .9rem; color: #444; }
+    .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row span { color: var(--muted); font-size: .88rem; }
+    .stat-row b { font-size: .9rem; }
+    .playlist-list { list-style: none; }
+    .playlist-list li { padding: 6px 0; border-bottom: 1px solid var(--border); }
+    .playlist-list li:last-child { border-bottom: none; }
+    .playlist-list a {
+      color: var(--blue); text-decoration: none; font-size: .88rem; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .playlist-list a:hover { text-decoration: underline; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .tag {
+      background: var(--bg); border: 1.5px solid var(--border); border-radius: 20px;
+      padding: 4px 12px; font-size: .78rem; font-weight: 600; color: var(--text);
+    }
+    .app-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #000; color: #fff; padding: 12px 20px;
+      border-radius: 10px; text-decoration: none; margin-top: 16px; font-size: .88rem;
+    }
+    .app-btn:hover { background: #333; }
+
+    /* ── VIDEO MODAL ────────────────────────────────── */
+    #vmodal {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,.85); align-items: center; justify-content: center;
       padding: 20px;
-      font-size: 0.82rem;
     }
-    footer a { color: var(--primary); text-decoration: none; }
+    .modal-box {
+      background: #111; border-radius: 16px; overflow: hidden;
+      width: 100%; max-width: 860px; box-shadow: 0 20px 60px rgba(0,0,0,.8);
+    }
+    .modal-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; background: #1a1a1a;
+    }
+    #modal-title { color: #fff; font-size: .9rem; font-weight: 700; flex: 1; margin-right: 12px; }
+    .modal-actions { display: flex; gap: 8px; align-items: center; }
+    #modal-yt-link {
+      color: var(--red); font-size: .8rem; font-weight: 700;
+      text-decoration: none; padding: 5px 12px; border: 1.5px solid var(--red);
+      border-radius: 6px;
+    }
+    #modal-yt-link:hover { background: var(--red); color: #fff; }
+    .close-btn {
+      background: none; border: none; color: #aaa; font-size: 1.4rem;
+      cursor: pointer; padding: 4px 8px; line-height: 1;
+    }
+    .close-btn:hover { color: #fff; }
+    #modal-iframe { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
 
-    /* ─── RESPONSIVE ─────────────────────────────────── */
-    @media (max-width: 640px) {
-      .channel-header { flex-wrap: wrap; padding: 16px; gap: 14px; }
-      .subscribe-btn { margin-left: 0; }
-      .banner-text { font-size: 1.8rem; }
-      .video-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    /* ── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 768px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .banner-title { font-size: 1.6rem; }
+      .channel-header { padding: 12px 16px; }
+      .ch-info h1 { font-size: 1.2rem; }
+    }
+    @media (max-width: 480px) {
+      .nav-links { display: none; }
+      .vgrid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .sgrid { grid-template-columns: repeat(2, 1fr); }
+      .cat-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <!-- BANNER -->
-  <div class="banner">
-    <div class="banner-text">🎵 Eli Kids – Cartoons & Songs</div>
+<!-- ── NAVBAR ─────────────────────────────────────── -->
+<nav class="navbar">
+  <div class="nav-logo">🎵 Eli <span>Kids</span></div>
+  <div class="nav-links">
+    <a href="eli-kids-dinosaures.html">🦕 Dinosaures</a>
+    <a href="eli-kids-vehicules.html">🚌 Véhicules</a>
+    <a href="eli-kids-bebes.html">👶 Bébé</a>
+    <a href="eli-kids-abc.html">🔤 ABC</a>
+    <a href="eli-kids-about.html">ℹ️ À propos</a>
+  </div>
+  <a class="nav-sub" href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA?sub_confirmation=1" target="_blank" rel="noopener">▶ S'abonner</a>
+</nav>
+
+<!-- ── BANNER ─────────────────────────────────────── -->
+<div class="channel-banner">
+  <div class="banner-emoji">🌟 🎵 🦕 🚌 🎈 🎶 🌈 🐥 🎠 🎪</div>
+  <div class="banner-title">🎵 Eli Kids – Cartoons & Songs</div>
+</div>
+
+<!-- ── CHANNEL HEADER ─────────────────────────────── -->
+<div class="channel-header">
+  <img class="ch-avatar"
+    src="https://yt3.ggpht.com/ytc/AIdro_njfSblKWPsnVC-76o1NyiTGwq3bwEycmDNmAXm-7hWXKY=s240-c-k-c0x00ffffff-no-rj"
+    alt="Eli Kids avatar" />
+  <div class="ch-info">
+    <h1>Eli Kids – Cartoons &amp; Songs</h1>
+    <div class="ch-handle">@EliKids · 🇺🇸 États-Unis · Depuis 2018</div>
+    <div class="ch-stats">
+      <div class="stat">👥 <b>20 Millions</b> d'abonnés</div>
+      <div class="stat">👁 <b>8,99 Milliards</b> de vues</div>
+      <div class="stat">🎬 <b>1 316</b> vidéos</div>
+      <div class="stat">📈 <b>+100K</b> abonnés / mois</div>
+    </div>
+  </div>
+  <div class="ch-actions">
+    <a class="btn-yt" href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA" target="_blank" rel="noopener">↗ YouTube</a>
+    <a class="btn-sub" href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA?sub_confirmation=1" target="_blank" rel="noopener">▶ S'abonner</a>
+  </div>
+</div>
+
+<!-- ── TABS ───────────────────────────────────────── -->
+<div class="tabs">
+  <button class="tab-btn active" data-tab="tab-home"   onclick="switchTab('tab-home')">🏠 Accueil</button>
+  <button class="tab-btn"        data-tab="tab-videos" onclick="switchTab('tab-videos')">🎬 Vidéos</button>
+  <button class="tab-btn"        data-tab="tab-shorts" onclick="switchTab('tab-shorts')">📱 Shorts</button>
+  <button class="tab-btn"        data-tab="tab-live"   onclick="switchTab('tab-live')">🔴 Live</button>
+  <button class="tab-btn"        data-tab="tab-about"  onclick="switchTab('tab-about')">ℹ️ À propos</button>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- TAB : ACCUEIL                                   -->
+<!-- ════════════════════════════════════════════════ -->
+<div id="tab-home" class="tab-panel active">
+<div class="content">
+
+  <!-- Featured -->
+  <div class="featured">
+    <div class="sec-title"><span>🔥 Vidéo à la une</span></div>
+    <iframe src="https://www.youtube.com/embed/ijEs7ZUs7hg?rel=0"
+      title="Mega Candy Machine | Colorful Candies Fun! Eli Kids"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+    <div class="feat-meta">
+      <h2>🍬 Mega Candy Machine | Colorful Candies Fun! Eli Kids Nursery Rhymes</h2>
+      <p>📅 29 nov. 2025 &nbsp;·&nbsp; 👁 8 039 135 vues &nbsp;·&nbsp; 👍 1 951 likes &nbsp;·&nbsp; ⏱ 3m 36s</p>
+    </div>
   </div>
 
-  <!-- CHANNEL HEADER -->
-  <div class="channel-header">
-    <img class="channel-avatar"
-         src="https://yt3.ggpht.com/ytc/AIdro_njfSblKWPsnVC-76o1NyiTGwq3bwEycmDNmAXm-7hWXKY=s240-c-k-c0x00ffffff-no-rj"
-         alt="Eli Kids channel avatar" />
-    <div class="channel-info">
-      <h1>Eli Kids – Cartoons & Songs</h1>
-      <div class="handle">@EliKids · YouTube Channel · 🇺🇸 United States · Since 2018</div>
-      <div class="channel-stats">
-        <div class="stat-badge">👥 <span>20 Million</span> Subscribers</div>
-        <div class="stat-badge">👁 <span>8.99 Billion</span> Views</div>
-        <div class="stat-badge">🎬 <span>1,316</span> Videos</div>
-        <div class="stat-badge">📈 <span>+100K</span> Subs / month</div>
-      </div>
+  <!-- Popular grid -->
+  <div class="sec-title">
+    <span>🎬 Vidéos populaires</span>
+    <a class="see-all" href="#" onclick="switchTab('tab-videos');return false">Tout voir →</a>
+  </div>
+  <div class="vgrid">
+    <div class="vcard" onclick="playVideo('tWLLwTYQj28','Toy Train 2 +More | Toy Play Song')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/tWLLwTYQj28/maxresdefault.jpg" alt="Toy Train 2" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=tWLLwTYQj28" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Toy Train 2 +More | Toy Play Song</h3><div class="vdate">19 avr. 2022</div></div>
     </div>
-    <a class="subscribe-btn"
-       href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA?sub_confirmation=1"
-       target="_blank" rel="noopener">
-      ▶ Subscribe
+    <div class="vcard" onclick="playVideo('54Eaq6xpaR0','Don\'t Cry Baby | What To Do')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/54Eaq6xpaR0/maxresdefault.jpg" alt="Don't Cry Baby" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=54Eaq6xpaR0" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Don't Cry Baby | What To Do</h3><div class="vdate">10 avr. 2022</div></div>
+    </div>
+    <div class="vcard" onclick="playVideo('kRQCiw2slfc','Five Little Ducks | Nursery Rhymes')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/kRQCiw2slfc/maxresdefault.jpg" alt="Five Little Ducks" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=kRQCiw2slfc" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Five Little Ducks | Nursery Rhymes</h3><div class="vdate">27 mai 2019</div></div>
+    </div>
+    <div class="vcard" onclick="playVideo('gAj5qORdf0U','Dinosaur Bus | Eli Kids Songs')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/gAj5qORdf0U/maxresdefault.jpg" alt="Dinosaur Bus" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=gAj5qORdf0U" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Dinosaur Bus | Jurassic Zoo</h3><div class="vdate">22 nov. 2022</div></div>
+    </div>
+    <div class="vcard" onclick="playVideo('wWAK93Xc6oc','Baby Has Fever | Sick Song')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/wWAK93Xc6oc/maxresdefault.jpg" alt="Baby Has Fever" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=wWAK93Xc6oc" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Baby Has Fever | Sick Song</h3><div class="vdate">6 janv. 2026</div></div>
+    </div>
+    <div class="vcard" onclick="playVideo('z3grFwJwrD0','Happy Birthday Song +More')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/z3grFwJwrD0/maxresdefault.jpg" alt="Happy Birthday" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=z3grFwJwrD0" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Happy Birthday Song +More</h3><div class="vdate">21 juil. 2021</div></div>
+    </div>
+    <div class="vcard" onclick="playVideo('lCzPT_lyWlQ','ABC Song (Train Version) +More')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/lCzPT_lyWlQ/maxresdefault.jpg" alt="ABC Train" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=lCzPT_lyWlQ" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>ABC Song (Train Version) +More</h3><div class="vdate">28 mai 2021</div></div>
+    </div>
+    <div class="vcard" onclick="playVideo('n2P0FmmP3kc','Dinosaur Bus #2 | Jurassic Zoo')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/n2P0FmmP3kc/maxresdefault.jpg" alt="Dinosaur Bus 2" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=n2P0FmmP3kc" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Dinosaur Bus #2 | Jurassic Zoo</h3><div class="vdate">20 avr. 2023</div></div>
+    </div>
+    <div class="vcard" onclick="playVideo('3yBEUpRVk5E','Wheels on The Bus + More')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/3yBEUpRVk5E/maxresdefault.jpg" alt="Wheels on The Bus" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=3yBEUpRVk5E" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Wheels on The Bus + More</h3><div class="vdate">6 mai 2019</div></div>
+    </div>
+    <div class="vcard" onclick="playVideo('SriFt0dMiMI','Peek A Boo Song')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/SriFt0dMiMI/maxresdefault.jpg" alt="Peek A Boo" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=SriFt0dMiMI" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Peek A Boo Song</h3><div class="vdate">13 oct. 2021</div></div>
+    </div>
+    <div class="vcard" onclick="playVideo('HU4bZdc-VaQ','Ball Pit Fun | Kids Songs')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/HU4bZdc-VaQ/maxresdefault.jpg" alt="Ball Pit Fun" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=HU4bZdc-VaQ" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Ball Pit Fun | Kids Songs</h3><div class="vdate">24 nov. 2023</div></div>
+    </div>
+    <div class="vcard" onclick="playVideo('WC41kIhLjcM','Ice Cream Floods The House')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/WC41kIhLjcM/maxresdefault.jpg" alt="Ice Cream Floods" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=WC41kIhLjcM" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Ice Cream Floods The House 🍦</h3><div class="vdate">30 avr. 2026</div></div>
+    </div>
+  </div>
+
+  <!-- Shorts preview -->
+  <div class="sec-title">
+    <span>📱 Shorts</span>
+    <a class="see-all" href="#" onclick="switchTab('tab-shorts');return false">Tout voir →</a>
+  </div>
+  <div class="sgrid">
+    <div class="scard" onclick="playVideo('tsrtr7A9mJQ','Happy Birthday #Shorts')">
+      <div class="sthumb"><img src="https://i.ytimg.com/vi/tsrtr7A9mJQ/maxresdefault.jpg" alt="Happy Birthday Short" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div>
+      <div class="sinfo"><h3>Happy Birthday #Shorts</h3></div>
+    </div>
+    <div class="scard" onclick="playVideo('Mv0gEzeWyIM','Baby Tooth Song')">
+      <div class="sthumb"><img src="https://i.ytimg.com/vi/Mv0gEzeWyIM/maxresdefault.jpg" alt="Baby Tooth" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div>
+      <div class="sinfo"><h3>Baby Tooth Song</h3></div>
+    </div>
+    <div class="scard" onclick="playVideo('ZhfW6oLzFYI','Phonic Alphabet Song #Shorts')">
+      <div class="sthumb"><img src="https://i.ytimg.com/vi/ZhfW6oLzFYI/maxresdefault.jpg" alt="Phonic ABC" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div>
+      <div class="sinfo"><h3>Phonic Alphabet Song</h3></div>
+    </div>
+    <div class="scard" onclick="playVideo('c86eIf9R3yg','Dinosaur Bus #Shorts')">
+      <div class="sthumb"><img src="https://i.ytimg.com/vi/c86eIf9R3yg/maxresdefault.jpg" alt="Dinosaur Bus Short" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div>
+      <div class="sinfo"><h3>Dinosaur Bus</h3></div>
+    </div>
+    <div class="scard" onclick="playVideo('OdXQ7tNZNyc','Colorful Candy Machine')">
+      <div class="sthumb"><img src="https://i.ytimg.com/vi/OdXQ7tNZNyc/maxresdefault.jpg" alt="Candy Machine" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div>
+      <div class="sinfo"><h3>Colorful Candy Machine</h3></div>
+    </div>
+    <div class="scard" onclick="playVideo('xbvYers8Hlg','Boo Boo Song')">
+      <div class="sthumb"><img src="https://i.ytimg.com/vi/xbvYers8Hlg/maxresdefault.jpg" alt="Boo Boo" loading="lazy" /><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div>
+      <div class="sinfo"><h3>Boo Boo Song</h3></div>
+    </div>
+  </div>
+
+  <!-- Categories -->
+  <div class="sec-title"><span>📂 Catégories</span></div>
+  <div class="cat-grid">
+    <a class="cat-card cat-dino" href="eli-kids-dinosaures.html">
+      <span class="cat-icon">🦕</span>
+      <div class="cat-label">Dinosaures<small>Dinosaur Bus, Jurassic Zoo…</small></div>
+    </a>
+    <a class="cat-card cat-veh" href="eli-kids-vehicules.html">
+      <span class="cat-icon">🚌</span>
+      <div class="cat-label">Véhicules &amp; Jouets<small>Bus, Train, Camion, Feu…</small></div>
+    </a>
+    <a class="cat-card cat-bebe" href="eli-kids-bebes.html">
+      <span class="cat-icon">👶</span>
+      <div class="cat-label">Bébé &amp; Famille<small>Baby songs, Diaper, Parents…</small></div>
+    </a>
+    <a class="cat-card cat-abc" href="eli-kids-abc.html">
+      <span class="cat-icon">🔤</span>
+      <div class="cat-label">ABC &amp; Éducation<small>Alphabet, Phonics, Nursery…</small></div>
     </a>
   </div>
 
-  <!-- ABOUT -->
-  <div class="about-strip">
-    <p>
-      🌈 <strong>Eli Kids</strong> provides fun educational songs and nursery rhymes for babies, toddlers
-      and preschoolers. Meet <strong>Abi and friends</strong> through exciting animated videos that teach
-      alphabets, numbers, shapes, colors, and much more — all through catchy songs and colorful cartoons!
-    </p>
+  <!-- Live preview -->
+  <div class="sec-title">
+    <span>🔴 Live</span>
+    <a class="see-all" href="#" onclick="switchTab('tab-live');return false">Voir →</a>
+  </div>
+  <div class="live-card" onclick="playVideo('D-YWGBSNsR0','New Baby [Live] Family Love Songs')">
+    <div class="live-thumb">
+      <img src="https://i.ytimg.com/vi/D-YWGBSNsR0/maxresdefault_live.jpg" alt="Live – New Baby" loading="lazy" />
+      <span class="live-badge">EN DIRECT</span>
+    </div>
+    <div class="live-info">
+      <h3>🔴 New Baby [Live] Family Love Songs | Educational Nursery Rhymes</h3>
+      <p>📅 28 janv. 2026 &nbsp;·&nbsp; Eli Kids – Cartoons &amp; Songs</p>
+    </div>
   </div>
 
-  <!-- FEATURED VIDEO -->
-  <section class="featured-section">
-    <div class="section-title">🔥 Featured Video</div>
-    <div class="featured-wrapper">
-      <iframe
-        src="https://www.youtube.com/embed/ijEs7ZUs7hg?autoplay=0&rel=0"
-        title="Mega Candy Machine | Colorful Candies Fun! Eli Kids Nursery Rhymes"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen>
-      </iframe>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- TAB : VIDÉOS                                    -->
+<!-- ════════════════════════════════════════════════ -->
+<div id="tab-videos" class="tab-panel">
+<div class="content">
+  <div class="sec-title"><span>🎬 Toutes les vidéos</span></div>
+  <div class="vgrid">
+    <!-- POPULAIRES -->
+    <div class="vcard" onclick="playVideo('tWLLwTYQj28','Toy Train 2 +More')"><div class="vthumb"><img src="https://i.ytimg.com/vi/tWLLwTYQj28/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/tWLLwTYQj28" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Toy Train 2 +More | Toy Play Song</h3><div class="vdate">Avr. 2022</div></div></div>
+    <div class="vcard" onclick="playVideo('54Eaq6xpaR0','Don\'t Cry Baby')"><div class="vthumb"><img src="https://i.ytimg.com/vi/54Eaq6xpaR0/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/54Eaq6xpaR0" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Don't Cry Baby | What To Do</h3><div class="vdate">Avr. 2022</div></div></div>
+    <div class="vcard" onclick="playVideo('kRQCiw2slfc','Five Little Ducks')"><div class="vthumb"><img src="https://i.ytimg.com/vi/kRQCiw2slfc/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/kRQCiw2slfc" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Five Little Ducks | Nursery Rhymes</h3><div class="vdate">Mai 2019</div></div></div>
+    <div class="vcard" onclick="playVideo('HU4bZdc-VaQ','Ball Pit Fun')"><div class="vthumb"><img src="https://i.ytimg.com/vi/HU4bZdc-VaQ/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/HU4bZdc-VaQ" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Ball Pit Fun | Kids Songs</h3><div class="vdate">Nov. 2023</div></div></div>
+    <div class="vcard" onclick="playVideo('SriFt0dMiMI','Peek A Boo Song')"><div class="vthumb"><img src="https://i.ytimg.com/vi/SriFt0dMiMI/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/SriFt0dMiMI" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Peek A Boo Song</h3><div class="vdate">Oct. 2021</div></div></div>
+    <div class="vcard" onclick="playVideo('gAj5qORdf0U','Dinosaur Bus')"><div class="vthumb"><img src="https://i.ytimg.com/vi/gAj5qORdf0U/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/gAj5qORdf0U" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Dinosaur Bus | Jurassic Zoo</h3><div class="vdate">Nov. 2022</div></div></div>
+    <div class="vcard" onclick="playVideo('8F98J1b6FE0','Dinosaur Song +More')"><div class="vthumb"><img src="https://i.ytimg.com/vi/8F98J1b6FE0/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/8F98J1b6FE0" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Dinosaur Song +More | Toy Fun</h3><div class="vdate">Déc. 2022</div></div></div>
+    <div class="vcard" onclick="playVideo('16ythC189_U','Dinosaur Song Jurassic Zoo')"><div class="vthumb"><img src="https://i.ytimg.com/vi/16ythC189_U/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/16ythC189_U" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Dinosaur Song | Jurassic Zoo</h3><div class="vdate">Nov. 2022</div></div></div>
+    <div class="vcard" onclick="playVideo('wWAK93Xc6oc','Baby Has Fever')"><div class="vthumb"><img src="https://i.ytimg.com/vi/wWAK93Xc6oc/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/wWAK93Xc6oc" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Baby Has Fever | Sick Song</h3><div class="vdate">Janv. 2026</div></div></div>
+    <div class="vcard" onclick="playVideo('aq3VitpLjfo','Parents Love Song')"><div class="vthumb"><img src="https://i.ytimg.com/vi/aq3VitpLjfo/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/aq3VitpLjfo" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Parents Love Song</h3><div class="vdate">Mai 2022</div></div></div>
+    <div class="vcard" onclick="playVideo('z3grFwJwrD0','Happy Birthday Song +More')"><div class="vthumb"><img src="https://i.ytimg.com/vi/z3grFwJwrD0/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/z3grFwJwrD0" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Happy Birthday Song +More</h3><div class="vdate">Juil. 2021</div></div></div>
+    <div class="vcard" onclick="playVideo('uX_5jcEaOoU','Finger Family With Colors')"><div class="vthumb"><img src="https://i.ytimg.com/vi/uX_5jcEaOoU/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/uX_5jcEaOoU" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Finger Family With Colors</h3><div class="vdate">Avr. 2022</div></div></div>
+    <div class="vcard" onclick="playVideo('7zUHd3VpB8I','Diaper Song')"><div class="vthumb"><img src="https://i.ytimg.com/vi/7zUHd3VpB8I/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/7zUHd3VpB8I" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Diaper Song | Kids Songs</h3><div class="vdate">Mars 2022</div></div></div>
+    <div class="vcard" onclick="playVideo('CKQOmJSTIa8','Baby Dance Songs')"><div class="vthumb"><img src="https://i.ytimg.com/vi/CKQOmJSTIa8/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/CKQOmJSTIa8" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Baby Dance Songs</h3><div class="vdate">Nov. 2020</div></div></div>
+    <div class="vcard" onclick="playVideo('xpbL-YTJVew','Fire Truck Toy Song')"><div class="vthumb"><img src="https://i.ytimg.com/vi/xpbL-YTJVew/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/xpbL-YTJVew" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Fire Truck Toy Song</h3><div class="vdate">Nov. 2022</div></div></div>
+    <div class="vcard" onclick="playVideo('GMCyXSnNcto','Why Babies Cry')"><div class="vthumb"><img src="https://i.ytimg.com/vi/GMCyXSnNcto/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/GMCyXSnNcto" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Why Babies Cry | Educational</h3><div class="vdate">Mars 2022</div></div></div>
+    <div class="vcard" onclick="playVideo('n2P0FmmP3kc','Dinosaur Bus #2')"><div class="vthumb"><img src="https://i.ytimg.com/vi/n2P0FmmP3kc/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/n2P0FmmP3kc" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Dinosaur Bus #2 | Jurassic Zoo</h3><div class="vdate">Avr. 2023</div></div></div>
+    <div class="vcard" onclick="playVideo('3yBEUpRVk5E','Wheels on The Bus')"><div class="vthumb"><img src="https://i.ytimg.com/vi/3yBEUpRVk5E/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/3yBEUpRVk5E" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Wheels on The Bus + More</h3><div class="vdate">Mai 2019</div></div></div>
+    <div class="vcard" onclick="playVideo('ZEX4u5mCnXc','Twinkle Twinkle Little Star')"><div class="vthumb"><img src="https://i.ytimg.com/vi/ZEX4u5mCnXc/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/ZEX4u5mCnXc" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Twinkle Twinkle Little Star</h3><div class="vdate">Juin 2019</div></div></div>
+    <div class="vcard" onclick="playVideo('4UCUvfJe6G4','Best Phonics Song')"><div class="vthumb"><img src="https://i.ytimg.com/vi/4UCUvfJe6G4/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/4UCUvfJe6G4" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Best Phonics Song THREE Words</h3><div class="vdate">Juin 2021</div></div></div>
+    <div class="vcard" onclick="playVideo('KGiWX3BeMu0','Toy Trucks & Cars')"><div class="vthumb"><img src="https://i.ytimg.com/vi/KGiWX3BeMu0/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/KGiWX3BeMu0" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Toy Trucks &amp; Cars Building Blocks</h3><div class="vdate">Mai 2024</div></div></div>
+    <div class="vcard" onclick="playVideo('PmgS7_8XSK4','Jingle Bell Christmas Song')"><div class="vthumb"><img src="https://i.ytimg.com/vi/PmgS7_8XSK4/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/PmgS7_8XSK4" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Jingle Bell +More | Christmas</h3><div class="vdate">Déc. 2021</div></div></div>
+    <div class="vcard" onclick="playVideo('YfH1qHFQZnQ','Dinosaur Bus Family')"><div class="vthumb"><img src="https://i.ytimg.com/vi/YfH1qHFQZnQ/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/YfH1qHFQZnQ" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Dinosaur Bus Family | Jurassic Zoo</h3><div class="vdate">Nov. 2023</div></div></div>
+    <div class="vcard" onclick="playVideo('qj-iq3BIlSI','Ice Cream Song')"><div class="vthumb"><img src="https://i.ytimg.com/vi/qj-iq3BIlSI/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/qj-iq3BIlSI" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Ice Cream Song</h3><div class="vdate">Janv. 2022</div></div></div>
+    <!-- RECENTES -->
+    <div class="vcard" onclick="playVideo('WC41kIhLjcM','Ice Cream Floods The House')"><div class="vthumb"><img src="https://i.ytimg.com/vi/WC41kIhLjcM/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/WC41kIhLjcM" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Ice Cream Floods The House</h3><div class="vdate">Avr. 2026</div></div></div>
+    <div class="vcard" onclick="playVideo('dsKdRVSOJTY','Baby Got Sick +More')"><div class="vthumb"><img src="https://i.ytimg.com/vi/dsKdRVSOJTY/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/dsKdRVSOJTY" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Baby Got Sick +More</h3><div class="vdate">Avr. 2026</div></div></div>
+    <div class="vcard" onclick="playVideo('vtyYRr-gIto','What About Me? (I\'m A Baby, Too!)')"><div class="vthumb"><img src="https://i.ytimg.com/vi/vtyYRr-gIto/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/vtyYRr-gIto" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>What About Me? (I'm A Baby, Too!)</h3><div class="vdate">Avr. 2026</div></div></div>
+    <div class="vcard" onclick="playVideo('IjUYTIsyTlU','A Tiny Baby +More')"><div class="vthumb"><img src="https://i.ytimg.com/vi/IjUYTIsyTlU/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/IjUYTIsyTlU" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>A Tiny Baby +More</h3><div class="vdate">Avr. 2026</div></div></div>
+    <div class="vcard" onclick="playVideo('4xBpTf6jeUU','A New Baby? Will Everything Change?')"><div class="vthumb"><img src="https://i.ytimg.com/vi/4xBpTf6jeUU/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/4xBpTf6jeUU" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>A New Baby? Will Everything Change?</h3><div class="vdate">Avr. 2026</div></div></div>
+    <div class="vcard" onclick="playVideo('fa99ORzeuX4','Too Many Babies!')"><div class="vthumb"><img src="https://i.ytimg.com/vi/fa99ORzeuX4/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/fa99ORzeuX4" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Too Many Babies!</h3><div class="vdate">Mars 2026</div></div></div>
+    <div class="vcard" onclick="playVideo('jEnMSz_SiL4','Toy Trucks Fun (Outdoor Play)')"><div class="vthumb"><img src="https://i.ytimg.com/vi/jEnMSz_SiL4/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/jEnMSz_SiL4" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Toy Trucks Fun (Outdoor Play)</h3><div class="vdate">Mars 2026</div></div></div>
+    <div class="vcard" onclick="playVideo('Y6X3l8Bb1Tc','Family Ice Cream Day')"><div class="vthumb"><img src="https://i.ytimg.com/vi/Y6X3l8Bb1Tc/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/Y6X3l8Bb1Tc" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Family Ice Cream Day 🍦</h3><div class="vdate">Fév. 2026</div></div></div>
+    <div class="vcard" onclick="playVideo('5h3JNYm466w','When Baby Is Born')"><div class="vthumb"><img src="https://i.ytimg.com/vi/5h3JNYm466w/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/5h3JNYm466w" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>When Baby Is Born</h3><div class="vdate">Fév. 2026</div></div></div>
+    <div class="vcard" onclick="playVideo('5w0O85PpX_0','Too Much Ice Cream!')"><div class="vthumb"><img src="https://i.ytimg.com/vi/5w0O85PpX_0/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/5w0O85PpX_0" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>Too Much Ice Cream! Catch Them All!</h3><div class="vdate">Fév. 2026</div></div></div>
+    <div class="vcard" onclick="playVideo('xxEuZVln_84','MEGA Ice Cream Machine')"><div class="vthumb"><img src="https://i.ytimg.com/vi/xxEuZVln_84/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/xxEuZVln_84" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>MEGA Ice Cream Machine</h3><div class="vdate">Déc. 2025</div></div></div>
+    <div class="vcard" onclick="playVideo('3uQiOIkkURc','MEGA Candy Machine +More')"><div class="vthumb"><img src="https://i.ytimg.com/vi/3uQiOIkkURc/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/3uQiOIkkURc" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>MEGA Candy Machine +More</h3><div class="vdate">Déc. 2025</div></div></div>
+    <div class="vcard" onclick="playVideo('XIr5JGQBLww','MEGA Doll House with Slides & Pools')"><div class="vthumb"><img src="https://i.ytimg.com/vi/XIr5JGQBLww/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/XIr5JGQBLww" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>MEGA Doll House with Slides &amp; Pools</h3><div class="vdate">Nov. 2025</div></div></div>
+    <div class="vcard" onclick="playVideo('bqYNjKZUvEA','A Father\'s Love Song +More')"><div class="vthumb"><img src="https://i.ytimg.com/vi/bqYNjKZUvEA/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div><a class="ext-link" href="https://youtu.be/bqYNjKZUvEA" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a><div class="vinfo"><h3>A Father's Love Song +More</h3><div class="vdate">Nov. 2025</div></div></div>
+  </div>
+  <div style="text-align:center;margin-top:8px">
+    <a href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA/videos" target="_blank" rel="noopener"
+       style="background:var(--red);color:#fff;font-weight:700;padding:12px 32px;border-radius:20px;text-decoration:none">
+      ▶ Voir les 1 316 vidéos sur YouTube
+    </a>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- TAB : SHORTS                                    -->
+<!-- ════════════════════════════════════════════════ -->
+<div id="tab-shorts" class="tab-panel">
+<div class="content">
+  <div class="sec-title"><span>📱 Shorts</span></div>
+  <div class="sgrid">
+    <div class="scard" onclick="playVideo('tsrtr7A9mJQ','Happy Birthday #Shorts')"><div class="sthumb"><img src="https://i.ytimg.com/vi/tsrtr7A9mJQ/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Happy Birthday #Shorts</h3></div></div>
+    <div class="scard" onclick="playVideo('0OOKyZ7gyaA','Toy Blocks #Shorts')"><div class="sthumb"><img src="https://i.ytimg.com/vi/0OOKyZ7gyaA/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Toy Blocks #Shorts</h3></div></div>
+    <div class="scard" onclick="playVideo('dbysPeDUoRU','Toy Truck #Shorts')"><div class="sthumb"><img src="https://i.ytimg.com/vi/dbysPeDUoRU/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Toy Truck #Shorts</h3></div></div>
+    <div class="scard" onclick="playVideo('Mv0gEzeWyIM','Baby Tooth Song')"><div class="sthumb"><img src="https://i.ytimg.com/vi/Mv0gEzeWyIM/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Baby Tooth Song</h3></div></div>
+    <div class="scard" onclick="playVideo('XJa4Y_F3lD8','Why Mom Is Tired')"><div class="sthumb"><img src="https://i.ytimg.com/vi/XJa4Y_F3lD8/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Why Mom Is Tired</h3></div></div>
+    <div class="scard" onclick="playVideo('PKQcYRqlxxk','Mother\'s Love Song')"><div class="sthumb"><img src="https://i.ytimg.com/vi/PKQcYRqlxxk/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Mother's Love Song</h3></div></div>
+    <div class="scard" onclick="playVideo('7y70Ab8A3VU','Color Slides')"><div class="sthumb"><img src="https://i.ytimg.com/vi/7y70Ab8A3VU/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Color Slides</h3></div></div>
+    <div class="scard" onclick="playVideo('ZhfW6oLzFYI','Phonic Alphabet Song')"><div class="sthumb"><img src="https://i.ytimg.com/vi/ZhfW6oLzFYI/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Phonic Alphabet Song</h3></div></div>
+    <div class="scard" onclick="playVideo('EC7hNv0t6VA','Toy Fire Truck')"><div class="sthumb"><img src="https://i.ytimg.com/vi/EC7hNv0t6VA/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Toy Fire Truck</h3></div></div>
+    <div class="scard" onclick="playVideo('hnQCNjK2bsg','Candy River')"><div class="sthumb"><img src="https://i.ytimg.com/vi/hnQCNjK2bsg/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Candy River</h3></div></div>
+    <div class="scard" onclick="playVideo('buw6knLAx_0','Toy Train In Bath Tub')"><div class="sthumb"><img src="https://i.ytimg.com/vi/buw6knLAx_0/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Toy Train In Bath Tub</h3></div></div>
+    <div class="scard" onclick="playVideo('xbvYers8Hlg','Boo Boo Song')"><div class="sthumb"><img src="https://i.ytimg.com/vi/xbvYers8Hlg/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Boo Boo Song</h3></div></div>
+    <div class="scard" onclick="playVideo('ovjupk_lzk8','Baby Shark Where Are You')"><div class="sthumb"><img src="https://i.ytimg.com/vi/ovjupk_lzk8/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Baby Shark Where Are You</h3></div></div>
+    <div class="scard" onclick="playVideo('VbNbtnb886Y','10 Little Buses')"><div class="sthumb"><img src="https://i.ytimg.com/vi/VbNbtnb886Y/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>10 Little Buses</h3></div></div>
+    <div class="scard" onclick="playVideo('Xsda1_40XHk','This Is The Way')"><div class="sthumb"><img src="https://i.ytimg.com/vi/Xsda1_40XHk/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>This Is The Way</h3></div></div>
+    <div class="scard" onclick="playVideo('571VGfe9Qbg','Toy Train Fun')"><div class="sthumb"><img src="https://i.ytimg.com/vi/571VGfe9Qbg/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Toy Train Fun</h3></div></div>
+    <div class="scard" onclick="playVideo('3_AJHOcT5m4','Why Baby Cries #Shorts')"><div class="sthumb"><img src="https://i.ytimg.com/vi/3_AJHOcT5m4/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Why Baby Cries</h3></div></div>
+    <div class="scard" onclick="playVideo('s_wFgpr3lQQ','Family Fingers')"><div class="sthumb"><img src="https://i.ytimg.com/vi/s_wFgpr3lQQ/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Family Fingers</h3></div></div>
+    <div class="scard" onclick="playVideo('OdXQ7tNZNyc','Colorful Candy Machine')"><div class="sthumb"><img src="https://i.ytimg.com/vi/OdXQ7tNZNyc/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Colorful Candy Machine</h3></div></div>
+    <div class="scard" onclick="playVideo('1U7Rr6vS_KA','Ice Cream Song')"><div class="sthumb"><img src="https://i.ytimg.com/vi/1U7Rr6vS_KA/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Ice Cream Song</h3></div></div>
+    <div class="scard" onclick="playVideo('-5ENJJ3jiWo','Kindergarten Song')"><div class="sthumb"><img src="https://i.ytimg.com/vi/-5ENJJ3jiWo/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Kindergarten Song</h3></div></div>
+    <div class="scard" onclick="playVideo('L7o8_fRgtlw','Baby Brother Song')"><div class="sthumb"><img src="https://i.ytimg.com/vi/L7o8_fRgtlw/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Baby Brother Song</h3></div></div>
+    <div class="scard" onclick="playVideo('Ph0rBz09_oY','Police Car Toy')"><div class="sthumb"><img src="https://i.ytimg.com/vi/Ph0rBz09_oY/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Police Car Toy</h3></div></div>
+    <div class="scard" onclick="playVideo('WWbf5Vmv5i8','Ball Pit Party')"><div class="sthumb"><img src="https://i.ytimg.com/vi/WWbf5Vmv5i8/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Ball Pit Party</h3></div></div>
+    <div class="scard" onclick="playVideo('gEQvZUAHe_o','Jingle Bell | Christmas')"><div class="sthumb"><img src="https://i.ytimg.com/vi/gEQvZUAHe_o/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Jingle Bell | Christmas</h3></div></div>
+    <div class="scard" onclick="playVideo('jZL6o9guBlE','Dinosaur Escape')"><div class="sthumb"><img src="https://i.ytimg.com/vi/jZL6o9guBlE/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Dinosaur Escape</h3></div></div>
+    <div class="scard" onclick="playVideo('c86eIf9R3yg','Dinosaur Bus Fun Song')"><div class="sthumb"><img src="https://i.ytimg.com/vi/c86eIf9R3yg/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Dinosaur Bus Fun Song</h3></div></div>
+    <div class="scard" onclick="playVideo('9M3-mtp1vL8','Happy Birthday Party')"><div class="sthumb"><img src="https://i.ytimg.com/vi/9M3-mtp1vL8/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Happy Birthday Party</h3></div></div>
+    <div class="scard" onclick="playVideo('5VpcuErBCqI','ABC Song With Balloons')"><div class="sthumb"><img src="https://i.ytimg.com/vi/5VpcuErBCqI/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>ABC Song With Balloons</h3></div></div>
+    <div class="scard" onclick="playVideo('KTiHvwUzNaU','Be Kind To Others')"><div class="sthumb"><img src="https://i.ytimg.com/vi/KTiHvwUzNaU/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Be Kind To Others</h3></div></div>
+    <div class="scard" onclick="playVideo('gRsMSxeS8XU','Super Mom #Shorts')"><div class="sthumb"><img src="https://i.ytimg.com/vi/gRsMSxeS8XU/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Super Mom</h3></div></div>
+    <div class="scard" onclick="playVideo('RHIe3ndSGv8','Thank You Mom & Dad')"><div class="sthumb"><img src="https://i.ytimg.com/vi/RHIe3ndSGv8/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Thank You Mom &amp; Dad</h3></div></div>
+    <div class="scard" onclick="playVideo('KoMvph0N-nU','Ice Cream Rain')"><div class="sthumb"><img src="https://i.ytimg.com/vi/KoMvph0N-nU/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Ice Cream Rain</h3></div></div>
+    <div class="scard" onclick="playVideo('uvTJVHBkVug','Chocolate River')"><div class="sthumb"><img src="https://i.ytimg.com/vi/uvTJVHBkVug/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Chocolate River</h3></div></div>
+    <div class="scard" onclick="playVideo('UzhMgF-_A2Y','Humpty Dumpty #Shorts')"><div class="sthumb"><img src="https://i.ytimg.com/vi/UzhMgF-_A2Y/maxresdefault.jpg" alt="" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div><div class="sinfo"><h3>Humpty Dumpty</h3></div></div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- TAB : LIVE                                      -->
+<!-- ════════════════════════════════════════════════ -->
+<div id="tab-live" class="tab-panel">
+<div class="content">
+  <div class="sec-title"><span>🔴 Diffusions en direct</span></div>
+  <div class="live-card" onclick="playVideo('D-YWGBSNsR0','New Baby [Live] Family Love Songs')">
+    <div class="live-thumb">
+      <img src="https://i.ytimg.com/vi/D-YWGBSNsR0/maxresdefault_live.jpg" alt="Live – New Baby" />
+      <span class="live-badge">EN DIRECT</span>
     </div>
-    <div class="featured-meta">
-      <h2>🍬 Mega Candy Machine | Colorful Candies Fun! Eli Kids Nursery Rhymes</h2>
-      <div class="vmeta">📅 Published Nov 29, 2025 &nbsp;·&nbsp; 👁 8,039,135 views &nbsp;·&nbsp; 👍 1,951 likes &nbsp;·&nbsp; ⏱ 3m 36s</div>
+    <div class="live-info">
+      <h3>🔴 New Baby [Live] Family Love Songs | Educational Nursery Rhymes</h3>
+      <p>📅 28 janv. 2026 &nbsp;·&nbsp; Eli Kids – Cartoons &amp; Songs</p>
     </div>
-  </section>
+  </div>
+  <p style="margin-top:24px;color:var(--muted);font-size:.88rem">
+    Suivez Eli Kids sur YouTube pour ne pas manquer les prochaines diffusions en direct !
+    <a href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA" target="_blank" rel="noopener" style="color:var(--red);font-weight:600">→ S'abonner</a>
+  </p>
+</div>
+</div>
 
-  <!-- POPULAR VIDEOS GRID -->
-  <section class="videos-section">
-    <div class="section-title">🎬 Popular Videos</div>
-    <div class="video-grid">
+<!-- ════════════════════════════════════════════════ -->
+<!-- TAB : À PROPOS                                  -->
+<!-- ════════════════════════════════════════════════ -->
+<div id="tab-about" class="tab-panel">
+<div class="content">
+  <div class="about-grid">
 
-      <a class="video-card" href="https://www.youtube.com/watch?v=tWLLwTYQj28" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/tWLLwTYQj28/maxresdefault.jpg" alt="Toy Train 2" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
+    <div>
+      <div class="about-box" style="margin-bottom:24px">
+        <h3>📝 Description</h3>
+        <p>
+          <strong>Eli Kids</strong> est une chaîne YouTube éducative dédiée aux bébés, aux tout-petits
+          et aux enfants d'âge préscolaire. Rencontrez <strong>Abi et ses amis</strong> à travers
+          des vidéos animées amusantes et colorées qui enseignent les lettres, les chiffres, les formes,
+          les couleurs et bien plus encore — le tout à travers des chansons entraînantes et des dessins
+          animés hauts en couleur !
+        </p>
+        <p style="margin-top:12px">
+          Les comptines aident à accélérer la conscience phonétique ainsi que les compétences en lecture
+          et en écriture. Eli Kids est votre destination unique pour apprendre en s'amusant.
+        </p>
+        <div class="tag-list">
+          <span class="tag">#elikids</span>
+          <span class="tag">#nurseryrhymes</span>
+          <span class="tag">#kidssongs</span>
+          <span class="tag">#educational</span>
+          <span class="tag">#abcphonics</span>
+          <span class="tag">#dinosaursong</span>
+          <span class="tag">#babysong</span>
+          <span class="tag">#childrenmusic</span>
         </div>
-        <div class="video-info">
-          <h3>Toy Train 2 +More | Toy Play Song</h3>
-          <div class="pub-date">Apr 19, 2022</div>
-        </div>
-      </a>
+        <a class="app-btn" href="https://apps.apple.com/gb/app/eli-kids/id1383129134" target="_blank" rel="noopener">
+          📱 Télécharger l'app Eli Kids (iOS)
+        </a>
+      </div>
 
-      <a class="video-card" href="https://www.youtube.com/watch?v=54Eaq6xpaR0" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/54Eaq6xpaR0/maxresdefault.jpg" alt="Don't Cry Baby" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Don't Cry Baby | What To Do</h3>
-          <div class="pub-date">Apr 10, 2022</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=kRQCiw2slfc" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/kRQCiw2slfc/maxresdefault.jpg" alt="Five Little Ducks" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Five Little Ducks | Nursery Rhymes</h3>
-          <div class="pub-date">May 27, 2019</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=HU4bZdc-VaQ" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/HU4bZdc-VaQ/maxresdefault.jpg" alt="Ball Pit Fun" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Ball Pit Fun | Kids Songs</h3>
-          <div class="pub-date">Nov 24, 2023</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=SriFt0dMiMI" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/SriFt0dMiMI/maxresdefault.jpg" alt="Peek A Boo Song" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Peek A Boo Song</h3>
-          <div class="pub-date">Oct 13, 2021</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=gAj5qORdf0U" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/gAj5qORdf0U/maxresdefault.jpg" alt="Dinosaur Bus" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Dinosaur Bus | Jurassic Zoo</h3>
-          <div class="pub-date">Nov 22, 2022</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=8F98J1b6FE0" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/8F98J1b6FE0/maxresdefault.jpg" alt="Dinosaur Song" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Dinosaur Song +More | Toy Fun</h3>
-          <div class="pub-date">Dec 12, 2022</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=wWAK93Xc6oc" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/wWAK93Xc6oc/maxresdefault.jpg" alt="Baby Has Fever" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Baby Has Fever | Sick Song</h3>
-          <div class="pub-date">Jan 6, 2026</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=aq3VitpLjfo" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/aq3VitpLjfo/maxresdefault.jpg" alt="Parents Love Song" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Parents Love Song</h3>
-          <div class="pub-date">May 24, 2022</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=z3grFwJwrD0" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/z3grFwJwrD0/maxresdefault.jpg" alt="Happy Birthday Song" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Happy Birthday Song +More</h3>
-          <div class="pub-date">Jul 21, 2021</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=uX_5jcEaOoU" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/uX_5jcEaOoU/maxresdefault.jpg" alt="Finger Family With Colors" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Finger Family With Colors</h3>
-          <div class="pub-date">Apr 15, 2022</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=7zUHd3VpB8I" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/7zUHd3VpB8I/maxresdefault.jpg" alt="Diaper Song" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Diaper Song | Kids Songs</h3>
-          <div class="pub-date">Mar 26, 2022</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=CKQOmJSTIa8" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/CKQOmJSTIa8/maxresdefault.jpg" alt="Baby Dance Songs" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Baby Dance Songs Compilation</h3>
-          <div class="pub-date">Nov 12, 2020</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=xpbL-YTJVew" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/xpbL-YTJVew/maxresdefault.jpg" alt="Fire Truck Toy Song" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Fire Truck Toy Song</h3>
-          <div class="pub-date">Nov 25, 2022</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=GMCyXSnNcto" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/GMCyXSnNcto/maxresdefault.jpg" alt="Why Babies Cry" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Why Babies Cry | Educational</h3>
-          <div class="pub-date">Mar 2, 2022</div>
-        </div>
-      </a>
-
-      <a class="video-card" href="https://www.youtube.com/watch?v=3yBEUpRVk5E" target="_blank" rel="noopener">
-        <div class="thumb-wrapper">
-          <img src="https://i.ytimg.com/vi/3yBEUpRVk5E/maxresdefault.jpg" alt="Wheels on The Bus" loading="lazy" />
-          <div class="play-overlay"><div class="play-icon"></div></div>
-        </div>
-        <div class="video-info">
-          <h3>Wheels on The Bus +More</h3>
-          <div class="pub-date">May 6, 2019</div>
-        </div>
-      </a>
-
+      <div class="about-box">
+        <h3>📊 Statistiques de la chaîne</h3>
+        <div class="stat-row"><span>👥 Abonnés</span><b>20 000 000</b></div>
+        <div class="stat-row"><span>👁 Vues totales</span><b>8 994 052 886</b></div>
+        <div class="stat-row"><span>🎬 Vidéos publiées</span><b>1 316</b></div>
+        <div class="stat-row"><span>📅 Date de création</span><b>16 janv. 2018</b></div>
+        <div class="stat-row"><span>🌍 Pays</span><b>🇺🇸 États-Unis</b></div>
+        <div class="stat-row"><span>📈 Abonnés gagnés (30j)</span><b>+100 000</b></div>
+        <div class="stat-row"><span>👁 Vues gagnées (30j)</span><b>+97 407 124</b></div>
+        <div class="stat-row"><span>🎵 Thématiques</span><b>Musique · Éducation · Divertissement</b></div>
+      </div>
     </div>
 
-    <!-- See All button -->
-    <div style="text-align:center; margin-top: 36px;">
-      <a href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA/videos"
-         target="_blank" rel="noopener"
-         style="background:var(--primary);color:#fff;font-weight:700;padding:14px 40px;border-radius:50px;text-decoration:none;font-size:1rem;">
-        ▶ See All 1,316 Videos on YouTube
-      </a>
+    <div>
+      <div class="about-box">
+        <h3>🎵 Playlists officielles</h3>
+        <ul class="playlist-list">
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPNHh7w06Zp8izKKT-KjbXCH" target="_blank" rel="noopener">🎵 Best Kids Songs</a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPOCyBv7N9U2kO04Ns1_wDw5" target="_blank" rel="noopener">📖 Nursery Rhymes Compilations</a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPNwSC6cdhSR4VuckC14qz6E" target="_blank" rel="noopener">🎭 Abi Stories – Educational Cartoon</a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPOmJlQkqk-8TwLAoTmQJYw5" target="_blank" rel="noopener">⭐ Popular Kids Songs &amp; Nursery Rhymes</a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPOlkTvanYorRs-pmcyTy6pW" target="_blank" rel="noopener">🔤 Alphabet | ABC &amp; Phonics Songs</a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPPzGVwTNSzWzPN5q0CmVAJF" target="_blank" rel="noopener">🌈 Color &amp; Shape Songs</a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPOB8C3VkxEM8wwTDgrzOK14" target="_blank" rel="noopener">🐾 Animal Songs &amp; Nursery Rhymes</a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPNKW-jSWp8QA259Estja9YL" target="_blank" rel="noopener">🦆 Funny Cartoon | CoCoDuck</a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPMbB_ItgRra-izCY486ezbj" target="_blank" rel="noopener">✏️ 2D Nursery Rhymes for Kids</a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPN6mUMeJbrWNfkrFKQ_k7zS" target="_blank" rel="noopener">🔢 Numbers 1-10 | Counting for Kids</a></li>
+        </ul>
+      </div>
+
+      <div class="about-box" style="margin-top:24px">
+        <h3>📂 Catégories du site</h3>
+        <ul class="playlist-list">
+          <li><a href="eli-kids-dinosaures.html">🦕 Dinosaures – Dinosaur Bus, Jurassic Zoo…</a></li>
+          <li><a href="eli-kids-vehicules.html">🚌 Véhicules &amp; Jouets – Bus, Train, Camion…</a></li>
+          <li><a href="eli-kids-bebes.html">👶 Bébé &amp; Famille – Baby Songs, Diaper…</a></li>
+          <li><a href="eli-kids-abc.html">🔤 ABC &amp; Éducation – Alphabet, Phonics…</a></li>
+        </ul>
+      </div>
     </div>
-  </section>
 
-  <footer>
-    <p>This page is an unofficial fan site. All videos belong to
-      <a href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA" target="_blank" rel="noopener">Eli Kids – Cartoons & Songs</a>
-      on YouTube. &copy; 2026
-    </p>
-  </footer>
+  </div>
+</div>
+</div>
 
+<!-- ── FOOTER ─────────────────────────────────────── -->
+<footer style="background:#0f0f0f;color:#888;text-align:center;padding:20px;font-size:.8rem">
+  Site non officiel – Fan site. Toutes les vidéos appartiennent à
+  <a href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA" target="_blank" rel="noopener" style="color:#ff4444">Eli Kids – Cartoons &amp; Songs</a>.
+  &copy; 2026
+</footer>
+
+<!-- ── VIDEO MODAL ────────────────────────────────── -->
+<div id="vmodal" onclick="if(event.target===this)closePlayer()">
+  <div class="modal-box">
+    <div class="modal-top">
+      <div id="modal-title"></div>
+      <div class="modal-actions">
+        <a id="modal-yt-link" href="#" target="_blank" rel="noopener">↗ YouTube</a>
+        <button class="close-btn" onclick="closePlayer()">✕</button>
+      </div>
+    </div>
+    <iframe id="modal-iframe" allowfullscreen
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+  </div>
+</div>
+
+<script>
+  function switchTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    var btn = document.querySelector('[data-tab="' + id + '"]');
+    if (btn) btn.classList.add('active');
+    window.scrollTo({ top: document.querySelector('.tabs').offsetTop - 56, behavior: 'smooth' });
+  }
+
+  function playVideo(id, title) {
+    var modal = document.getElementById('vmodal');
+    document.getElementById('modal-iframe').src =
+      'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0';
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-yt-link').href =
+      'https://www.youtube.com/watch?v=' + id;
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePlayer() {
+    document.getElementById('modal-iframe').src = '';
+    document.getElementById('vmodal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePlayer();
+  });
+</script>
 </body>
 </html>

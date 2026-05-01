@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🦕 Eli Kids – Dinosaures | Dinosaur Bus, Jurassic Zoo, Songs & Nursery Rhymes</title>
+  <meta name="description" content="Toutes les vidéos de dinosaures d'Eli Kids : Dinosaur Bus, Dinosaur Song, Jurassic Zoo, Dinosaur Bus Family. Chansons éducatives pour enfants." />
+  <meta name="keywords" content="Eli Kids dinosaures, Dinosaur Bus, Jurassic Zoo, dinosaur songs for kids, nursery rhymes dinosaur" />
+  <meta name="robots" content="index, follow" />
+  <style>
+    :root { --red:#ff4444; --green:#388e3c; --bg:#f4faf4; --card:#fff; --border:#ddd; --text:#222; --muted:#777; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--text); }
+
+    .navbar { background:#0f0f0f; height:56px; display:flex; align-items:center; padding:0 24px; gap:16px; position:sticky; top:0; z-index:200; }
+    .nav-logo { color:#fff; font-size:1.1rem; font-weight:900; text-decoration:none; }
+    .nav-logo span { color:var(--red); }
+    .nav-links { display:flex; gap:4px; margin-left:auto; }
+    .nav-links a { color:#ccc; text-decoration:none; font-size:.83rem; padding:5px 12px; border-radius:20px; transition:background .2s; }
+    .nav-links a:hover, .nav-links a.active { background:rgba(255,255,255,.12); color:#fff; }
+    .nav-sub { background:var(--red); color:#fff; font-weight:700; font-size:.83rem; padding:7px 16px; border-radius:20px; text-decoration:none; }
+
+    .cat-hero {
+      background:linear-gradient(135deg, #1b5e20, #388e3c, #66bb6a);
+      padding:48px 32px; text-align:center; color:#fff;
+    }
+    .cat-hero h1 { font-size:2.2rem; font-weight:900; text-shadow:2px 4px 12px rgba(0,0,0,.3); }
+    .cat-hero p { font-size:1rem; margin-top:10px; opacity:.9; max-width:560px; margin-left:auto; margin-right:auto; }
+
+    .content { max-width:1200px; margin:0 auto; padding:32px 24px 60px; }
+    .sec-title { font-size:1.1rem; font-weight:800; margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+    .sec-title::before { content:''; display:inline-block; width:4px; height:20px; background:var(--green); border-radius:3px; }
+
+    .vgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:18px; margin-bottom:36px; }
+    .vcard { background:var(--card); border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.08); cursor:pointer; transition:transform .2s,box-shadow .2s; position:relative; }
+    .vcard:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,.15); }
+    .vthumb { position:relative; aspect-ratio:16/9; background:#111; overflow:hidden; }
+    .vthumb img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s; }
+    .vcard:hover .vthumb img { transform:scale(1.05); }
+    .play-btn { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0); transition:background .2s; }
+    .vcard:hover .play-btn { background:rgba(0,0,0,.28); }
+    .play-circle { width:48px; height:48px; background:var(--red); border-radius:50%; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .2s; }
+    .vcard:hover .play-circle { opacity:1; }
+    .play-circle::after { content:''; border-left:17px solid #fff; border-top:10px solid transparent; border-bottom:10px solid transparent; margin-left:4px; }
+    .ext-link { position:absolute; top:8px; right:8px; background:rgba(0,0,0,.6); color:#fff; font-size:.68rem; padding:3px 7px; border-radius:5px; text-decoration:none; opacity:0; transition:opacity .2s; }
+    .vcard:hover .ext-link { opacity:1; }
+    .vinfo { padding:10px 12px 14px; }
+    .vinfo h3 { font-size:.85rem; font-weight:700; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; color:#1b5e20; }
+    .vdate { font-size:.72rem; color:var(--muted); margin-top:5px; }
+
+    .sgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:14px; margin-bottom:36px; }
+    .scard { background:var(--card); border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.08); cursor:pointer; transition:transform .2s; }
+    .scard:hover { transform:translateY(-3px); }
+    .sthumb { position:relative; aspect-ratio:9/16; background:#111; overflow:hidden; }
+    .sthumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .shorts-badge { position:absolute; bottom:8px; left:8px; background:var(--red); color:#fff; font-size:.62rem; font-weight:800; padding:2px 7px; border-radius:4px; }
+    .sinfo { padding:8px 10px 12px; }
+    .sinfo h3 { font-size:.78rem; font-weight:700; line-height:1.35; color:#1b5e20; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+    .back-btn { display:inline-flex; align-items:center; gap:8px; background:var(--green); color:#fff; font-weight:700; padding:10px 22px; border-radius:20px; text-decoration:none; margin-bottom:24px; font-size:.9rem; }
+    .back-btn:hover { opacity:.88; }
+
+    /* modal */
+    #vmodal { display:none; position:fixed; inset:0; z-index:500; background:rgba(0,0,0,.85); align-items:center; justify-content:center; padding:20px; }
+    .modal-box { background:#111; border-radius:16px; overflow:hidden; width:100%; max-width:860px; }
+    .modal-top { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:#1a1a1a; }
+    #modal-title { color:#fff; font-size:.88rem; font-weight:700; flex:1; margin-right:12px; }
+    .modal-actions { display:flex; gap:8px; align-items:center; }
+    #modal-yt-link { color:var(--red); font-size:.78rem; font-weight:700; text-decoration:none; padding:4px 10px; border:1.5px solid var(--red); border-radius:6px; }
+    #modal-yt-link:hover { background:var(--red); color:#fff; }
+    .close-btn { background:none; border:none; color:#aaa; font-size:1.3rem; cursor:pointer; padding:4px 8px; }
+    .close-btn:hover { color:#fff; }
+    #modal-iframe { width:100%; aspect-ratio:16/9; border:none; display:block; }
+
+    footer { background:#0f0f0f; color:#888; text-align:center; padding:18px; font-size:.78rem; }
+    footer a { color:var(--red); text-decoration:none; }
+    @media(max-width:480px) { .vgrid { grid-template-columns:repeat(2,1fr); } .sgrid { grid-template-columns:repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="nav-logo" href="eli-kids-channel.html">🎵 Eli <span>Kids</span></a>
+  <div class="nav-links">
+    <a href="eli-kids-dinosaures.html" class="active">🦕 Dinosaures</a>
+    <a href="eli-kids-vehicules.html">🚌 Véhicules</a>
+    <a href="eli-kids-bebes.html">👶 Bébé</a>
+    <a href="eli-kids-abc.html">🔤 ABC</a>
+    <a href="eli-kids-about.html">ℹ️ À propos</a>
+  </div>
+  <a class="nav-sub" href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA?sub_confirmation=1" target="_blank" rel="noopener">▶ S'abonner</a>
+</nav>
+
+<div class="cat-hero">
+  <h1>🦕 Dinosaures</h1>
+  <p>Tous les épisodes de Dinosaur Bus, Jurassic Zoo et les chansons de dinosaures d'Eli Kids !</p>
+</div>
+
+<div class="content">
+  <a class="back-btn" href="eli-kids-channel.html">← Retour à la chaîne</a>
+
+  <div class="sec-title">🦕 Vidéos Dinosaures</div>
+  <div class="vgrid">
+
+    <div class="vcard" onclick="playVideo('gAj5qORdf0U','Dinosaur Bus | Eli Kids Songs')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/gAj5qORdf0U/maxresdefault.jpg" alt="Dinosaur Bus" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=gAj5qORdf0U" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Dinosaur Bus | Jurassic Zoo</h3><div class="vdate">22 nov. 2022</div></div>
+    </div>
+
+    <div class="vcard" onclick="playVideo('8F98J1b6FE0','Dinosaur Song +More | Toy Fun')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/8F98J1b6FE0/maxresdefault.jpg" alt="Dinosaur Song" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=8F98J1b6FE0" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Dinosaur Song +More | Toy Fun</h3><div class="vdate">12 déc. 2022</div></div>
+    </div>
+
+    <div class="vcard" onclick="playVideo('16ythC189_U','Dinosaur Song | Jurassic Zoo')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/16ythC189_U/maxresdefault.jpg" alt="Dinosaur Jurassic" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=16ythC189_U" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Dinosaur Song | Jurassic Zoo</h3><div class="vdate">18 nov. 2022</div></div>
+    </div>
+
+    <div class="vcard" onclick="playVideo('n2P0FmmP3kc','Dinosaur Bus #2 | Jurassic Zoo')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/n2P0FmmP3kc/maxresdefault.jpg" alt="Dinosaur Bus 2" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=n2P0FmmP3kc" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Dinosaur Bus #2 | Jurassic Zoo</h3><div class="vdate">20 avr. 2023</div></div>
+    </div>
+
+    <div class="vcard" onclick="playVideo('YfH1qHFQZnQ','Dinosaur Bus Family | Jurassic Zoo')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/YfH1qHFQZnQ/maxresdefault.jpg" alt="Dinosaur Bus Family" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=YfH1qHFQZnQ" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Dinosaur Bus Family | Jurassic Zoo</h3><div class="vdate">9 nov. 2023</div></div>
+    </div>
+
+    <div class="vcard" onclick="playVideo('bVV9rzvs_Ls','Turtle Bus #3: Baby Turtle')">
+      <div class="vthumb"><img src="https://i.ytimg.com/vi/bVV9rzvs_Ls/maxresdefault.jpg" alt="Turtle Bus" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div></div>
+      <a class="ext-link" href="https://www.youtube.com/watch?v=bVV9rzvs_Ls" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ YT</a>
+      <div class="vinfo"><h3>Turtle Bus #3: "Baby Turtle"</h3><div class="vdate">13 avr. 2023</div></div>
+    </div>
+
+  </div>
+
+  <div class="sec-title">📱 Shorts Dinosaures</div>
+  <div class="sgrid">
+
+    <div class="scard" onclick="playVideo('jZL6o9guBlE','Dinosaur Escape')">
+      <div class="sthumb"><img src="https://i.ytimg.com/vi/jZL6o9guBlE/maxresdefault.jpg" alt="Dinosaur Escape" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div>
+      <div class="sinfo"><h3>Dinosaur Escape</h3></div>
+    </div>
+
+    <div class="scard" onclick="playVideo('c86eIf9R3yg','Dinosaur Bus Fun Song')">
+      <div class="sthumb"><img src="https://i.ytimg.com/vi/c86eIf9R3yg/maxresdefault.jpg" alt="Dinosaur Bus Short" loading="lazy"/><div class="play-btn"><div class="play-circle"></div></div><span class="shorts-badge">Shorts</span></div>
+      <div class="sinfo"><h3>Dinosaur Bus Fun Song</h3></div>
+    </div>
+
+  </div>
+
+  <div style="text-align:center;margin-top:16px">
+    <a href="https://www.youtube.com/results?search_query=eli+kids+dinosaur" target="_blank" rel="noopener"
+       style="background:#388e3c;color:#fff;font-weight:700;padding:12px 28px;border-radius:20px;text-decoration:none">
+      🦕 Voir plus sur YouTube
+    </a>
+  </div>
+</div>
+
+<footer>
+  Fan site non officiel.
+  <a href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA" target="_blank" rel="noopener">Eli Kids – Cartoons &amp; Songs</a>
+  &copy; 2026
+</footer>
+
+<div id="vmodal" onclick="if(event.target===this)closePlayer()">
+  <div class="modal-box">
+    <div class="modal-top">
+      <div id="modal-title"></div>
+      <div class="modal-actions">
+        <a id="modal-yt-link" href="#" target="_blank" rel="noopener">↗ YouTube</a>
+        <button class="close-btn" onclick="closePlayer()">✕</button>
+      </div>
+    </div>
+    <iframe id="modal-iframe" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+  </div>
+</div>
+
+<script>
+  function playVideo(id, title) {
+    document.getElementById('modal-iframe').src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0';
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-yt-link').href = 'https://www.youtube.com/watch?v=' + id;
+    document.getElementById('vmodal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  function closePlayer() {
+    document.getElementById('modal-iframe').src = '';
+    document.getElementById('vmodal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePlayer(); });
+</script>
+</body>
+</html>

@@ -59,4 +59,35 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://exauce2025kossi-png.github.io/prayer-channels-seo/deliverance-prayers.html"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://exauce2025kossi-png.github.io/prayer-channels-seo/prieres-delivrance.html"/>
   </url>
+  <!-- Eli Kids Channel Clone -->
+  <url>
+    <loc>https://exauce2025kossi-png.github.io/prayer-channels-seo/eli-kids-channel.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://exauce2025kossi-png.github.io/prayer-channels-seo/eli-kids-about.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://exauce2025kossi-png.github.io/prayer-channels-seo/eli-kids-dinosaures.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://exauce2025kossi-png.github.io/prayer-channels-seo/eli-kids-vehicules.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://exauce2025kossi-png.github.io/prayer-channels-seo/eli-kids-bebes.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://exauce2025kossi-png.github.io/prayer-channels-seo/eli-kids-abc.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
 </urlset>
