@@ -152,10 +152,10 @@ class YouTubeManagerAgent(BaseAgent):
 
     def _load_channels(self):
         if CONFIG_FILE.exists():
-            with open(CONFIG_FILE) as f:
+            with open(CONFIG_FILE, encoding="utf-8") as f:
                 return json.load(f)
         return {}
 
     def _save_channels(self):
-        with open(CONFIG_FILE, "w") as f:
+        with open(CONFIG_FILE, "w", encoding="utf-8") as f:
             json.dump(self._channels, f, indent=2, ensure_ascii=False)

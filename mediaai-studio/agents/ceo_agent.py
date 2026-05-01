@@ -165,7 +165,7 @@ class CEOAgent(BaseAgent):
         self.video_director.list_outputs()
 
     def help(self):
-        with open(CONFIG) as f:
+        with open(CONFIG, encoding="utf-8") as f:
             cfg = json.load(f)
         print(f"\n{'═'*60}")
         print(f"  🏢 {cfg['company']['name']} — {cfg['company']['motto']}")

@@ -157,10 +157,10 @@ class ECommerceAgent(BaseAgent):
 
     def _load_stores(self):
         if CONFIG_FILE.exists():
-            with open(CONFIG_FILE) as f:
+            with open(CONFIG_FILE, encoding="utf-8") as f:
                 return json.load(f)
         return {}
 
     def _save_stores(self):
-        with open(CONFIG_FILE, "w") as f:
+        with open(CONFIG_FILE, "w", encoding="utf-8") as f:
             json.dump(self._stores, f, indent=2, ensure_ascii=False)
