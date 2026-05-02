@@ -57,10 +57,21 @@ def make_gradient(w, h, color1, color2):
 
 # ── Police ─────────────────────────────────────────────────────────────────
 FONT_CANDIDATES = [
+    # Windows
+    "C:/Windows/Fonts/arialbd.ttf",
+    "C:/Windows/Fonts/Arial Bold.ttf",
+    "C:/Windows/Fonts/arial.ttf",
+    "C:/Windows/Fonts/calibrib.ttf",
+    "C:/Windows/Fonts/impact.ttf",
+    "C:/Windows/Fonts/verdanab.ttf",
+    # Linux
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
     "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
     "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
     "/usr/share/fonts/TTF/DejaVuSans-Bold.ttf",
+    # macOS
+    "/Library/Fonts/Arial Bold.ttf",
+    "/System/Library/Fonts/Helvetica.ttc",
 ]
 
 def get_font(size):
@@ -75,6 +86,10 @@ def get_font(size):
 
 def get_emoji_font(size):
     candidates = [
+        # Windows
+        "C:/Windows/Fonts/seguiemj.ttf",
+        "C:/Windows/Fonts/seguisym.ttf",
+        # Linux
         "/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf",
         "/usr/share/fonts/truetype/noto/NotoEmoji-Regular.ttf",
     ]
@@ -89,12 +104,15 @@ def get_emoji_font(size):
 
 # ── Rendu d'une frame ──────────────────────────────────────────────────────
 def draw_text_centered(draw, text, y_center, font, fill, shadow_color, img_w):
-    bbox = draw.textbbox((0, 0), text, font=font)
-    tw = bbox[2] - bbox[0]
-    th = bbox[3] - bbox[1]
+    try:
+        bbox = draw.textbbox((0, 0), text, font=font)
+        tw = bbox[2] - bbox[0]
+        th = bbox[3] - bbox[1]
+    except Exception:
+        tw = len(text) * 28
+        th = 40
     x = (img_w - tw) // 2
     y = y_center - th // 2
-    # ombre
     draw.text((x + 3, y + 3), text, font=font, fill=shadow_color)
     draw.text((x, y), text, font=font, fill=fill)
 
@@ -111,10 +129,13 @@ def make_frame_image(title, lyric_text, emoji, color1, color2, progress=0.0):
 
     # Titre
     title_font = get_font(42)
-    draw.text((0, 0), "", font=title_font, fill=(0, 0, 0))  # reset
-    bbox = draw.textbbox((0, 0), title, font=title_font)
-    tw = bbox[2] - bbox[0]
+    try:
+        bbox = draw.textbbox((0, 0), title, font=title_font)
+        tw = bbox[2] - bbox[0]
+    except Exception:
+        tw = len(title) * 26
     tx = (WIDTH - tw) // 2
+    draw.text((tx + 2, 30), title, font=title_font, fill=(0, 0, 0))
     draw.text((tx, 28), title, font=title_font, fill=(255, 255, 255))
 
     # Emoji centré
