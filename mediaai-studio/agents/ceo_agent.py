@@ -8,6 +8,7 @@ from .youtube_manager import YouTubeManagerAgent
 from .ecommerce_agent import ECommerceAgent
 from .translator_agent import TranslatorAgent
 from .seo_agent import SEOAgent
+from .quality_agent import QualityAgent
 
 CONFIG = Path(__file__).parent.parent / "config" / "company.json"
 
@@ -26,6 +27,7 @@ class CEOAgent(BaseAgent):
         self.ecommerce      = ECommerceAgent()
         self.translator     = TranslatorAgent()
         self.seo            = SEOAgent()
+        self.quality        = QualityAgent()
 
     # ── Commande principale ─────────────────────────────────────────────────
     def execute(self, command: str, **params) -> dict:
@@ -65,8 +67,8 @@ class CEOAgent(BaseAgent):
         emoji = STYLE_EMOJIS.get(style, "🎵")
         self.header(f"Production {style.upper()} | {topic} | {language}")
 
-        # 1. Script
-        if video_type == "song" or style == "kids":
+        # 1. Script authentique
+        if video_type == "song" or style in ("kids", "disney", "3d", "music", "comedy"):
             script = self.script_writer.write_kids_song(topic, language, duration_min)
         elif video_type == "motivational" or style == "motivational":
             script = self.script_writer.write_motivational_video(topic, language, duration_min)
@@ -82,17 +84,30 @@ class CEOAgent(BaseAgent):
         script["description"] = seo["description"]
         script["tags"]        = seo["tags"]
 
-        # 3. Vidéo
+        # 3. Vérification qualité YouTube
+        quality = self.quality.check_video(script, style)
+        if not quality["publishable"]:
+            self.warn(f"Score qualité faible ({quality['score']}/100) — {quality['verdict']}")
+
+        # 4. Vidéo
         video_path = self.video_director.produce(script, style)
 
-        result = {"script": script, "video_path": str(video_path), "seo": seo}
+        result = {
+            "script":     script,
+            "video_path": str(video_path),
+            "seo":        seo,
+            "quality":    quality,
+        }
 
-        # 4. Upload optionnel
+        # 5. Upload optionnel (uniquement si qualité suffisante)
         if upload_to and video_path.exists():
-            video_id = self.youtube.upload_video(upload_to, str(video_path), script)
-            result["video_id"] = video_id
+            if quality["publishable"]:
+                video_id = self.youtube.upload_video(upload_to, str(video_path), script)
+                result["video_id"] = video_id
+            else:
+                self.warn(f"Upload annulé — score qualité insuffisant ({quality['score']}/100)")
 
-        self.success(f"Terminé ! Vidéo : {video_path.name}")
+        self.success(f"Terminé ! Vidéo : {video_path.name} | Qualité : {quality['score']}/100")
         return result
 
     # ── Batch production ─────────────────────────────────────────────────────
