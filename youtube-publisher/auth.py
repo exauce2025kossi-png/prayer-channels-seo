@@ -3,7 +3,6 @@ import pickle
 import ssl
 import httplib2
 import google_auth_httplib2
-import google.auth.transport.httplib2 as ga_httplib2
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
@@ -34,9 +33,8 @@ def get_youtube():
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            # Utilise le transport httplib2 (pas requests) pour éviter
-            # l'incompatibilité Http.request(data=...) sur Python 3.14+
-            creds.refresh(ga_httplib2.Request(_build_http()))
+            # google_auth_httplib2.Request est compatible avec httplib2.Http
+            creds.refresh(google_auth_httplib2.Request(_build_http()))
         else:
             flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET, SCOPES)
             flow.redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
