@@ -116,12 +116,19 @@ def set_thumbnail(youtube, video_id, thumb_path):
 
 # ── Main logic ─────────────────────────────────────────────────────────────
 
-def publish_date(target_date=None):
+def publish_date(target_date=None, force=False):
     schedule = load_schedule()
-    entry = find_today(schedule, target_date)
+    date = target_date or datetime.now().strftime("%Y-%m-%d")
+
+    if force:
+        # Cherche même les vidéos déjà publiées
+        entry = next((v for v in schedule["videos"] if v["date"] == date), None)
+        if entry:
+            entry["published"] = False  # remet à zéro pour republier
+    else:
+        entry = find_today(schedule, target_date)
 
     if not entry:
-        date = target_date or datetime.now().strftime("%Y-%m-%d")
         log(f"ℹ️  Aucune vidéo planifiée pour {date} (ou déjà publiée).")
         return
 
@@ -170,6 +177,7 @@ if __name__ == "__main__":
     parser.add_argument("--date",   help="Date cible YYYY-MM-DD")
     parser.add_argument("--list",   action="store_true", help="Afficher le planning")
     parser.add_argument("--daemon", action="store_true", help="Mode continu")
+    parser.add_argument("--force",  action="store_true", help="Republier même si déjà publiée")
     parser.add_argument("--hour",   type=int, default=10,
                         help="Heure de publication en mode daemon (défaut: 10)")
     args = parser.parse_args()
@@ -179,4 +187,4 @@ if __name__ == "__main__":
     elif args.daemon:
         daemon(publish_hour=args.hour)
     else:
-        publish_date(target_date=args.date)
+        publish_date(target_date=args.date, force=args.force)
