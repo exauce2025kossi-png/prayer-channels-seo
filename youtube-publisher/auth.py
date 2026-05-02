@@ -1,10 +1,10 @@
 import os
 import pickle
 import ssl
-import httplib2
-import google_auth_httplib2
 from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
+import requests
 
 # Bypass SSL self-signed cert in sandboxed environments
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -19,12 +19,8 @@ CLIENT_SECRET = os.path.join(os.path.dirname(__file__), "client_secret.json")
 TOKEN_FILE    = os.path.join(os.path.dirname(__file__), "token.pickle")
 
 
-def _build_http():
-    return httplib2.Http(disable_ssl_certificate_validation=True)
-
-
 def get_youtube():
-    """Return an authenticated YouTube service. Opens browser on first run."""
+    """Return an authenticated YouTube service using requests transport."""
     creds = None
 
     if os.path.exists(TOKEN_FILE):
@@ -33,8 +29,8 @@ def get_youtube():
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            # google_auth_httplib2.Request est compatible avec httplib2.Http
-            creds.refresh(google_auth_httplib2.Request(_build_http()))
+            # Request() utilise requests.Session — compatible Python 3.14+
+            creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET, SCOPES)
             flow.redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
@@ -56,5 +52,6 @@ def get_youtube():
             pickle.dump(creds, f)
         print("✅ Authentification réussie — token sauvegardé.")
 
-    authed_http = google_auth_httplib2.AuthorizedHttp(creds, http=_build_http())
-    return build("youtube", "v3", http=authed_http)
+    # build() avec credentials= utilise requests (pas httplib2)
+    # → gère correctement les redirections HTTP 308 de YouTube
+    return build("youtube", "v3", credentials=creds)
