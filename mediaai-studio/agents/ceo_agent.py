@@ -89,8 +89,8 @@ class CEOAgent(BaseAgent):
         if not quality["publishable"]:
             self.warn(f"Score qualité faible ({quality['score']}/100) — {quality['verdict']}")
 
-        # 4. Vidéo
-        video_path = self.video_director.produce(script, style)
+        # 4. Vidéo (avec voix clonée si canal prayer configuré)
+        video_path = self.video_director.produce(script, style, channel_name=upload_to)
 
         result = {
             "script":     script,

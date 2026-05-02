@@ -6,11 +6,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from agents.ceo_agent import CEOAgent
+from agents.voice_agent import VoiceAgent, CHANNEL_VOICES, SAMPLES_DIR, OUTPUT_DIR as AUDIO_OUT
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-ceo = CEOAgent()
+ceo   = CEOAgent()
+voice = VoiceAgent()
 tasks = {}
 _lock = threading.Lock()
 
@@ -60,6 +62,20 @@ def channels():
 @app.route("/seo")
 def seo():
     return render_template("seo.html")
+
+
+@app.route("/voice")
+def voice_page():
+    voices_status = {}
+    for ch, cfg in CHANNEL_VOICES.items():
+        sample = SAMPLES_DIR / cfg["sample"]
+        voices_status[ch] = {
+            "lang":  cfg["lang"],
+            "file":  cfg["sample"],
+            "ready": sample.exists(),
+            "size":  sample.stat().st_size if sample.exists() else 0,
+        }
+    return render_template("voice.html", voices=voices_status)
 
 
 # ── API ──────────────────────────────────────────────────────────────────────
@@ -183,6 +199,45 @@ def api_keywords(niche):
 def api_translate():
     d = request.json
     return jsonify({"translated": ceo.translator.translate(d["text"], d["lang"])})
+
+
+@app.route("/api/upload-voice", methods=["POST"])
+def api_upload_voice():
+    channel = request.form.get("channel")
+    file    = request.files.get("voice_file")
+    if not file or not channel:
+        return "Missing file or channel", 400
+    import tempfile, os
+    suffix = Path(file.filename).suffix or ".wav"
+    with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+        file.save(tmp.name)
+        tmp_path = tmp.name
+    ok = voice.add_voice_sample(channel, tmp_path)
+    os.unlink(tmp_path)
+    from flask import redirect
+    return redirect("/voice")
+
+
+@app.route("/api/test-voice", methods=["POST"])
+def api_test_voice():
+    data    = request.json
+    channel = data.get("channel")
+    text    = data.get("text", "Bonjour, ceci est un test de voix.")
+    if not voice.has_voice(channel):
+        return jsonify({"success": False,
+                        "message": "Aucun échantillon vocal pour cette chaîne. Uploadez d'abord votre voix."})
+    import tempfile
+    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False, dir=str(AUDIO_OUT)) as f:
+        out_path = f.name
+    result = voice.speak(text, channel, out_path)
+    if result and Path(result).exists():
+        return jsonify({"success": True, "filename": Path(result).name})
+    return jsonify({"success": False, "message": "Erreur lors de la synthèse vocale."})
+
+
+@app.route("/api/audio/<filename>")
+def api_audio(filename):
+    return send_from_directory(str(AUDIO_OUT), filename)
 
 
 @app.route("/api/videos")

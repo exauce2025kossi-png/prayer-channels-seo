@@ -3,6 +3,7 @@ import os, sys, tempfile, subprocess, shutil
 from pathlib import Path
 import numpy as np
 from .base_agent import BaseAgent
+from .voice_agent import VoiceAgent, CHANNEL_VOICES
 
 BASE_DIR   = Path(__file__).parent.parent
 OUTPUT_DIR = BASE_DIR / "outputs" / "videos"
@@ -14,8 +15,10 @@ class VideoDirectorAgent(BaseAgent):
     def __init__(self):
         super().__init__("Video Director", "🎬", "Production vidéo multi-styles")
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        self.voice = VoiceAgent()
 
-    def produce(self, script: dict, style: str = "kids", output_filename: str = None) -> Path:
+    def produce(self, script: dict, style: str = "kids", output_filename: str = None,
+                channel_name: str = None) -> Path:
         """
         Produit une vidéo MP4 à partir d'un script.
         script: {"title", "lyrics": [{"text", "duration"}], "emoji", "language"}
@@ -56,8 +59,8 @@ class VideoDirectorAgent(BaseAgent):
 
         video = concatenate_videoclips(clips, method="compose")
 
-        # Audio
-        audio_path = self._generate_audio(lyrics, lang)
+        # Audio — voix clonée si disponible pour ce canal
+        audio_path = self._get_audio(lyrics, lang, channel_name)
         if audio_path:
             try:
                 audio = AudioFileClip(str(audio_path))
@@ -102,6 +105,22 @@ class VideoDirectorAgent(BaseAgent):
             size = f.stat().st_size // 1024
             print(f"  🎬 {f.name:<55} {size:>6} Ko")
         print(f"\n  Total : {len(files)} vidéos")
+
+    def _get_audio(self, lyrics, lang="en", channel_name=None):
+        """Utilise la voix clonée si disponible, sinon TTS standard."""
+        full_text = " ... ".join(l["text"] for l in lyrics if l.get("text","").strip())
+
+        # Voix clonée (Autel de Prière / Altar of Prayer)
+        if channel_name and self.voice.has_voice(channel_name):
+            self.log(f"🎙️ Voix clonée activée pour [{channel_name}]")
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
+                out_path = f.name
+            result = self.voice.speak(full_text, channel_name, out_path)
+            if result and Path(result).exists() and Path(result).stat().st_size > 1000:
+                self.success("Audio avec voix personnalisée généré")
+                return result
+
+        return self._generate_audio(lyrics, lang)
 
     def _generate_audio(self, lyrics, lang="en"):
         full_text = " ... ".join(

@@ -6,3 +6,4 @@ from .ecommerce_agent import ECommerceAgent
 from .translator_agent import TranslatorAgent
 from .seo_agent import SEOAgent
 from .quality_agent import QualityAgent
+from .voice_agent import VoiceAgent
