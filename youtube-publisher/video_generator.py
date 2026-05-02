@@ -453,7 +453,8 @@ def generate_video(filename, song_data, output_path, force=False):
 
     # ── Étape 2 : génération de l'audio ──────────────────────────────────────
     audio_path = None
-    with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp_a:
+    with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False,
+                                     dir=str(VIDEOS_DIR)) as tmp_a:
         audio_file = Path(tmp_a.name)
     try:
         print("     🎙  Génération audio (gTTS)...")
@@ -464,25 +465,36 @@ def generate_video(filename, song_data, output_path, force=False):
     # ── Étape 3 : fusion vidéo + audio via ffmpeg ─────────────────────────────
     ff = _ffmpeg()
     if ff and audio_path and Path(audio_path).exists():
-        print("     💾 Fusion vidéo + audio...")
-        result = subprocess.run([
-            ff, "-y",
-            "-i", str(silent_path),
-            "-i", str(audio_path),
-            "-c:v", "copy",
-            "-c:a", "aac",
-            "-b:a", "128k",
-            "-shortest",
-            str(output_path),
-        ], capture_output=True, timeout=180)
-        if result.returncode == 0:
-            try:
-                os.unlink(str(silent_path))
-            except Exception:
-                pass
-        else:
-            print(f"     ⚠️  Fusion audio échouée, vidéo muette conservée.")
-            shutil.move(str(silent_path), str(output_path))
+        print("     💾 Fusion vidéo + audio (peut prendre 1-2 min)...")
+        try:
+            proc = subprocess.Popen(
+                [
+                    ff, "-y",
+                    "-i", str(silent_path),
+                    "-i", str(audio_path),
+                    "-c:v", "copy",
+                    "-c:a", "aac",
+                    "-b:a", "128k",
+                    "-shortest",
+                    str(output_path),
+                ],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            proc.wait()  # pas de timeout — on attend que ffmpeg finisse
+            if proc.returncode == 0 and output_path.exists():
+                try:
+                    os.unlink(str(silent_path))
+                except Exception:
+                    pass
+            else:
+                print("     ⚠️  Fusion audio échouée — vidéo muette conservée.")
+                if not output_path.exists():
+                    shutil.move(str(silent_path), str(output_path))
+        except Exception as e:
+            print(f"     ⚠️  ffmpeg erreur ({e}) — vidéo muette conservée.")
+            if not output_path.exists():
+                shutil.move(str(silent_path), str(output_path))
     else:
         shutil.move(str(silent_path), str(output_path))
 

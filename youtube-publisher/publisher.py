@@ -89,12 +89,24 @@ def upload_video(youtube, entry):
     )
 
     response = None
+    retry = 0
+    max_retries = 5
     while response is None:
-        status, response = request.next_chunk()
-        if status:
-            pct = int(status.progress() * 100)
-            sys.stdout.write(f"\r   Upload : {pct}%")
-            sys.stdout.flush()
+        try:
+            status, response = request.next_chunk()
+            if status:
+                pct = int(status.progress() * 100)
+                sys.stdout.write(f"\r   Upload : {pct}%")
+                sys.stdout.flush()
+            retry = 0  # réinitialise après succès partiel
+        except Exception as e:
+            retry += 1
+            if retry > max_retries:
+                log(f"❌ Upload échoué après {max_retries} tentatives : {e}")
+                return None
+            wait = 2 ** retry
+            log(f"⚠️  Erreur réseau ({e}) — retry {retry}/{max_retries} dans {wait}s...")
+            time.sleep(wait)
 
     print()
     video_id = response["id"]
