@@ -3,8 +3,8 @@ import pickle
 import ssl
 import httplib2
 import google_auth_httplib2
+import google.auth.transport.httplib2 as ga_httplib2
 from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
 # Bypass SSL self-signed cert in sandboxed environments
@@ -34,7 +34,9 @@ def get_youtube():
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request(_build_http()))
+            # Utilise le transport httplib2 (pas requests) pour éviter
+            # l'incompatibilité Http.request(data=...) sur Python 3.14+
+            creds.refresh(ga_httplib2.Request(_build_http()))
         else:
             flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET, SCOPES)
             flow.redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
