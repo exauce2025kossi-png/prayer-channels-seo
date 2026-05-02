@@ -1,5 +1,5 @@
-"""Video Director Agent — Produit des vidéos MP4 dans tous les styles."""
-import os, sys, tempfile, subprocess, shutil
+"""Video Director Agent — Produit de vraies vidéos animées MP4 dans tous les styles."""
+import os, sys, tempfile, subprocess, shutil, threading
 from pathlib import Path
 import numpy as np
 from .base_agent import BaseAgent
@@ -8,91 +8,109 @@ from .voice_agent import VoiceAgent, CHANNEL_VOICES
 BASE_DIR   = Path(__file__).parent.parent
 OUTPUT_DIR = BASE_DIR / "outputs" / "videos"
 FPS = 24
-W, H = 1280, 720
 
 
 class VideoDirectorAgent(BaseAgent):
     def __init__(self):
-        super().__init__("Video Director", "🎬", "Production vidéo multi-styles")
+        super().__init__("Video Director", "🎬", "Production vidéo animée multi-styles")
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         self.voice = VoiceAgent()
 
     def produce(self, script: dict, style: str = "kids", output_filename: str = None,
                 channel_name: str = None) -> Path:
         """
-        Produit une vidéo MP4 à partir d'un script.
-        script: {"title", "lyrics": [{"text", "duration"}], "emoji", "language"}
-        style: kids | disney | african | 3d | music | motivational | news
+        Produit une vidéo MP4 animée à partir d'un script.
+        script: {"title", "lyrics"/"sections": [{"text","duration"}], "language"}
+        style: kids | disney | 3d | motivational | african | music
         """
-        from styles.video_styles import get_style
         try:
             from moviepy import ImageClip, AudioFileClip, concatenate_videoclips
         except ImportError:
             from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
 
-        title  = script.get("title", "Untitled")
-        lyrics = script.get("lyrics", [])
-        emoji  = script.get("emoji", "🎵")
-        lang   = script.get("language", "en")
-        style_fn = get_style(style)
+        # Import du moteur d'animation
+        sys.path.insert(0, str(BASE_DIR))
+        from styles.animator import generate_animated_frames, VideoAnimator
 
-        self.header(f"Production [{style.upper()}] — {title}")
-        self.log(f"Style: {style} | Langue: {lang} | {len(lyrics)} lignes")
+        title = script.get("title", "Untitled")
+        lang  = script.get("language", "en")
+
+        self.header(f"Animation [{style.upper()}] — {title}")
 
         fname = output_filename or self._safe_filename(title) + ".mp4"
         output_path = OUTPUT_DIR / fname
 
-        # Build clips
+        # ── Génère toutes les frames animées ──────────────────────────────────
+        self.log("🎨 Génération des frames animées...")
+        frames = []
+        for frame_arr, _ in generate_animated_frames(script, style, fps=FPS):
+            frames.append(frame_arr)
+
+        if not frames:
+            raise RuntimeError("Aucune frame générée")
+
+        self.log(f"   {len(frames)} frames générées ({len(frames)/FPS:.1f}s)")
+
+        # ── Assemble en clips vidéo ───────────────────────────────────────────
+        self.log("🎞️  Assemblage vidéo...")
         clips = []
-        # Intro 3s
-        intro_img = style_fn(title, f"🎵 {title}", emoji, progress=0.0)
-        clips.append(ImageClip(np.array(intro_img)).with_duration(3.0))
-
-        total_dur = 3.0 + sum(l["duration"] for l in lyrics)
-        elapsed   = 3.0
-
-        for lyric in lyrics:
-            progress = elapsed / total_dur
-            frame    = style_fn(title, lyric["text"], emoji, progress=progress)
-            clips.append(ImageClip(np.array(frame)).with_duration(lyric["duration"]))
-            elapsed += lyric["duration"]
+        # Regroupe les frames en clips de 1s pour éviter des milliers de clips
+        chunk = FPS
+        for i in range(0, len(frames), chunk):
+            chunk_frames = frames[i:i + chunk]
+            # Un clip de chunk_frames/FPS secondes
+            for frame in chunk_frames:
+                clips.append(ImageClip(frame).with_duration(1.0 / FPS))
 
         video = concatenate_videoclips(clips, method="compose")
 
-        # Audio — voix clonée si disponible pour ce canal
+        # ── Audio ─────────────────────────────────────────────────────────────
+        lyrics = script.get("lyrics", script.get("sections", []))
         audio_path = self._get_audio(lyrics, lang, channel_name)
         if audio_path:
             try:
                 audio = AudioFileClip(str(audio_path))
-                audio = audio.with_end(min(audio.duration, video.duration))
+                if audio.duration < video.duration:
+                    # Boucle l'audio si trop court
+                    from moviepy import concatenate_audioclips
+                    repeats = int(video.duration / audio.duration) + 1
+                    audio = concatenate_audioclips([audio] * repeats)
+                audio = audio.with_end(video.duration)
                 video = video.with_audio(audio)
+                self.success("Audio synchronisé")
             except Exception as e:
                 self.warn(f"Audio ignoré : {e}")
 
-        self.log(f"Encodage MP4 → {fname}...")
+        # ── Encodage ──────────────────────────────────────────────────────────
+        self.log(f"💾 Encodage MP4 → {fname}  (peut prendre 1-3 min)...")
         video.write_videofile(str(output_path), fps=FPS, codec="libx264",
-                              audio_codec="aac", logger=None)
-        self.success(f"Vidéo créée : {output_path.name} ({output_path.stat().st_size//1024} Ko)")
+                              audio_codec="aac", logger=None,
+                              threads=4, preset="ultrafast")
 
-        # Cleanup
         if audio_path:
-            try: os.unlink(audio_path)
-            except Exception: pass
+            try:
+                os.unlink(audio_path)
+            except Exception:
+                pass
 
+        size_kb = output_path.stat().st_size // 1024
+        self.success(f"Vidéo animée créée : {output_path.name} ({size_kb} Ko)")
         return output_path
 
+    # ── Batch ────────────────────────────────────────────────────────────────
     def produce_batch(self, scripts: list, style: str = "kids") -> list:
-        """Produit plusieurs vidéos en séquence."""
-        self.log(f"Production batch : {len(scripts)} vidéos en style [{style}]")
+        self.log(f"Batch : {len(scripts)} vidéos [{style}]")
         results = []
         for i, script in enumerate(scripts, 1):
-            self.log(f"[{i}/{len(scripts)}] {script.get('title','?')}")
+            self.log(f"[{i}/{len(scripts)}] {script.get('title', '?')}")
             try:
                 path = self.produce(script, style)
-                results.append({"success": True, "path": str(path), "title": script.get("title")})
+                results.append({"success": True, "path": str(path),
+                                 "title": script.get("title")})
             except Exception as e:
                 self.error(f"Échec : {e}")
-                results.append({"success": False, "error": str(e), "title": script.get("title")})
+                results.append({"success": False, "error": str(e),
+                                 "title": script.get("title")})
         return results
 
     def list_outputs(self):
@@ -106,47 +124,77 @@ class VideoDirectorAgent(BaseAgent):
             print(f"  🎬 {f.name:<55} {size:>6} Ko")
         print(f"\n  Total : {len(files)} vidéos")
 
+    # ── Audio ────────────────────────────────────────────────────────────────
     def _get_audio(self, lyrics, lang="en", channel_name=None):
-        """Utilise la voix clonée si disponible, sinon TTS standard."""
-        full_text = " ... ".join(l["text"] for l in lyrics if l.get("text","").strip())
+        full_text = " ... ".join(
+            s.get("text", s.get("content", "")) if isinstance(s, dict) else str(s)
+            for s in lyrics
+        ).strip()
 
-        # Voix clonée (Autel de Prière / Altar of Prayer)
+        # Voix clonée
         if channel_name and self.voice.has_voice(channel_name):
-            self.log(f"🎙️ Voix clonée activée pour [{channel_name}]")
+            self.log(f"🎙️ Voix clonée [{channel_name}]")
             with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
                 out_path = f.name
             result = self.voice.speak(full_text, channel_name, out_path)
             if result and Path(result).exists() and Path(result).stat().st_size > 1000:
-                self.success("Audio avec voix personnalisée généré")
+                self.success("Voix personnalisée générée")
                 return result
 
-        return self._generate_audio(lyrics, lang)
+        return self._tts_audio(full_text, lang)
 
-    def _generate_audio(self, lyrics, lang="en"):
-        full_text = " ... ".join(
-            ''.join(c for c in l["text"] if c.isascii() or c == ' ') for l in lyrics
-        ).strip()
+    def _tts_audio(self, text, lang="en"):
+        clean = ''.join(c if (c.isascii() or ord(c) < 0x500) and c != '\n' else ' '
+                        for c in text).strip()
+        if not clean:
+            return None
+
+        with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as f:
+            mp3_path = f.name
+
+        # 1. gTTS (internet — meilleure qualité sur Windows)
+        try:
+            from gtts import gTTS
+            lang_map = {"fr": "fr", "es": "es", "de": "de", "pt": "pt",
+                        "ar": "ar", "zh": "zh-CN", "ja": "ja", "hi": "hi",
+                        "it": "it", "ko": "ko", "tr": "tr"}
+            tts_lang = lang_map.get(lang, "en")
+            tts = gTTS(text=clean[:3000], lang=tts_lang, slow=False)
+            tts.save(mp3_path)
+            if os.path.getsize(mp3_path) > 500:
+                self.log(f"  Audio gTTS [{tts_lang}] généré")
+                return mp3_path
+        except Exception as e:
+            self.warn(f"gTTS échoué ({e}), tentative espeak...")
+
+        try:
+            os.unlink(mp3_path)
+        except Exception:
+            pass
+
+        # 2. espeak-ng (offline Linux/Mac)
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
             wav_path = f.name
-
         espeak = shutil.which("espeak-ng") or shutil.which("espeak")
         if espeak:
-            lang_map = {"fr":"fr","es":"es","de":"de","it":"it","pt":"pt",
-                        "ar":"ar","sw":"sw","yo":"yo","ha":"ha"}
-            voice = lang_map.get(lang, "en")
+            lang_map2 = {"fr": "fr", "es": "es", "de": "de", "it": "it",
+                         "pt": "pt", "ar": "ar", "sw": "sw"}
+            voice = lang_map2.get(lang, "en")
             try:
                 result = subprocess.run(
-                    [espeak, "-v", voice, "-s", "135", "-w", wav_path, full_text],
+                    [espeak, "-v", voice, "-s", "140", "-w", wav_path, clean[:2000]],
                     capture_output=True, timeout=120
                 )
                 if result.returncode == 0 and os.path.getsize(wav_path) > 1000:
                     return wav_path
             except Exception:
                 pass
+
         try:
             os.unlink(wav_path)
         except Exception:
             pass
+        self.warn("Aucun moteur TTS disponible — vidéo muette")
         return None
 
     def _safe_filename(self, title: str) -> str:
