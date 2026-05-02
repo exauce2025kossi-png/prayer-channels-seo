@@ -1,6 +1,7 @@
 """Video Director Agent — Produit de vraies vidéos animées MP4 dans tous les styles."""
-import os, sys, tempfile, subprocess, shutil, threading
+import os, sys, tempfile, subprocess, shutil
 from pathlib import Path
+import imageio
 import numpy as np
 from .base_agent import BaseAgent
 from .voice_agent import VoiceAgent, CHANNEL_VOICES
@@ -23,11 +24,6 @@ class VideoDirectorAgent(BaseAgent):
         script: {"title", "lyrics"/"sections": [{"text","duration"}], "language"}
         style: kids | disney | 3d | motivational | african | music
         """
-        try:
-            from moviepy import ImageClip, AudioFileClip, concatenate_videoclips
-        except ImportError:
-            from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
-
         # Import du moteur d'animation
         sys.path.insert(0, str(BASE_DIR))
         from styles.animator import generate_animated_frames, VideoAnimator
@@ -40,52 +36,53 @@ class VideoDirectorAgent(BaseAgent):
         fname = output_filename or self._safe_filename(title) + ".mp4"
         output_path = OUTPUT_DIR / fname
 
-        # ── Génère toutes les frames animées ──────────────────────────────────
-        self.log("🎨 Génération des frames animées...")
-        frames = []
+        # ── Étape 1 : écriture streaming des frames (sans accumuler en RAM) ───
+        self.log("🎨 Génération des frames animées (streaming)...")
+        silent_path = output_path.with_suffix(".silent.mp4")
+        writer = imageio.get_writer(
+            str(silent_path),
+            fps=FPS,
+            macro_block_size=None,
+            ffmpeg_params=["-preset", "ultrafast", "-crf", "23", "-pix_fmt", "yuv420p"],
+        )
+        written = 0
         for frame_arr, _ in generate_animated_frames(script, style, fps=FPS):
-            frames.append(frame_arr)
+            writer.append_data(frame_arr)
+            written += 1
+        writer.close()
 
-        if not frames:
+        if written == 0:
             raise RuntimeError("Aucune frame générée")
+        self.log(f"   ✅ {written} frames ({written/FPS:.1f}s)")
 
-        self.log(f"   {len(frames)} frames générées ({len(frames)/FPS:.1f}s)")
-
-        # ── Assemble en clips vidéo ───────────────────────────────────────────
-        self.log("🎞️  Assemblage vidéo...")
-        clips = []
-        # Regroupe les frames en clips de 1s pour éviter des milliers de clips
-        chunk = FPS
-        for i in range(0, len(frames), chunk):
-            chunk_frames = frames[i:i + chunk]
-            # Un clip de chunk_frames/FPS secondes
-            for frame in chunk_frames:
-                clips.append(ImageClip(frame).with_duration(1.0 / FPS))
-
-        video = concatenate_videoclips(clips, method="compose")
-
-        # ── Audio ─────────────────────────────────────────────────────────────
-        lyrics = script.get("lyrics", script.get("sections", []))
+        # ── Étape 2 : audio ───────────────────────────────────────────────────
+        lyrics    = script.get("lyrics", script.get("sections", []))
         audio_path = self._get_audio(lyrics, lang, channel_name)
-        if audio_path:
-            try:
-                audio = AudioFileClip(str(audio_path))
-                if audio.duration < video.duration:
-                    # Boucle l'audio si trop court
-                    from moviepy import concatenate_audioclips
-                    repeats = int(video.duration / audio.duration) + 1
-                    audio = concatenate_audioclips([audio] * repeats)
-                audio = audio.with_end(video.duration)
-                video = video.with_audio(audio)
-                self.success("Audio synchronisé")
-            except Exception as e:
-                self.warn(f"Audio ignoré : {e}")
 
-        # ── Encodage ──────────────────────────────────────────────────────────
-        self.log(f"💾 Encodage MP4 → {fname}  (peut prendre 1-3 min)...")
-        video.write_videofile(str(output_path), fps=FPS, codec="libx264",
-                              audio_codec="aac", logger=None,
-                              threads=4, preset="ultrafast")
+        # ── Étape 3 : fusion ffmpeg ───────────────────────────────────────────
+        self.log(f"💾 Fusion vidéo+audio → {fname}...")
+        ff = self._find_ffmpeg()
+        if ff and audio_path and Path(audio_path).exists():
+            result = subprocess.run([
+                ff, "-y",
+                "-i", str(silent_path),
+                "-i", str(audio_path),
+                "-c:v", "copy",
+                "-c:a", "aac",
+                "-b:a", "128k",
+                "-shortest",
+                str(output_path),
+            ], capture_output=True, timeout=300)
+            if result.returncode == 0:
+                try:
+                    os.unlink(str(silent_path))
+                except Exception:
+                    pass
+            else:
+                self.warn("Fusion audio échouée — vidéo muette conservée")
+                shutil.move(str(silent_path), str(output_path))
+        else:
+            shutil.move(str(silent_path), str(output_path))
 
         if audio_path:
             try:
@@ -196,6 +193,14 @@ class VideoDirectorAgent(BaseAgent):
             pass
         self.warn("Aucun moteur TTS disponible — vidéo muette")
         return None
+
+    def _find_ffmpeg(self):
+        try:
+            import imageio_ffmpeg
+            return imageio_ffmpeg.get_ffmpeg_exe()
+        except Exception:
+            pass
+        return shutil.which("ffmpeg") or shutil.which("ffmpeg.exe")
 
     def _safe_filename(self, title: str) -> str:
         safe = "".join(c if c.isalnum() or c in " -_" else "_" for c in title)

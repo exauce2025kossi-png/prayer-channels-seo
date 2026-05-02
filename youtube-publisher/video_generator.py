@@ -16,17 +16,15 @@ import json
 import math
 import os
 import random
+import shutil
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
+import imageio
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-
-try:
-    from moviepy import ImageClip, AudioFileClip, concatenate_videoclips, concatenate_audioclips
-except ImportError:
-    from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
 
 BASE_DIR     = Path(__file__).parent
 VIDEOS_DIR   = BASE_DIR / "videos"
@@ -388,7 +386,18 @@ def generate_audio(lyrics, output_path):
 
     raise RuntimeError("Aucun moteur TTS disponible")
 
-# ── Génération vidéo animée ────────────────────────────────────────────────────
+# ── FFmpeg helper ─────────────────────────────────────────────────────────────
+def _ffmpeg():
+    """Trouve l'exécutable ffmpeg (via imageio_ffmpeg ou PATH)."""
+    try:
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        pass
+    return shutil.which("ffmpeg") or shutil.which("ffmpeg.exe")
+
+
+# ── Génération vidéo animée (streaming — sans accumuler en RAM) ───────────────
 def generate_video(filename, song_data, output_path, force=False):
     if output_path.exists() and not force:
         print(f"  ⏭  Déjà générée : {filename}")
@@ -396,74 +405,96 @@ def generate_video(filename, song_data, output_path, force=False):
 
     title  = song_data["title"]
     lyrics = song_data["lyrics"]
-    c1     = tuple(int(song_data["colors"][0].lstrip("#")[i:i+2], 16) for i in (0,2,4))
-    c2     = tuple(int(song_data["colors"][1].lstrip("#")[i:i+2], 16) for i in (0,2,4))
+    c1     = tuple(int(song_data["colors"][0].lstrip("#")[i:i+2], 16) for i in (0, 2, 4))
+    c2     = tuple(int(song_data["colors"][1].lstrip("#")[i:i+2], 16) for i in (0, 2, 4))
 
     total_dur = 2.5 + sum(l["duration"] for l in lyrics)
     n_total   = int(total_dur * FPS)
     print(f"  🎬 Animation : {title} ({total_dur:.0f}s / {n_total} frames)")
 
-    # Génère toutes les frames animées
-    frames = []
-    t_cur  = 0.0
+    # ── Étape 1 : écriture des frames directement dans un MP4 muet (streaming) ──
+    silent_path = output_path.with_suffix(".silent.mp4")
+    writer = imageio.get_writer(
+        str(silent_path),
+        fps=FPS,
+        macro_block_size=None,
+        ffmpeg_params=["-preset", "ultrafast", "-crf", "23", "-pix_fmt", "yuv420p"],
+    )
+
+    t_cur = 0.0
+    written = 0
 
     # Intro 2.5s
     for i in range(int(2.5 * FPS)):
-        t = t_cur + i / FPS
-        frame = make_animated_frame(title, "🎵  " + title + "  🎵", c1, c2,
-                                     t, t / total_dur, word_idx=0)
-        frames.append(frame)
+        t     = t_cur + i / FPS
+        frame = make_animated_frame(title, "🎵  " + title + "  🎵",
+                                    c1, c2, t, t / total_dur, word_idx=0)
+        writer.append_data(frame)
+        written += 1
     t_cur += 2.5
 
     # Paroles
     for lyric in lyrics:
-        words     = lyric["text"].split()
-        n_frames  = max(int(lyric["duration"] * FPS), 1)
+        words    = lyric["text"].split()
+        n_frames = max(int(lyric["duration"] * FPS), 1)
         for i in range(n_frames):
             frac     = i / max(n_frames - 1, 1)
             t        = t_cur + i / FPS
             progress = t / total_dur
             word_idx = int(frac * len(words)) if words else 0
-            frame    = make_animated_frame(title, lyric["text"], c1, c2,
-                                            t, progress, word_idx=word_idx)
-            frames.append(frame)
+            frame    = make_animated_frame(title, lyric["text"],
+                                           c1, c2, t, progress, word_idx)
+            writer.append_data(frame)
+            written += 1
         t_cur += lyric["duration"]
 
-    print(f"     ✅ {len(frames)} frames générées — assemblage en cours...")
+    writer.close()
+    print(f"     ✅ {written} frames encodées en streaming")
 
-    # Assemble en clips (par blocs d'1s pour économiser la RAM)
-    clips = [ImageClip(f).with_duration(1.0 / FPS) for f in frames]
-    video = concatenate_videoclips(clips, method="compose")
-
-    # Audio
+    # ── Étape 2 : génération de l'audio ──────────────────────────────────────
+    audio_path = None
     with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp_a:
         audio_file = Path(tmp_a.name)
     try:
-        print(f"     🎙  Génération audio...")
-        actual_audio = generate_audio(lyrics, audio_file)
-        audio_clip   = AudioFileClip(actual_audio)
-        # Boucle si l'audio est plus court que la vidéo
-        if audio_clip.duration < video.duration:
-            repeats = int(video.duration / audio_clip.duration) + 1
-            audio_clip = concatenate_audioclips([audio_clip] * repeats)
-        audio_clip = audio_clip.with_end(video.duration)
-        video = video.with_audio(audio_clip)
+        print("     🎙  Génération audio (gTTS)...")
+        audio_path = generate_audio(lyrics, audio_file)
     except Exception as e:
         print(f"     ⚠️  Audio ignoré ({e}). Vidéo muette.")
 
-    print(f"     💾 Encodage MP4 (ultrafast)...")
-    video.write_videofile(str(output_path), fps=FPS, codec="libx264",
-                          audio_codec="aac", logger=None,
-                          threads=4, preset="ultrafast")
+    # ── Étape 3 : fusion vidéo + audio via ffmpeg ─────────────────────────────
+    ff = _ffmpeg()
+    if ff and audio_path and Path(audio_path).exists():
+        print("     💾 Fusion vidéo + audio...")
+        result = subprocess.run([
+            ff, "-y",
+            "-i", str(silent_path),
+            "-i", str(audio_path),
+            "-c:v", "copy",
+            "-c:a", "aac",
+            "-b:a", "128k",
+            "-shortest",
+            str(output_path),
+        ], capture_output=True, timeout=180)
+        if result.returncode == 0:
+            try:
+                os.unlink(str(silent_path))
+            except Exception:
+                pass
+        else:
+            print(f"     ⚠️  Fusion audio échouée, vidéo muette conservée.")
+            shutil.move(str(silent_path), str(output_path))
+    else:
+        shutil.move(str(silent_path), str(output_path))
 
+    # Nettoyage audio temporaire
     for ext in [".mp3", ".wav"]:
-        tmp_path = str(audio_file).replace(".mp3", ext)
         try:
-            os.unlink(tmp_path)
+            os.unlink(str(audio_file).replace(".mp3", ext))
         except Exception:
             pass
 
-    print(f"     🎉 {output_path.name} créée !")
+    size_kb = output_path.stat().st_size // 1024
+    print(f"     🎉 {output_path.name} créée ! ({size_kb} Ko)")
     return True
 
 
