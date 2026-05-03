@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
 """
-video_generator.py — Générateur de lyric-videos animées style "Super Simple Songs".
+video_generator.py — Générateur style Cocomelon / Super Simple Songs.
 
-Chaque vidéo produit :
-  • 5 scènes animées qui alternent (ciel, espace, arc-en-ciel, sous-marin, forêt)
-  • Personnage central qui danse avec bras/jambes animés
-  • Texte karaoké grand format avec mise en valeur mot-par-mot
-  • Mélodie de comptine générée automatiquement (numpy + wave)
-  • Audio mixé : mélodie + voix TTS (gTTS)
+Chaque chanson a :
+  • Sa propre scène thématique animée (bus, ABC, sous-marin, arc-en-ciel, jardin)
+  • Un personnage cartoon Cocomelon (grosse tête, grands yeux, corps petit)
+  • Texte karaoké mot-par-mot avec halo lumineux
+  • Mélodie de comptine générée + voix TTS mixées
 
 Usage :
-    python video_generator.py              # génère toutes les vidéos courtes
-    python video_generator.py --long       # génère les compilations longues
-    python video_generator.py --all        # tout régénérer
     python video_generator.py --song jour01_wheels_on_the_bus.mp4
+    python video_generator.py              # génère toutes les vidéos courtes
     python video_generator.py --list
 """
 
@@ -23,16 +20,14 @@ import math
 import os
 import random
 import shutil
-import struct
 import subprocess
 import sys
-import tempfile
 import wave
 from pathlib import Path
 
 import imageio
 import numpy as np
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 
 BASE_DIR     = Path(__file__).parent
 VIDEOS_DIR   = BASE_DIR / "videos"
@@ -41,16 +36,17 @@ W, H         = 1280, 720
 FPS          = 24
 SAMPLE_RATE  = 44100
 
+OL = (20, 12, 5)   # outline quasi-noir
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # POLICES
 # ══════════════════════════════════════════════════════════════════════════════
 
 FONT_PATHS = [
-    "C:/Windows/Fonts/comicbd.ttf",   # Comic Sans Bold — parfait pour kids
+    "C:/Windows/Fonts/comicbd.ttf",
     "C:/Windows/Fonts/comic.ttf",
     "C:/Windows/Fonts/arialbd.ttf",
-    "C:/Windows/Fonts/Arial Bold.ttf",
     "C:/Windows/Fonts/calibrib.ttf",
     "C:/Windows/Fonts/impact.ttf",
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
@@ -74,9 +70,9 @@ def get_font(size):
     _fonts[size] = f
     return f
 
-def text_wh(draw_or_none, text, font):
+def text_wh(draw_obj, text, font):
     try:
-        d = draw_or_none or ImageDraw.Draw(Image.new("RGB", (1, 1)))
+        d = draw_obj or ImageDraw.Draw(Image.new("RGB", (1, 1)))
         bb = d.textbbox((0, 0), text, font=font)
         return bb[2] - bb[0], bb[3] - bb[1]
     except Exception:
@@ -89,15 +85,17 @@ def text_wh(draw_or_none, text, font):
 # ══════════════════════════════════════════════════════════════════════════════
 
 def clamp(c):
+    if isinstance(c, (int, float)):
+        return max(0, min(255, int(c)))
     return tuple(max(0, min(255, int(v))) for v in c)
 
 def lerp_c(a, b, t):
-    t = max(0.0, min(1.0, t))
+    t = max(0.0, min(1.0, float(t)))
     return tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3))
 
 def gradient_arr(w, h, c1, c2, vertical=True):
     arr = np.zeros((h, w, 3), dtype=np.uint8)
-    n   = h if vertical else w
+    n = h if vertical else w
     for i in range(3):
         line = np.linspace(c1[i], c2[i], n, dtype=np.float32)
         if vertical:
@@ -106,21 +104,59 @@ def gradient_arr(w, h, c1, c2, vertical=True):
             arr[:, :, i] = line[None, :]
     return arr
 
+def rounded_rect(draw, xy, radius, fill=None, outline=None, width=2):
+    """Rounded rectangle compatible Pillow ≥ 8.2 et fallback."""
+    try:
+        draw.rounded_rectangle(xy, radius=radius, fill=fill, outline=outline, width=width)
+    except (AttributeError, TypeError):
+        x0, y0, x1, y1 = xy
+        r = radius
+        if fill:
+            draw.rectangle([x0 + r, y0, x1 - r, y1], fill=fill)
+            draw.rectangle([x0, y0 + r, x1, y1 - r], fill=fill)
+            draw.ellipse([x0, y0, x0 + 2*r, y0 + 2*r], fill=fill)
+            draw.ellipse([x1 - 2*r, y0, x1, y0 + 2*r], fill=fill)
+            draw.ellipse([x0, y1 - 2*r, x0 + 2*r, y1], fill=fill)
+            draw.ellipse([x1 - 2*r, y1 - 2*r, x1, y1], fill=fill)
+        if outline:
+            for side in [(x0+r, y0, x1-r, y0), (x0+r, y1, x1-r, y1),
+                         (x0, y0+r, x0, y1-r), (x1, y0+r, x1, y1-r)]:
+                draw.line(side, fill=outline, width=width)
+
+
+def ol_ellipse(draw, bbox, fill, outline=OL, width=3):
+    """Ellipse avec contour noir propre."""
+    x0, y0, x1, y1 = bbox
+    w = width
+    draw.ellipse([x0-w, y0-w, x1+w, y1+w], fill=outline)
+    draw.ellipse(bbox, fill=fill)
+
+def ol_rect(draw, bbox, radius, fill, outline=OL, width=3):
+    """Rounded rect avec contour noir propre."""
+    x0, y0, x1, y1 = bbox
+    w = width
+    rounded_rect(draw, [x0-w, y0-w, x1+w, y1+w], radius+w, fill=outline)
+    rounded_rect(draw, bbox, radius, fill=fill)
+
 
 # ══════════════════════════════════════════════════════════════════════════════
-# GÉNÉRATION MUSICALE
+# MUSIQUE DE FOND
 # ══════════════════════════════════════════════════════════════════════════════
 
 NOTE_HZ = {
-    "C3": 130.81, "D3": 146.83, "E3": 164.81, "G3": 196.00, "A3": 220.00,
-    "C4": 261.63, "D4": 293.66, "E4": 329.63, "F4": 349.23, "G4": 392.00,
-    "A4": 440.00, "B4": 493.88,
-    "C5": 523.25, "D5": 587.33, "E5": 659.25, "G5": 783.99,
-    "R":  0.0,
+    "C3":130.81,"D3":146.83,"E3":164.81,"F3":174.61,"G3":196.00,"A3":220.00,"B3":246.94,
+    "C4":261.63,"D4":293.66,"E4":329.63,"F4":349.23,"G4":392.00,"A4":440.00,"B4":493.88,
+    "C5":523.25,"D5":587.33,"E5":659.25,"G5":783.99,
+    "R": 0.0,
 }
 
-# Mélodie joyeuse universelle (style Twinkle/comptine)
-MELODY = [
+MELODY_MARCH = [
+    ("C4",2),("E4",2),("G4",2),("C5",2),("G4",2),("E4",2),("C4",4),
+    ("F4",2),("A4",2),("C5",2),("F5",2),("C5",2),("A4",2),("F4",4),
+    ("G4",1),("G4",1),("A4",2),("G4",2),("F4",2),("E4",2),
+    ("D4",1),("D4",1),("E4",2),("D4",2),("C4",2),("B3",2),("C4",8),
+]
+MELODY_TWINKLE = [
     ("C4",1),("C4",1),("G4",1),("G4",1),("A4",1),("A4",1),("G4",2),
     ("F4",1),("F4",1),("E4",1),("E4",1),("D4",1),("D4",1),("C4",2),
     ("G4",1),("G4",1),("F4",1),("F4",1),("E4",1),("E4",1),("D4",2),
@@ -128,101 +164,77 @@ MELODY = [
     ("C4",1),("C4",1),("G4",1),("G4",1),("A4",1),("A4",1),("G4",2),
     ("F4",1),("F4",1),("E4",1),("E4",1),("D4",1),("D4",1),("C4",2),
 ]
-
-# Accompagnement basse (donne de la profondeur)
-BASS = [
-    ("C3",2),("C3",2),("F3",2),("C3",2),
-    ("G3",2),("G3",2),("G3",2),("G3",2),
-    ("G3",2),("G3",2),("G3",2),("G3",2),
-    ("C3",2),("C3",2),("F3",2),("C3",2),
+MELODY_HAPPY = [
+    ("C4",1),("C4",1),("D4",2),("C4",2),("F4",2),("E4",4),
+    ("C4",1),("C4",1),("D4",2),("C4",2),("G4",2),("F4",4),
+    ("C4",1),("C4",1),("C5",2),("A4",2),("F4",1),("F4",1),("E4",2),("D4",4),
+    ("A4",1),("A4",1),("G4",2),("F4",2),("A4",2),("C5",4),
 ]
+BASS = [("C3",4),("F3",4),("G3",4),("C3",4),("F3",4),("C3",4),("G3",4),("C3",4)]
+MELODIES = {"bus": MELODY_MARCH, "abc": MELODY_TWINKLE, "default": MELODY_HAPPY}
 
 
-def _synth_note(freq, dur_sec, vol=0.35, sr=SAMPLE_RATE):
-    n = int(dur_sec * sr)
-    if n == 0 or freq < 1:
-        return np.zeros(n)
+def _synth_note(freq, dur_sec, vol=0.38):
+    n = int(dur_sec * SAMPLE_RATE)
+    if n < 2 or freq < 1:
+        return np.zeros(max(n, 1))
     t = np.linspace(0, dur_sec, n, False)
-    # Onde harmonique (fondamentale + 2 harmoniques)
-    wave = (0.55 * np.sin(2 * np.pi * freq * t) +
-            0.25 * np.sin(4 * np.pi * freq * t) +
-            0.12 * np.sin(6 * np.pi * freq * t))
-    # Enveloppe ADSR
-    atk = min(int(0.04 * sr), n // 4)
-    rel = min(int(0.25 * sr), n // 3)
+    wav = (0.55 * np.sin(2*np.pi*freq*t) +
+           0.25 * np.sin(4*np.pi*freq*t) +
+           0.12 * np.sin(6*np.pi*freq*t))
+    atk = min(int(0.04*SAMPLE_RATE), n//4)
+    rel = min(int(0.25*SAMPLE_RATE), n//3)
     env = np.ones(n)
-    if atk > 0:
-        env[:atk] = np.linspace(0, 1, atk)
-    if rel > 0:
-        env[-rel:] = np.linspace(1, 0, rel)
-    return wave * env * vol
+    if atk > 0: env[:atk] = np.linspace(0, 1, atk)
+    if rel > 0: env[-rel:] = np.linspace(1, 0, rel)
+    return wav * env * vol
 
 
-def generate_background_music(duration_sec, bpm=128):
-    """Génère une mélodie de comptine complète avec basse."""
-    beat = 60.0 / bpm
-    sr   = SAMPLE_RATE
-    total = int(duration_sec * sr) + sr  # +1s marge
+def generate_background_music(duration_sec, bpm=120, melody_key="default"):
+    beat  = 60.0 / bpm
+    total = int(duration_sec * SAMPLE_RATE) + SAMPLE_RATE
     audio = np.zeros(total, dtype=np.float32)
+    melody = MELODIES.get(melody_key, MELODY_HAPPY)
 
-    # Mélodie principale
-    pos = 0
-    mi  = 0
+    pos, mi = 0, 0
     while pos < total:
-        note, beats = MELODY[mi % len(MELODY)]
-        dur = beat * beats
-        samples = _synth_note(NOTE_HZ[note], dur, vol=0.40)
-        end = min(pos + len(samples), total)
-        audio[pos:end] += samples[:end - pos]
-        pos += len(samples)
-        mi  += 1
+        note, beats = melody[mi % len(melody)]
+        s = _synth_note(NOTE_HZ[note], beat * beats, vol=0.48)
+        end = min(pos + len(s), total)
+        audio[pos:end] += s[:end-pos]
+        pos += len(s); mi += 1
 
-    # Basse (commence après 0.5s)
-    pos = int(0.5 * sr)
-    bi  = 0
+    pos, bi = int(0.3 * SAMPLE_RATE), 0
     while pos < total:
         note, beats = BASS[bi % len(BASS)]
-        dur = beat * beats
-        samples = _synth_note(NOTE_HZ[note], dur, vol=0.18)
-        end = min(pos + len(samples), total)
-        audio[pos:end] += samples[:end - pos]
-        pos += len(samples)
-        bi  += 1
+        s = _synth_note(NOTE_HZ[note], beat * beats, vol=0.15)
+        end = min(pos + len(s), total)
+        audio[pos:end] += s[:end-pos]
+        pos += len(s); bi += 1
 
-    # Normalise et convertit en int16
     mx = np.max(np.abs(audio))
-    if mx > 0:
-        audio = audio / mx * 0.75
-    return (audio[:int(duration_sec * sr)] * 32767).astype(np.int16)
+    if mx > 0: audio = audio / mx * 0.75
+    return (audio[:int(duration_sec*SAMPLE_RATE)] * 32767).astype(np.int16)
 
 
 def save_wav(audio_i16, path):
     with wave.open(str(path), "w") as wf:
-        wf.setnchannels(1)
-        wf.setsampwidth(2)
+        wf.setnchannels(1); wf.setsampwidth(2)
         wf.setframerate(SAMPLE_RATE)
         wf.writeframes(audio_i16.tobytes())
 
 
 def mix_audio(music_path, speech_path, output_path):
-    """Mix musique de fond (40%) + voix TTS (100%) via ffmpeg."""
     ff = _ffmpeg()
     if not ff:
-        shutil.copy(str(speech_path), str(output_path))
-        return
-    cmd = [
-        ff, "-y",
-        "-i", str(music_path),
-        "-i", str(speech_path),
-        "-filter_complex",
-        "[0:a]volume=0.35[music];[1:a]volume=1.0[voice];[music][voice]amix=inputs=2:duration=shortest",
-        "-ac", "1",
-        "-ar", "44100",
-        str(output_path),
-    ]
-    proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    proc.wait()
-    if proc.returncode != 0 or not Path(output_path).exists():
+        shutil.copy(str(speech_path), str(output_path)); return
+    cmd = [ff, "-y", "-i", str(music_path), "-i", str(speech_path),
+           "-filter_complex",
+           "[0:a]volume=0.32[m];[1:a]volume=1.0[v];[m][v]amix=inputs=2:duration=shortest",
+           "-ac", "1", "-ar", "44100", str(output_path)]
+    p = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    p.wait()
+    if p.returncode != 0 or not Path(output_path).exists():
         shutil.copy(str(speech_path), str(output_path))
 
 
@@ -236,614 +248,726 @@ def _ffmpeg():
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# SCÈNES ANIMÉES
+# PERSONNAGE COCOMELON-STYLE
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _scene_sky(t):
-    """Ciel bleu avec soleil tournant, nuages mobiles."""
-    img  = Image.fromarray(gradient_arr(W, H, (135, 206, 250), (200, 240, 255)))
+def draw_kid(img, t, cx, cy, shirt=(220,50,50), skin=(255,218,185), hair=(55,35,12), scale=1.0):
+    """
+    Personnage cartoon style Cocomelon.
+    cx, cy = centre du torse. Hauteur totale ≈ 260*scale px.
+    Tête très grande (r=68), corps petit, grands yeux expressifs.
+    """
+    draw = ImageDraw.Draw(img)
+    ph   = t * math.pi * 2
+    bob  = int(abs(math.sin(ph)) * 13 * scale)
+    cy   = cy - bob
+
+    hr   = int(68 * scale)   # rayon de la tête
+    bw   = int(34 * scale)   # demi-largeur corps
+    bh   = int(48 * scale)   # demi-hauteur corps
+    lh   = int(52 * scale)   # longueur jambes
+    pants = (45, 85, 210)
+    shoe  = (35, 25, 15)
+
+    # ── JAMBES ───────────────────────────────────────────────────────
+    swing = math.sin(ph * 2) * int(18 * scale)
+    lw    = int(18 * scale)
+    for side in (-1, 1):
+        lx0 = cx + side * int(14 * scale)
+        ly0 = cy + bh
+        lx1 = int(lx0 + swing * side)
+        ly1 = ly0 + lh
+        draw.line([(lx0, ly0), (lx1, ly1)], fill=OL, width=lw + 4)
+        draw.line([(lx0, ly0), (lx1, ly1)], fill=pants, width=lw)
+        sw, sh2 = int(22 * scale), int(13 * scale)
+        sx0 = lx1 + side * int(4 * scale)
+        draw.ellipse([sx0-sw-2, ly1-sh2-2, sx0+sw+2, ly1+sh2+2], fill=OL)
+        draw.ellipse([sx0-sw, ly1-sh2, sx0+sw, ly1+sh2], fill=shoe)
+
+    # ── CORPS ────────────────────────────────────────────────────────
+    ol_rect(draw, [cx-bw, cy-bh, cx+bw, cy+bh], radius=int(13*scale),
+            fill=shirt, outline=OL, width=3)
+    # Rayures de chemise
+    stripe = clamp(tuple(c+45 for c in shirt))
+    for sy2 in range(cy-bh+16, cy+bh-8, int(17*scale)):
+        draw.line([(cx-bw+4, sy2), (cx+bw-4, sy2)], fill=stripe, width=3)
+    # Col
+    draw.arc([cx-bw//2, cy-bh-8, cx+bw//2, cy-bh+8], start=0, end=180, fill=OL, width=3)
+
+    # ── BRAS ─────────────────────────────────────────────────────────
+    aw   = int(15 * scale)
+    alen = int(50 * scale)
+    aswing = math.sin(ph * 2) * int(28 * scale)
+    for side in (-1, 1):
+        ax0 = cx + side * (bw - 2)
+        ay0 = cy - bh // 3
+        ax1 = int(ax0 + side * int(28 * scale))
+        ay1 = int(ay0 + alen + aswing * side)
+        draw.line([(ax0, ay0), (ax1, ay1)], fill=OL, width=aw+4)
+        draw.line([(ax0, ay0), (ax1, ay1)], fill=skin, width=aw)
+        ol_ellipse(draw, [ax1-int(11*scale), ay1-int(11*scale),
+                          ax1+int(11*scale), ay1+int(11*scale)],
+                   fill=skin, outline=OL, width=2)
+
+    # ── TÊTE ─────────────────────────────────────────────────────────
+    hx = cx
+    hy = cy - bh - hr + int(10 * scale)
+    # ombre
+    draw.ellipse([hx-hr+5, hy-hr+5, hx+hr+5, hy+hr+5], fill=(70,50,30))
+    ol_ellipse(draw, [hx-hr, hy-hr, hx+hr, hy+hr], fill=skin, outline=OL, width=3)
+
+    # ── CHEVEUX ──────────────────────────────────────────────────────
+    draw.pieslice([hx-hr, hy-hr, hx+hr, hy+hr], start=205, end=335, fill=hair)
+    draw.arc([hx-hr, hy-hr, hx+hr, hy+hr], start=205, end=335, fill=OL, width=3)
+    for off_x, off_y, tr in [(-10, -hr-6, 14), (8, -hr-15, 18), (26, -hr-7, 13)]:
+        tx, ty = hx+int(off_x*scale), hy+int(off_y*scale)
+        tr2 = int(tr*scale)
+        draw.ellipse([tx-tr2, ty-tr2, tx+tr2, ty+tr2], fill=hair)
+        draw.arc([tx-tr2, ty-tr2, tx+tr2, ty+tr2], start=190, end=350, fill=OL, width=2)
+
+    # ── YEUX ─────────────────────────────────────────────────────────
+    er = int(21 * scale)
+    blink = (int(t * 4) % 14 == 0)
+    for side in (-1, 1):
+        ex = hx + side * int(24 * scale)
+        ey = hy - int(5 * scale)
+        if blink:
+            draw.arc([ex-er, ey-er//2, ex+er, ey+er//2], start=0, end=180, fill=OL, width=4)
+        else:
+            ol_ellipse(draw, [ex-er, ey-er, ex+er, ey+er], fill=(255,255,255), outline=OL, width=2)
+            ir = int(14 * scale)
+            px = int(math.sin(t*0.6)*3*scale)
+            draw.ellipse([ex-ir+px, ey-ir, ex+ir+px, ey+ir], fill=(90,58,18))
+            pr = int(9 * scale)
+            draw.ellipse([ex-pr+px, ey-pr, ex+pr+px, ey+pr], fill=(8,4,2))
+            draw.ellipse([ex-pr+px+3, ey-pr+2, ex-pr+px+8, ey-pr+7], fill=(255,255,255))
+            # cils supérieurs
+            for a in (-50, -30, -10, 10, 30, 50):
+                rad = math.radians(-90+a)
+                x1_ = int(ex + math.cos(rad)*er)
+                y1_ = int(ey + math.sin(rad)*er)
+                if y1_ < ey:
+                    draw.line([(x1_, y1_),
+                               (int(ex+math.cos(rad)*(er+int(6*scale))),
+                                int(ey+math.sin(rad)*(er+int(6*scale))))],
+                              fill=OL, width=2)
+        # sourcil
+        by2 = ey - er - int(5*scale)
+        draw.arc([ex-er+2, by2-int(9*scale), ex+er-2, by2+int(9*scale)],
+                 start=208, end=332, fill=OL, width=int(3*scale))
+
+    # ── NEZ ──────────────────────────────────────────────────────────
+    nr = int(6*scale)
+    nc = clamp(tuple(c-28 for c in skin))
+    draw.ellipse([hx-nr, hy+int(6*scale)-nr, hx+nr, hy+int(6*scale)+nr], fill=nc)
+
+    # ── JOUES ────────────────────────────────────────────────────────
+    cr = int(17*scale)
+    for side in (-1, 1):
+        chx = hx + side*int(36*scale)
+        chy = hy + int(15*scale)
+        draw.ellipse([chx-cr, chy-cr, chx+cr, chy+cr], fill=(255,155,155))
+
+    # ── BOUCHE ───────────────────────────────────────────────────────
+    mo = int(5 + 7*abs(math.sin(t*5)))
+    mw = int(25*scale)
+    my = hy + int(23*scale)
+    draw.arc([hx-mw, my-4, hx+mw, my+mo*2+4], start=0, end=180, fill=OL, width=4)
+    draw.arc([hx-mw+3, my-1, hx+mw-3, my+mo*2+1], start=0, end=180,
+             fill=(255,255,255), width=mo+2)
+    if mo > 6:
+        draw.arc([hx-int(11*scale), my+mo, hx+int(11*scale), my+mo*2],
+                 start=0, end=180, fill=(220,90,90), width=mo)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SCÈNE 1 : BUS (Wheels on the Bus)
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _scene_bus(t):
+    img  = Image.fromarray(gradient_arr(W, H, (105,200,255), (175,235,255)))
     draw = ImageDraw.Draw(img)
 
-    # Collines vertes
-    for x in range(0, W + 40, 8):
-        hill_h = 80 + 40 * math.sin(x * 0.012)
-        for py in range(int(H - hill_h), H):
-            blend = min(1.0, (py - (H - hill_h)) / 80)
-            c = lerp_c((60, 160, 60), (40, 120, 40), blend)
-            draw.point((x, py), fill=c)
-
-    # Soleil
-    sx, sy, sr = 130, 110, 56
-    # Halo
-    for r in range(sr + 35, sr - 1, -4):
-        alpha = int(80 * (1 - (r - sr) / 35)) if r > sr else 255
-        sun_c = lerp_c((255, 255, 180), (255, 230, 50), (r - sr) / 35 if r > sr else 0)
-        draw.ellipse([sx - r, sy - r, sx + r, sy + r],
-                     fill=sun_c if r <= sr else None,
-                     outline=sun_c if r > sr else None, width=3)
-    # Rayons
+    # Soleil souriant
+    sx, sy, sr_s = 1115, 105, 72
+    for r in range(sr_s+28, sr_s, -4):
+        alpha = (r-sr_s)/28
+        draw.ellipse([sx-r,sy-r,sx+r,sy+r], fill=lerp_c((255,250,160),(255,230,40),alpha))
+    draw.ellipse([sx-sr_s, sy-sr_s, sx+sr_s, sy+sr_s], fill=(255,220,0))
     for i in range(12):
-        angle = math.radians(i * 30 + t * 18)
-        x1 = int(sx + math.cos(angle) * (sr + 5))
-        y1 = int(sy + math.sin(angle) * (sr + 5))
-        x2 = int(sx + math.cos(angle) * (sr + 24))
-        y2 = int(sy + math.sin(angle) * (sr + 24))
-        draw.line([(x1, y1), (x2, y2)], fill=(255, 210, 30), width=4)
+        ang = math.radians(i*30 + t*15)
+        draw.line([(int(sx+math.cos(ang)*(sr_s+5)), int(sy+math.sin(ang)*(sr_s+5))),
+                   (int(sx+math.cos(ang)*(sr_s+28)), int(sy+math.sin(ang)*(sr_s+28)))],
+                  fill=(255,190,0), width=5)
+    for ex2, ey2 in [(-23,-10),(23,-10)]:
+        draw.ellipse([sx+ex2-7,sy+ey2-7,sx+ex2+7,sy+ey2+7], fill=(200,140,0))
+        draw.ellipse([sx+ex2-4,sy+ey2-4,sx+ex2+4,sy+ey2+4], fill=(70,35,0))
+    draw.arc([sx-20, sy+4, sx+20, sy+26], start=0, end=180, fill=(200,120,0), width=4)
 
     # Nuages
-    for cx_off, cy_off, speed in [(200, 90, 0.3), (600, 65, 0.2), (1020, 95, 0.25)]:
-        cx = int(cx_off + math.sin(t * speed) * 22)
-        cy = cy_off
-        for dx, dy, r in [(-38, 0, 40), (0, -18, 50), (45, 0, 40), (88, 5, 34)]:
-            draw.ellipse([cx + dx - r, cy + dy - r, cx + dx + r, cy + dy + r],
-                         fill=(255, 255, 255))
+    for cx2, cy2, sp in [(180,75,0.16),(480,52,0.11),(820,68,0.14)]:
+        cx3 = int(cx2 + math.sin(t*sp+cx2*0.01)*18)
+        for dx, dy, cr2 in [(-44,0,37),(0,-20,47),(48,0,37),(96,4,31)]:
+            draw.ellipse([cx3+dx-cr2, cy2+dy-cr2, cx3+dx+cr2, cy2+dy+cr2], fill=(255,255,255))
 
-    # Fleurs dans l'herbe
-    rng = random.Random(42)
-    for _ in range(12):
-        fx = rng.randint(30, W - 30)
-        petal_colors = [(255, 80, 80), (255, 180, 50), (180, 50, 200), (50, 180, 255)]
-        pc = rng.choice(petal_colors)
-        fy = H - 60 + int(math.sin(t * 2 + fx * 0.05) * 4)
-        for a in range(0, 360, 60):
-            rad = math.radians(a)
-            px = int(fx + math.cos(rad) * 10)
-            py = int(fy + math.sin(rad) * 10)
-            draw.ellipse([px - 7, py - 7, px + 7, py + 7], fill=pc)
-        draw.ellipse([fx - 6, fy - 6, fx + 6, fy + 6], fill=(255, 255, 80))
+    # Collines
+    hill_pts = []
+    for x in range(0, W+2, 2):
+        y = int(H*0.63 + 32*math.sin(x*0.009+0.4) + 18*math.sin(x*0.016))
+        hill_pts.append((x, y))
+    hill_pts += [(W, H), (0, H)]
+    try: draw.polygon(hill_pts, fill=(48,162,48))
+    except: draw.rectangle([0, int(H*0.62), W, H], fill=(48,162,48))
+
+    # Route
+    ry = int(H*0.67)
+    draw.rectangle([0, ry, W, H], fill=(88,88,94))
+    period = 140
+    offset = int(t*290) % period
+    for x in range(-period+offset, W+period, period):
+        draw.rectangle([x, ry+35, x+82, ry+47], fill=(255,238,0))
+    draw.rectangle([0, ry, W, ry+8], fill=(235,198,0))
+
+    # === BUS SCOLAIRE JAUNE ===
+    bb = int(math.sin(t*11)*3)   # rebond
+    bx, by = 210, ry - 205 + bb
+    bw_b, bh_b = 650, 205
+
+    draw.ellipse([bx+25, by+bh_b+3, bx+bw_b-25, by+bh_b+18], fill=(40,35,30))
+
+    # Carrosserie (outline noir puis jaune)
+    ol_rect(draw, [bx, by+38, bx+bw_b, by+bh_b], radius=18,
+            fill=(255,220,0), outline=(190,145,0), width=4)
+
+    # Toit arrondi
+    for ry2 in range(38, 1, -2):
+        blend = 1 - ry2/38
+        c = lerp_c((255,215,0),(255,238,50), blend)
+        draw.line([(bx+12, by+ry2), (bx+bw_b-12, by+ry2)], fill=c, width=2)
+
+    # Bande rouge
+    draw.rectangle([bx, by+80, bx+bw_b, by+116], fill=(215,38,38))
+    draw.rectangle([bx, by+80, bx+bw_b, by+85], fill=(185,135,0))
+    draw.rectangle([bx, by+111, bx+bw_b, by+116], fill=(185,135,0))
+
+    # Fenêtres + têtes d'enfants
+    for i, wx2 in enumerate([bx+58, bx+160, bx+270, bx+378, bx+486]):
+        wy2 = by+118
+        ww2, wh2 = 82, 62
+        draw.rectangle([wx2-3,wy2-3,wx2+ww2+3,wy2+wh2+3], fill=(175,135,0))
+        draw.rectangle([wx2, wy2, wx2+ww2, wy2+wh2], fill=(148,213,242))
+        draw.line([(wx2+ww2//2, wy2), (wx2+ww2//2, wy2+wh2)], fill=(155,115,0), width=2)
+        draw.line([(wx2, wy2+wh2//2), (wx2+ww2, wy2+wh2//2)], fill=(155,115,0), width=2)
+        # Tête enfant dans la fenêtre
+        kx = wx2 + ww2//2
+        ky = wy2 + wh2//2 + int(math.sin(t*4+i)*3)
+        draw.ellipse([kx-19, ky-21, kx+19, ky+18], fill=(255,218,185))
+        draw.pieslice([kx-16, ky-23, kx+16, ky], start=200, end=340, fill=(55,35,12))
+        for ex3, ey3 in [(-7,-6),(7,-6)]:
+            draw.ellipse([kx+ex3-3, ky+ey3-3, kx+ex3+3, ky+ey3+3], fill=(15,8,2))
+
+    # Pare-brise
+    px2 = bx + bw_b - 118
+    draw.rectangle([px2-3, by+38, bx+bw_b-12, by+120], fill=(148,215,244))
+    draw.rectangle([px2-5, by+36, bx+bw_b-10, by+122], outline=(175,135,0), width=3)
+
+    # Phares
+    draw.ellipse([bx+bw_b-32, by+126, bx+bw_b-12, by+146], fill=(255,255,195))
+    draw.ellipse([bx+bw_b-32, by+149, bx+bw_b-12, by+169], fill=(218,45,45))
+
+    # Porte
+    draw.rectangle([bx+22, by+116, bx+70, by+bh_b-4], fill=(195,155,0))
+    draw.line([(bx+46, by+116),(bx+46, by+bh_b-4)], fill=(175,135,0), width=3)
+
+    # Roues animées
+    for wx3 in [bx+105, bx+bw_b-105]:
+        wr = 44
+        draw.ellipse([wx3-wr-3, ry-wr-3, wx3+wr+3, ry+wr+3], fill=(22,18,14))
+        draw.ellipse([wx3-wr, ry-wr, wx3+wr, ry+wr], fill=(44,40,36))
+        draw.ellipse([wx3-28, ry-28, wx3+28, ry+28], fill=(195,198,210))
+        draw.ellipse([wx3-15, ry-15, wx3+15, ry+15], fill=(145,148,160))
+        for r_i in range(6):
+            ang = math.radians(r_i*60 + t*360)
+            draw.line([(int(wx3+math.cos(ang)*12), int(ry+math.sin(ang)*12)),
+                       (int(wx3+math.cos(ang)*26), int(ry+math.sin(ang)*26))],
+                      fill=(120,123,135), width=3)
+        draw.ellipse([wx3-7, ry-7, wx3+7, ry+7], fill=(75,78,90))
+
+    # Arbres bordure
+    for tx2 in [65, 152, 900, 995, 1090]:
+        _tree(draw, tx2, ry, t)
 
     return img
 
 
-def _scene_space(t):
-    """Espace sombre avec planètes colorées et étoiles."""
-    arr = np.zeros((H, W, 3), dtype=np.uint8)
-    # Gradient sombre bleu-noir
-    for y in range(H):
-        v = int(y / H * 25)
-        arr[y, :] = (v // 3, v // 2, v + 5)
-    img  = Image.fromarray(arr)
+def _tree(draw, x, base_y, t):
+    sw = int(math.sin(t*0.8+x*0.02)*4)
+    draw.rectangle([x-9, base_y-90, x+9, base_y], fill=(115,65,20))
+    for r, yo in [(52,90),(62,56),(52,24)]:
+        draw.ellipse([x-r+sw, base_y-yo-r, x+r+sw, base_y-yo+r],
+                     fill=(38+r//4, 148+r//4, 38))
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SCÈNE 2 : ABC
+# ══════════════════════════════════════════════════════════════════════════════
+
+ABC_COLORS = [(220,50,50),(50,120,220),(50,190,50),(220,155,30),
+              (185,50,220),(45,205,185),(220,75,155),(100,225,50)]
+
+def _scene_abc(t, active="A"):
+    img  = Image.fromarray(gradient_arr(W, H, (248,252,255),(218,238,255)))
     draw = ImageDraw.Draw(img)
 
-    # Étoiles (statiques + scintillantes)
-    rng = random.Random(7)
-    for _ in range(180):
-        sx = rng.randint(0, W)
-        sy = rng.randint(0, H)
-        br = int(100 + 155 * abs(math.sin(t * 3 + sx * 0.1)))
-        ss = rng.randint(1, 3)
-        draw.ellipse([sx - ss, sy - ss, sx + ss, sy + ss], fill=(br, br, br))
+    # Sol tapis coloré
+    draw.rectangle([0, int(H*0.72), W, H], fill=(95,55,165))
+    for tx in range(0, W, 80):
+        for ty in range(int(H*0.72), H, 40):
+            c2 = ABC_COLORS[((tx//80)+(ty//40)) % len(ABC_COLORS)]
+            draw.rectangle([tx, ty, tx+79, ty+39],
+                           fill=clamp(tuple(v+55 for v in c2)))
 
-    # Planètes animées
-    planets = [
-        (160, 180, 65, (100, 50, 200), t * 0.3),
-        (980, 140, 48, (200, 80, 50), -t * 0.2),
-        (1150, 400, 35, (50, 180, 200), t * 0.15),
-        (250, 500, 28, (180, 150, 50), t * 0.25),
-    ]
-    for px, py, pr, pc, angle in planets:
-        # Planète avec gradient
-        for r in range(pr, 0, -2):
-            blend = 1 - r / pr
-            c = lerp_c(pc, clamp(tuple(v + 80 for v in pc)), blend)
-            draw.ellipse([px - r, py - r, px + r, py + r], fill=c)
-        # Anneau (2e planète)
-        if pr == 48:
-            ax1 = int(px + math.cos(math.radians(angle)) * (pr + 20))
-            ay1 = int(py + math.sin(math.radians(angle * 0.5)) * 10)
-            draw.ellipse([px - pr - 22, py - 10, px + pr + 22, py + 10],
-                         outline=(200, 170, 100), width=3)
-        # Étoile sur les planètes
-        for a in range(0, 360, 60):
-            rad = math.radians(a + angle * 30)
-            mx  = int(px + math.cos(rad) * (pr + 5 + 3 * math.sin(t * 4 + a)))
-            my  = int(py + math.sin(rad) * (pr + 5 + 3 * math.sin(t * 4 + a)))
-            ss  = 3
-            draw.ellipse([mx - ss, my - ss, mx + ss, my + ss], fill=(255, 255, 200))
+    # Lettres flottantes
+    font_l = get_font(68)
+    for i, ltr in enumerate("ABCDEFGHIJKLMNOP"):
+        lx = int(55 + (i % 8)*155 + math.sin(t*1.2+i*0.5)*9)
+        ly = int(72 + (i//8)*215 + math.cos(t*1.4+i*0.7)*10)
+        lc = ABC_COLORS[i % len(ABC_COLORS)]
+        is_act = (ltr == active.upper())
+        if is_act:
+            ww, wh = text_wh(draw, ltr, font_l)
+            for off in range(18, 0, -4):
+                glow = clamp(tuple(int(c*0.35) for c in lc))
+                draw.rectangle([lx-off, ly-off, lx+ww+off, ly+wh+off], fill=glow)
+            draw.text((lx+3, ly+3), ltr, font=font_l, fill=OL)
+            draw.text((lx, ly), ltr, font=font_l, fill=(255,255,60))
+        else:
+            draw.text((lx+2, ly+2), ltr, font=font_l, fill=OL)
+            draw.text((lx, ly), ltr, font=font_l, fill=lc)
 
-    # Voie lactée (trainée de points)
-    for i in range(60):
-        mx = int(W // 2 + math.cos(t * 0.1 + i * 0.3) * 300 + i * 5)
-        my = int(H // 3 + math.sin(t * 0.08 + i * 0.2) * 80)
-        br = int(40 + 30 * math.sin(t * 2 + i))
-        draw.ellipse([mx - 1, my - 1, mx + 1, my + 1], fill=(br, br, br + 20))
+    # Grande lettre active au centre-droit
+    if active:
+        al = active.upper()
+        font_b = get_font(180)
+        ac = ABC_COLORS[ord(al) % len(ABC_COLORS)]
+        fw, fh = text_wh(draw, al, font_b)
+        ax2 = W//2 + 220 - fw//2
+        ay2 = int(H*0.18)
+        pulse = 0.88 + 0.12*math.sin(t*5)
+        for off in range(16, 0, -4):
+            gc = clamp(tuple(int(c*0.3) for c in ac))
+            draw.text((ax2-off, ay2), al, font=font_b, fill=gc)
+            draw.text((ax2+off, ay2), al, font=font_b, fill=gc)
+        draw.text((ax2+5, ay2+5), al, font=font_b, fill=OL)
+        draw.text((ax2, ay2), al, font=font_b,
+                  fill=clamp(tuple(int(c*pulse) for c in ac)))
 
     return img
 
 
-def _scene_rainbow(t):
-    """Arc-en-ciel lumineux avec fond blanc/jaune et confettis."""
-    img  = Image.fromarray(gradient_arr(W, H, (255, 250, 220), (255, 230, 180)))
+# ══════════════════════════════════════════════════════════════════════════════
+# SCÈNE 3 : JARDIN JOYEUX (scène générique)
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _scene_yard(t):
+    img  = Image.fromarray(gradient_arr(W, H, (102,198,255),(185,234,255)))
     draw = ImageDraw.Draw(img)
 
-    # Arc-en-ciel (7 couleurs)
-    rainbow = [
-        (255, 0, 0), (255, 127, 0), (255, 255, 0),
-        (0, 200, 0), (0, 100, 255), (75, 0, 130), (200, 0, 255),
-    ]
-    cx_r, cy_r = W // 2, H + 50
-    for i, rc in enumerate(reversed(rainbow)):
-        r_out = 500 - i * 30
-        r_in  = r_out - 28
-        for angle in range(180, 360):
-            rad = math.radians(angle)
-            for r in range(r_in, r_out):
-                x = int(cx_r + math.cos(rad) * r)
-                y = int(cy_r + math.sin(rad) * r)
-                if 0 <= x < W and 0 <= y < H:
-                    draw.point((x, y), fill=rc)
+    # Arc-en-ciel
+    colors_rb = [(220,0,0),(255,120,0),(255,220,0),(0,200,0),(0,100,255),(145,0,215)]
+    rcx, rcy = W//2, H+100
+    for i, rc in enumerate(reversed(colors_rb)):
+        rout = 430-i*28; rin = rout-22
+        for ang in range(183, 357, 2):
+            rad = math.radians(ang)
+            for r in range(rin, rout, 2):
+                x2 = int(rcx+math.cos(rad)*r); y2 = int(rcy+math.sin(rad)*r)
+                if 0<=x2<W and 0<=y2<H: draw.point((x2,y2), fill=rc)
 
-    # Confettis tombants
-    rng = random.Random(13)
-    conf_colors = [(255,50,50),(50,255,50),(50,50,255),(255,255,50),(255,50,255),(50,255,255)]
-    for i in range(35):
-        cx = int((rng.randint(0, W) + t * rng.randint(20, 60)) % W)
-        cy = int((rng.randint(0, H) + t * rng.randint(30, 80)) % H)
-        cs = rng.randint(8, 18)
-        cc = rng.choice(conf_colors)
-        rot = t * rng.uniform(1, 3) * 50
-        pts = [(cx + math.cos(math.radians(rot + a)) * cs,
-                cy + math.sin(math.radians(rot + a)) * cs) for a in [0, 90, 180, 270]]
-        try:
-            draw.polygon(pts, fill=cc)
-        except Exception:
-            draw.ellipse([cx-cs//2, cy-cs//2, cx+cs//2, cy+cs//2], fill=cc)
+    # Nuages
+    for cx4, cy4, sp in [(210,82,0.14),(550,52,0.11),(960,68,0.17)]:
+        cx5 = int(cx4 + math.sin(t*sp+cx4)*17)
+        for dx, dy, cr3 in [(-42,0,36),(0,-20,46),(46,0,36),(90,4,30)]:
+            draw.ellipse([cx5+dx-cr3,cy4+dy-cr3,cx5+dx+cr3,cy4+dy+cr3], fill=(255,255,255))
 
-    # Étoiles scintillantes
-    for i in range(20):
-        sx = int((i * 137 + t * 15) % W)
-        sy = int((i * 97) % (H // 2))
-        ss = 5 + int(3 * abs(math.sin(t * 4 + i)))
-        sc = int(200 + 55 * abs(math.sin(t * 3 + i)))
-        _draw_star(draw, sx, sy, ss, (sc, sc, 100))
+    # Sol herbe
+    gpts = []
+    for x2 in range(0, W+2, 2):
+        y2 = int(H*0.61+24*math.sin(x2*0.01))
+        gpts.append((x2, y2))
+    gpts += [(W,H),(0,H)]
+    try: draw.polygon(gpts, fill=(52,168,52))
+    except: draw.rectangle([0,int(H*0.6),W,H], fill=(52,168,52))
+
+    # Maison
+    hx2, hy2 = 920, int(H*0.60)
+    hw2, hh2 = 198, 172
+    draw.rectangle([hx2, hy2-hh2, hx2+hw2, hy2], fill=(238,228,198))
+    roof_pts = [(hx2-18,hy2-hh2),(hx2+hw2//2,hy2-hh2-98),(hx2+hw2+18,hy2-hh2)]
+    try: draw.polygon(roof_pts, fill=(178,48,48))
+    except: pass
+    draw.rectangle([roof_pts[0], roof_pts[2]], outline=(145,32,32), width=3)
+    dx2 = hx2+hw2//2-22
+    draw.rectangle([dx2, hy2-78, dx2+44, hy2], fill=(118,68,28))
+    draw.ellipse([dx2+33,hy2-42, dx2+43,hy2-32], fill=(218,178,0))
+    for wx4, wy4 in [(hx2+18,hy2-hh2+38),(hx2+hw2-68,hy2-hh2+38)]:
+        draw.rectangle([wx4,wy4,wx4+50,wy4+50], fill=(148,212,242))
+        draw.rectangle([wx4-2,wy4-2,wx4+52,wy4+52], outline=(178,138,0), width=3)
+        draw.line([(wx4+25,wy4),(wx4+25,wy4+50)], fill=(165,128,0), width=2)
+        draw.line([(wx4,wy4+25),(wx4+50,wy4+25)], fill=(165,128,0), width=2)
+
+    # Fleurs
+    rng = random.Random(99)
+    petals = [(255,78,78),(255,178,48),(198,48,198),(48,198,255),(255,98,148)]
+    flower_xs = [95,198,340,498,692,820,1095,1195,58,1178]
+    for fxi in flower_xs:
+        fy2 = int(H*0.88 + math.sin(t*2+fxi*0.05)*3)
+        pc2 = rng.choice(petals)
+        sh = 28+rng.randint(0,12)
+        draw.line([(fxi,fy2),(fxi,fy2-sh)], fill=(38,148,38), width=3)
+        for a2 in range(0,360,60):
+            rad = math.radians(a2+t*18)
+            px3=int(fxi+math.cos(rad)*11); py3=int(fy2-sh+math.sin(rad)*11)
+            draw.ellipse([px3-8,py3-8,px3+8,py3+8], fill=pc2)
+        draw.ellipse([fxi-7,fy2-sh-7,fxi+7,fy2-sh+7], fill=(255,238,48))
+
+    # Oiseaux
+    for i2 in range(4):
+        bx4 = int((290+i2*210+t*38) % (W+200))-100
+        by4 = int(98+i2*26+math.sin(t*2+i2)*14)
+        wg  = int(math.sin(t*6+i2)*8)
+        draw.arc([bx4-20,by4-5-wg,bx4,by4+5], start=180, end=0, fill=(48,38,28), width=3)
+        draw.arc([bx4,by4-5+wg,bx4+20,by4+5], start=180, end=0, fill=(48,38,28), width=3)
 
     return img
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SCÈNE 4 : SOUS-MARIN
+# ══════════════════════════════════════════════════════════════════════════════
 
 def _scene_underwater(t):
-    """Fond marin avec poissons, bulles et algues."""
-    img  = Image.fromarray(gradient_arr(W, H, (0, 100, 180), (0, 60, 120)))
+    img  = Image.fromarray(gradient_arr(W, H, (0,102,202),(0,52,132)))
     draw = ImageDraw.Draw(img)
 
-    # Reflets de lumière à la surface
-    for i in range(8):
-        lx = int(W * i / 8 + math.sin(t * 1.5 + i) * 30)
-        for w in range(0, W // 8, 3):
-            draw.line([(lx + w, 0), (lx + w + 20, H // 4)],
-                      fill=(80, 160, 220), width=1)
+    # Reflets surface
+    for i in range(10):
+        lx2 = int(W*i/10 + math.sin(t*1.4+i)*24)
+        for w2 in range(0, 58, 8):
+            draw.line([(lx2+w2,0),(lx2+w2+28,H//5)], fill=(78,158,242), width=2)
 
-    # Sable au fond
-    draw.rectangle([0, H - 90, W, H], fill=(210, 180, 100))
-    rng = random.Random(5)
-    for _ in range(25):
-        rx = rng.randint(0, W)
-        ry = H - rng.randint(5, 40)
-        rw = rng.randint(10, 40)
-        draw.ellipse([rx, ry - 8, rx + rw, ry + 8], fill=(190, 160, 80))
+    # Sable
+    draw.rectangle([0,H-98,W,H], fill=(218,183,108))
+    rng2 = random.Random(5)
+    for _ in range(32):
+        rx2=rng2.randint(0,W); ry2=H-rng2.randint(5,48); rw2=rng2.randint(14,48)
+        draw.ellipse([rx2,ry2-9,rx2+rw2,ry2+9], fill=(198,163,88))
 
-    # Algues ondulantes
-    for ax in range(60, W, 100):
-        for seg in range(8):
-            sx = ax + int(math.sin(t * 2 + seg * 0.5) * 15)
-            sy = H - 90 - seg * 22
-            draw.ellipse([sx - 6, sy - 10, sx + 6, sy + 10],
-                         fill=(0, 150, 60))
+    # Algues
+    for ax2 in range(38, W, 75):
+        for seg in range(10):
+            sx2 = ax2+int(math.sin(t*2+seg*0.4+ax2*0.05)*16)
+            sy2 = H-98-seg*18
+            draw.ellipse([sx2-7,sy2-12,sx2+7,sy2+12],
+                         fill=(0,int(128+18*math.sin(t+ax2)),58))
+
+    # Coraux
+    coral_c2 = [(218,78,78),(218,158,58),(78,198,178),(198,78,178),(98,178,255)]
+    for cx6, cc2 in zip([98,342,692,1048,1178], coral_c2):
+        for br in range(5):
+            ba = math.radians(-90+br*40-80)
+            bx5=cx6+int(math.cos(ba)*28); by5=H-90+int(math.sin(ba)*28)
+            draw.line([(cx6,H-90),(bx5,by5)], fill=cc2, width=5)
+            draw.ellipse([bx5-8,by5-8,bx5+8,by5+8], fill=cc2)
 
     # Bulles
-    rng2 = random.Random(3)
-    for i in range(20):
-        bx = int((rng2.randint(0, W) + t * rng2.randint(5, 20)) % W)
-        by = int((H - (t * rng2.randint(30, 80) + i * 40)) % H)
-        br = rng2.randint(5, 15)
-        bright = int(120 + 80 * abs(math.sin(t * 3 + i)))
-        draw.ellipse([bx - br, by - br, bx + br, by + br],
-                     outline=(bright, bright + 30, 255), width=2)
-        draw.ellipse([bx - br // 3, by - br // 2,
-                      bx, by - br // 4], fill=(200, 220, 255))
+    rng3=random.Random(8)
+    for i in range(28):
+        bx6=int((rng3.randint(50,W-50)+t*rng3.randint(8,26))%W)
+        by6=int((H-(t*rng3.randint(30,82)*1.4+i*34))%H)
+        br2=rng3.randint(5,18)
+        br3=int(118+78*abs(math.sin(t*3+i)))
+        draw.ellipse([bx6-br2,by6-br2,bx6+br2,by6+br2], outline=(br3,br3+18,255), width=2)
+        draw.ellipse([bx6-br2//3,by6-br2//2,bx6,by6-br2//4], fill=(208,228,255))
 
-    # Poissons
-    fish_data = [
-        (int((200 + t * 60) % (W + 200)), 180, (255, 150, 50), 1),
-        (int((W - (t * 45) % (W + 200))), 260, (255, 80, 150), -1),
-        (int((400 + t * 35) % (W + 200)), 350, (80, 220, 255), 1),
+    # Poissons colorés
+    fish_list = [
+        (int((148+t*72)%(W+148)), 158, (255,138,28), 1),
+        (int((W+98-t*58)%(W+148)), 248, (255,78,148), -1),
+        (int((348+t*42)%(W+148)), 338, (78,228,255), 1),
+        (int((W-t*32)%(W+148)), 418, (118,255,78), -1),
     ]
-    for fx, fy, fc, flip in fish_data:
-        _draw_fish(draw, fx % W, fy, fc, t, flip)
+    for fx2, fy3, fc2, fl in fish_list:
+        if 0 <= fx2 < W:
+            _fish(draw, fx2, fy3, fc2, t, fl)
 
     return img
 
 
-def _scene_forest(t):
-    """Forêt colorée avec papillons et champignons."""
-    img  = Image.fromarray(gradient_arr(W, H, (30, 150, 60), (20, 100, 40)))
+def _fish(draw, x, y, color, t, flip=1):
+    bw3, bh3 = 54, 29
+    oc2 = clamp(tuple(c-48 for c in color))
+    draw.ellipse([x-bw3-2,y-bh3-2,x+bw3+2,y+bh3+2], fill=oc2)
+    draw.ellipse([x-bw3,y-bh3,x+bw3,y+bh3], fill=color)
+    try:
+        draw.polygon([(x-38*flip,y),(x-64*flip,y-21),(x-64*flip,y+21)], fill=oc2)
+    except: pass
+    nag_y = y-bh3-10+int(math.sin(t*5)*5)
+    try:
+        draw.polygon([(x,y-bh3),(x+11*flip,nag_y),(x+21*flip,y-bh3)], fill=oc2)
+    except: pass
+    for i2 in range(1,3):
+        sx3=x+(i2-2)*11*flip
+        draw.line([(sx3,y-bh3+5),(sx3,y+bh3-5)],
+                  fill=clamp(tuple(c+38 for c in color)), width=3)
+    ex4=x+28*flip
+    draw.ellipse([ex4-7,y-7,ex4+7,y+7], fill=(255,255,255))
+    draw.ellipse([ex4-4,y-4,ex4+4,y+4], fill=(18,18,58))
+    draw.ellipse([ex4-2,y-5,ex4,y-3], fill=(255,255,255))
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SCÈNE 5 : PISTE DE DANSE RAINBOW
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _scene_rainbow_dance(t):
+    img  = Image.fromarray(gradient_arr(W, H, (255,248,228),(255,232,198)))
     draw = ImageDraw.Draw(img)
 
-    # Ciel visible en haut
-    sky_h = 180
-    for y in range(sky_h):
-        blend = y / sky_h
-        c = lerp_c((100, 200, 255), (50, 180, 80), blend)
-        draw.line([(0, y), (W, y)], fill=c)
+    # Arc-en-ciel
+    rbc3 = [(218,0,0),(255,118,0),(255,218,0),(0,198,0),(0,98,255),(148,0,218)]
+    rcx2, rcy2 = W//2, H+122
+    for i, rc2 in enumerate(reversed(rbc3)):
+        rout2=478-i*30; rin2=rout2-24
+        for ang in range(184, 356, 2):
+            rad = math.radians(ang)
+            for r in range(rin2, rout2, 2):
+                x2=int(rcx2+math.cos(rad)*r); y2=int(rcy2+math.sin(rad)*r)
+                if 0<=x2<W and 0<=y2<H: draw.point((x2,y2), fill=rc2)
 
-    # Arbres
-    for tx in range(0, W + 80, 110):
-        _draw_tree(draw, tx, H - 100, t)
+    # Sol piste de danse
+    draw.rectangle([0,int(H*0.72),W,H], fill=(48,28,118))
+    for tx2 in range(0,W,82):
+        for ty2 in range(int(H*0.72),H,42):
+            if ((tx2//82+ty2//42)%2==0):
+                pulse2=int(28*abs(math.sin(t*3+tx2*0.06)))
+                draw.rectangle([tx2,ty2,tx2+81,ty2+41], fill=(68,48,148+pulse2))
 
-    # Sol
-    draw.rectangle([0, H - 100, W, H], fill=(80, 50, 20))
-    # Herbe sur le sol
-    for gx in range(0, W, 10):
-        gh = 15 + int(5 * math.sin(t * 1.5 + gx * 0.05))
-        draw.line([(gx, H - 100), (gx + 3, H - 100 - gh)],
-                  fill=(60, 180, 60), width=2)
+    # Confettis
+    rng4=random.Random(77)
+    conf_c3=[(255,48,48),(48,255,48),(48,48,255),(255,255,48),(255,48,255),(48,255,255)]
+    for i in range(55):
+        cx7=int((rng4.randint(0,W)+t*rng4.randint(24,72))%W)
+        cy7=int((rng4.randint(0,H)+t*rng4.randint(38,92))%H)
+        cs3=rng4.randint(9,22)
+        cc3=rng4.choice(conf_c3)
+        rot2=t*rng4.uniform(1,4)*58
+        pts=[(cx7+math.cos(math.radians(rot2+a))*cs3,
+              cy7+math.sin(math.radians(rot2+a))*cs3) for a in [0,90,180,270]]
+        try: draw.polygon(pts, fill=cc3)
+        except: draw.ellipse([cx7-cs3//2,cy7-cs3//2,cx7+cs3//2,cy7+cs3//2], fill=cc3)
 
-    # Champignons
-    for mx in range(80, W, 200):
-        _draw_mushroom(draw, mx + int(math.sin(t + mx) * 5), H - 100)
+    # Étoiles scintillantes
+    for i2 in range(26):
+        sx4=int((i2*151+t*22)%W); sy4=int((i2*111)%int(H*0.65))
+        ss4=7+int(4*abs(math.sin(t*5+i2)))
+        sc4=int(198+57*abs(math.sin(t*4+i2)))
+        _star(draw, sx4, sy4, ss4, (sc4, sc4, 78))
 
-    # Papillons
-    for i in range(5):
-        bx = int(200 * i + 100 + math.sin(t * 1.5 + i) * 100)
-        by = int(150 + math.cos(t * 2 + i * 0.7) * 60)
-        _draw_butterfly(draw, bx % W, by, t + i * 1.2)
-
-    # Rayons de soleil entre les arbres
-    for i in range(3):
-        rx = 200 + i * 350
-        for r in range(0, 200, 10):
-            alpha = max(0, int(30 - r * 0.15))
-            c = (min(255, 200 + r), min(255, 200 + r), alpha)
-            draw.line([(rx, sky_h // 2), (rx - r // 3, sky_h + r)],
-                      fill=c, width=3)
+    # Notes de musique
+    nfont = get_font(44)
+    for i3 in range(7):
+        nx3=int((i3*198+48+t*62)%(W+100))-50
+        ny3=int(78+i3*48+math.sin(t*2+i3)*18)
+        nc3=ABC_COLORS[i3%len(ABC_COLORS)]
+        draw.text((nx3+2,ny3+2), "♪", font=nfont, fill=OL)
+        draw.text((nx3,ny3), "♪", font=nfont, fill=nc3)
 
     return img
 
 
-# Helpers pour les scènes
-def _draw_star(draw, x, y, r, color):
+def _star(draw, x, y, r, color):
     pts = []
-    for i in range(8):
-        ang = math.radians(i * 45 - 90)
-        rad = r if i % 2 == 0 else r // 2
-        pts.append((x + math.cos(ang) * rad, y + math.sin(ang) * rad))
+    for i in range(10):
+        ang = math.radians(i*36-90)
+        rad = r if i%2==0 else r*0.44
+        pts.append((x+math.cos(ang)*rad, y+math.sin(ang)*rad))
     try:
         draw.polygon(pts, fill=color)
-    except Exception:
-        draw.ellipse([x - r // 2, y - r // 2, x + r // 2, y + r // 2], fill=color)
-
-
-def _draw_fish(draw, x, y, color, t, flip=1):
-    bw = 50 * flip
-    # Corps
-    draw.ellipse([x - 30, y - 15, x + 30, y + 15], fill=color)
-    # Queue
-    tail_pts = [(x - 30 * flip, y),
-                (x - 55 * flip, y - 18),
-                (x - 55 * flip, y + 18)]
-    try:
-        draw.polygon(tail_pts, fill=clamp(tuple(c - 40 for c in color)))
-    except Exception:
-        pass
-    # Œil
-    ex = x + 15 * flip
-    draw.ellipse([ex - 5, y - 5, ex + 5, y + 5], fill=(255, 255, 255))
-    draw.ellipse([ex - 2, y - 2, ex + 2, y + 2], fill=(20, 20, 60))
-    # Nageoire
-    nav_y = y - 20 + int(math.sin(t * 4) * 5)
-    draw.polygon([(x, y - 15), (x + 10 * flip, nav_y), (x + 20 * flip, y - 15)],
-                 fill=clamp(tuple(c - 20 for c in color)))
-
-
-def _draw_tree(draw, x, base_y, t):
-    # Tronc
-    draw.rectangle([x - 12, base_y - 100, x + 12, base_y], fill=(100, 60, 20))
-    # Feuillage (3 couches)
-    sway = int(math.sin(t * 0.8 + x * 0.02) * 5)
-    for layer, (offset_y, radius) in enumerate([(100, 80), (60, 90), (20, 75)]):
-        shade = [60, 140, 50 + layer * 15]
-        draw.ellipse([x - radius + sway, base_y - offset_y - radius,
-                      x + radius + sway, base_y - offset_y + radius],
-                     fill=tuple(shade))
-
-
-def _draw_mushroom(draw, x, base_y):
-    # Pied
-    draw.ellipse([x - 12, base_y - 30, x + 12, base_y], fill=(230, 210, 190))
-    # Chapeau rouge à pois
-    pts = [(x - 35, base_y - 28), (x, base_y - 75), (x + 35, base_y - 28)]
-    try:
-        draw.polygon(pts, fill=(220, 30, 30))
-    except Exception:
-        pass
-    # Pois blancs
-    for px_off, py_off in [(-15, -45), (5, -55), (20, -40), (-5, -35)]:
-        draw.ellipse([x + px_off - 5, base_y + py_off - 5,
-                      x + px_off + 5, base_y + py_off + 5], fill=(255, 255, 255))
-
-
-def _draw_butterfly(draw, x, y, t):
-    wing_angle = math.sin(t * 6) * 40
-    colors = [(255, 100, 200), (100, 200, 255), (255, 200, 50)]
-    c = colors[int(t) % len(colors)]
-    for sign in [-1, 1]:
-        ang = math.radians(wing_angle * sign)
-        wx  = int(x + math.cos(ang) * 22 * sign)
-        wy  = int(y + math.sin(ang) * 12)
-        draw.ellipse([wx - 20, wy - 10, wx + 20, wy + 10], fill=c)
-    draw.line([(x, y - 10), (x, y + 10)], fill=(30, 20, 10), width=3)
-
-
-SCENES = [_scene_sky, _scene_space, _scene_rainbow, _scene_underwater, _scene_forest]
-SCENE_NAMES = ["sky", "space", "rainbow", "underwater", "forest"]
+        draw.polygon(pts, outline=OL, width=2)
+    except:
+        draw.ellipse([x-r,y-r,x+r,y+r], fill=color)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# PERSONNAGE CENTRAL AMÉLIORÉ
+# SÉLECTEUR DE SCÈNE
 # ══════════════════════════════════════════════════════════════════════════════
 
-def draw_character(draw, cx, cy_base, t, color=(255, 200, 150), scale=1.0):
-    """Personnage cartoon expressif qui danse."""
-    ph = t * math.pi * 2
-    dy  = -int(abs(math.sin(ph)) * 28 * scale)
-    sqx = 1 + 0.10 * abs(math.sin(ph))
-    sqy = 1 - 0.08 * abs(math.sin(ph))
-    cy  = int(cy_base + dy)
-    out = clamp(tuple(c - 55 for c in color))
-    dk  = clamp(tuple(c - 30 for c in color))
+def _infer_scene(title_or_file):
+    s = (title_or_file or "").lower()
+    if any(k in s for k in ("bus","wheel","roue")): return "bus"
+    if any(k in s for k in ("abc","alphabet","letter","lettr")): return "abc"
+    if any(k in s for k in ("shark","fish","row","boat","marin","ocean","water")): return "underwater"
+    if any(k in s for k in ("happy","dance","rainbow","jump","star","twinkle")): return "rainbow"
+    return "yard"
 
-    bw = int(60 * scale * sqx)
-    bh = int(72 * scale * sqy)
+def get_scene_img(scene_type, t, ctx=None):
+    ctx = ctx or {}
+    if scene_type == "bus":          return _scene_bus(t)
+    if scene_type == "abc":          return _scene_abc(t, ctx.get("active_letter","A"))
+    if scene_type == "underwater":   return _scene_underwater(t)
+    if scene_type == "rainbow":      return _scene_rainbow_dance(t)
+    return _scene_yard(t)
 
-    # Corps avec dégradé visuel (deux ellipses)
-    draw.ellipse([cx - bw, cy, cx + bw, cy + bh], fill=color, outline=out, width=3)
-    draw.ellipse([cx - bw + 4, cy + 4, cx + bw - 4, cy + bh // 2],
-                 fill=clamp(tuple(c + 20 for c in color)))
-
-    # Tête
-    hr = int(50 * scale * sqx)
-    hx, hy = cx, cy - int(hr * 1.75)
-    draw.ellipse([hx - hr, hy - hr, hx + hr, hy + hr], fill=color, outline=out, width=3)
-    # Brillance sur la tête
-    draw.ellipse([hx - hr + 8, hy - hr + 8, hx - hr // 2, hy - hr // 3],
-                 fill=clamp(tuple(c + 40 for c in color)))
-
-    # Oreilles
-    er = int(18 * scale)
-    for ex, ey in [(hx - hr - er + 5, hy), (hx + hr - 5, hy)]:
-        draw.ellipse([ex - er, ey - er, ex + er, ey + er], fill=dk, outline=out, width=2)
-        draw.ellipse([ex - er + 4, ey - er + 4, ex + er - 4, ey + er - 4],
-                     fill=clamp(tuple(c - 10 for c in color)))
-
-    # Yeux animés
-    blink = (int(t * 3) % 9 == 0)
-    er2   = int(11 * scale)
-    for ex_off in [-int(20 * scale), int(20 * scale)]:
-        ex = hx + ex_off
-        ey = hy - int(4 * scale)
-        if blink:
-            draw.line([(ex - er2, ey), (ex + er2, ey)], fill=out, width=3)
-        else:
-            draw.ellipse([ex - er2, ey - er2, ex + er2, ey + er2],
-                         fill=(255, 255, 255), outline=out, width=2)
-            px = ex + int(math.sin(t * 1.5) * 3)
-            pr = int(6 * scale)
-            draw.ellipse([px - pr, ey - pr, px + pr, ey + pr], fill=(30, 30, 80))
-            draw.ellipse([px - 2, ey - pr + 1, px + 1, ey - pr + 4], fill=(255, 255, 255))
-            # Cils
-            for ca in range(-20, 25, 10):
-                crad = math.radians(-90 + ca)
-                draw.line([(int(ex + math.cos(crad) * er2), int(ey + math.sin(crad) * er2)),
-                           (int(ex + math.cos(crad) * (er2 + 5)), int(ey + math.sin(crad) * (er2 + 5)))],
-                          fill=out, width=2)
-
-    # Joues roses
-    for chx in [hx - int(30 * scale), hx + int(30 * scale)]:
-        cr2 = int(13 * scale)
-        draw.ellipse([chx - cr2, hy + int(12 * scale) - cr2,
-                      chx + cr2, hy + int(12 * scale) + cr2], fill=(255, 150, 150))
-
-    # Bouche — ouverte quand chante
-    mo = 10 + int(7 * abs(math.sin(t * 5)))
-    draw.arc([hx - int(20 * scale), hy + int(16 * scale),
-              hx + int(20 * scale), hy + int(16 * scale) + mo],
-             start=0, end=180, fill=(180, 50, 50), width=4)
-    draw.arc([hx - int(16 * scale), hy + int(18 * scale),
-              hx + int(16 * scale), hy + int(18 * scale) + mo - 2],
-             start=0, end=180, fill=(255, 255, 255), width=3)
-
-    # Bras dansants
-    arm_s = math.sin(ph * 2) * 55
-    aw    = int(9 * scale)
-    ay    = cy + int(22 * scale)
-    for side, angle_base in [(-1, 45 + arm_s), (1, 45 - arm_s)]:
-        ax_start = cx + side * bw
-        ax_end   = int(ax_start + side * math.cos(math.radians(angle_base)) * 58 * scale)
-        ay_end   = int(ay - math.sin(math.radians(angle_base)) * 42 * scale)
-        draw.line([(ax_start, ay), (ax_end, ay_end)], fill=out, width=aw)
-        # Main ronde
-        draw.ellipse([ax_end - 10, ay_end - 10, ax_end + 10, ay_end + 10],
-                     fill=color, outline=out, width=2)
-
-    # Jambes
-    ls   = math.sin(ph * 2) * 28
-    lw   = int(8 * scale)
-    ll   = int(48 * scale)
-    lx_b = cy + bh
-    for side, offset in [(-1, -int(20 * scale)), (1, int(20 * scale))]:
-        foot_x = int(cx + offset + side * ls)
-        draw.line([(cx + offset, lx_b), (foot_x, lx_b + ll)], fill=out, width=lw)
-        draw.ellipse([foot_x - int(15 * scale), lx_b + ll - 8,
-                      foot_x + int(15 * scale), lx_b + ll + 16], fill=out)
+# Position du personnage selon la scène (à gauche, en bas)
+CHAR_POS = {
+    "bus":        (145, H//2 + 28),
+    "abc":        (145, H//2 + 18),
+    "underwater": (145, H//2 + 22),
+    "rainbow":    (145, H//2 + 12),
+    "yard":       (145, H//2 + 20),
+}
+SHIRT_MAP = {
+    "bus":        (220,50,50),
+    "abc":        (48,98,220),
+    "underwater": (48,178,178),
+    "rainbow":    (198,48,198),
+    "yard":       (48,178,48),
+}
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# RENDU DU TEXTE
+# BARRE TITRE + PAROLES + PROGRESSION
 # ══════════════════════════════════════════════════════════════════════════════
 
-def draw_title_bar(img, draw, title, t):
-    """Titre en haut avec fond foncé et texte coloré et rebondissant."""
-    font    = get_font(52)
-    bar_h   = 80
-    # Fond semi-transparent
+def draw_title_bar(img, title, t):
+    draw  = ImageDraw.Draw(img)
+    bar_h = 82
+    # Fond noir semi-opaque simulé
     overlay = Image.new("RGB", (W, bar_h), (0, 0, 0))
+    # Liseré coloré en bas de la barre
     img.paste(overlay, (0, 0))
     draw = ImageDraw.Draw(img)
+    for x2 in range(W):
+        lc = int(128+127*math.sin(t*3+x2*0.012))
+        draw.point((x2, bar_h-1), fill=(lc, lc//2, 255-lc//2))
 
-    colors  = [(255, 255, 80), (255, 160, 60), (255, 80, 150), (80, 220, 255), (120, 255, 120)]
+    font   = get_font(50)
+    colors = [(255,255,72),(255,158,58),(255,78,148),(78,218,255),(118,255,118)]
     total_w = sum(text_wh(draw, ch, font)[0] for ch in title)
-    x       = max(10, (W - total_w) // 2)
-    y_base  = 14
+    x = max(8, (W - total_w) // 2)
+    y = 14
 
     for i, ch in enumerate(title):
-        y_off = int(math.sin(t * 5 + i * 0.5) * 8)
-        c     = colors[i % len(colors)]
-        pulse = 0.85 + 0.15 * math.sin(t * 3 + i * 0.3)
-        c     = clamp(tuple(int(v * pulse) for v in c))
-        draw.text((x + 2, y_base + y_off + 2), ch, font=font, fill=(0, 0, 0))
-        draw.text((x, y_base + y_off), ch, font=font, fill=c)
-        cw, _ = text_wh(draw, ch, font)
-        x    += cw
+        y_off = int(math.sin(t*5+i*0.45)*7)
+        c  = colors[i % len(colors)]
+        p  = 0.84 + 0.16*math.sin(t*3+i*0.28)
+        c  = clamp(tuple(int(v*p) for v in c))
+        draw.text((x+2, y+y_off+2), ch, font=font, fill=OL)
+        draw.text((x,   y+y_off),   ch, font=font, fill=c)
+        x += text_wh(draw, ch, font)[0]
 
 
-def draw_lyrics_panel(img, draw, text, word_idx, t, bg_color=(0, 60, 20)):
-    """Panneau de paroles karaoké en bas — mot par mot."""
+def draw_lyrics_panel(img, text, word_idx, t):
     if not text.strip():
         return
-
-    words     = text.split()
-    font_big  = get_font(58)
-    font_sml  = get_font(50)
-    panel_h   = 160
-    panel_y   = H - panel_h
-
-    # Fond avec légère transparence simulée
-    overlay = Image.new("RGB", (W, panel_h), bg_color)
-    img.paste(overlay, (0, panel_y))
-
-    # Ligne lumineuse en haut du panneau
-    for x in range(W):
-        pulse = int(80 + 50 * math.sin(t * 4 + x * 0.01))
-        draw = ImageDraw.Draw(img)
-        draw.point((x, panel_y), fill=(pulse, pulse, 50))
-
+    words   = text.split()
+    ph      = H - 160
+    panel_h = 160
+    # Fond sombre
+    overlay = Image.new("RGB", (W, panel_h), (5, 30, 10))
+    img.paste(overlay, (0, ph))
     draw = ImageDraw.Draw(img)
 
-    # Calcule largeur totale pour centrer
-    tmp = Image.new("RGB", (1, 1))
-    td  = ImageDraw.Draw(tmp)
-    line_words, line_w = [], 0
+    # Liseré supérieur animé
+    for x2 in range(W):
+        lc = int(78+50*math.sin(t*4+x2*0.01))
+        draw.point((x2, ph), fill=(lc, lc, 48))
+
+    font_big = get_font(58)
+    font_sml = get_font(50)
+
+    # Première ligne de mots qui rentrent dans W-80
+    td = ImageDraw.Draw(Image.new("RGB",(1,1)))
+    line, lw = [], 0
     for i, w in enumerate(words):
-        ww, _ = text_wh(td, w + " ", font_big)
-        if line_w + ww > W - 60 and line_words:
-            break
-        line_words.append((i, w))
-        line_w += ww
+        ww, _ = text_wh(td, w+" ", font_big)
+        if lw+ww > W-80 and line: break
+        line.append((i, w)); lw += ww
 
-    x   = (W - line_w) // 2
-    y   = panel_y + 42
+    x2 = (W-lw)//2
+    y2 = ph + 44
 
-    for wi, word in line_words:
-        is_active = (wi == word_idx % max(len(words), 1))
-        font      = font_big if is_active else font_sml
-        y_off     = -int(5 * abs(math.sin(t * 6))) if is_active else 0
+    for wi, word in line:
+        active = (wi == word_idx % max(len(words), 1))
+        font   = font_big if active else font_sml
+        y_off  = -int(5*abs(math.sin(t*6))) if active else 0
 
-        if is_active:
-            # Halo coloré sous le mot actif
+        if active:
             ww, wh = text_wh(draw, word, font)
-            glow_c = (min(255, bg_color[0] + 120), min(255, bg_color[1] + 80), 50)
-            for off in range(5, 0, -1):
-                draw.rectangle([x - off, y + y_off - off,
-                                 x + ww + off, y + y_off + wh + off],
-                                fill=clamp(tuple(int(c * (1 - off / 6)) for c in glow_c)))
-            # Soulignement animé
-            draw.rectangle([x, y + y_off + wh + 3, x + ww, y + y_off + wh + 8],
-                           fill=(255, 255, 80))
-            text_color = (255, 255, 60)
+            for off in range(6, 0, -1):
+                glow = clamp(tuple(int(c*(1-off/7)) for c in (80,220,48)))
+                draw.rectangle([x2-off, y2+y_off-off, x2+ww+off, y2+y_off+wh+off], fill=glow)
+            draw.rectangle([x2, y2+y_off+wh+3, x2+ww, y2+y_off+wh+8], fill=(255,255,72))
+            draw.text((x2+3, y2+y_off+3), word, font=font, fill=OL)
+            draw.text((x2,   y2+y_off),   word, font=font, fill=(255,255,58))
         else:
-            text_color = (230, 230, 230)
+            draw.text((x2+3, y2+y_off+3), word, font=font, fill=OL)
+            draw.text((x2,   y2+y_off),   word, font=font, fill=(228,228,228))
 
-        # Ombre du texte
-        draw.text((x + 3, y + y_off + 3), word, font=font, fill=(0, 0, 0))
-        draw.text((x, y + y_off), word, font=font, fill=text_color)
-        ww, _ = text_wh(draw, word + " ", font)
-        x    += ww
+        x2 += text_wh(draw, word+" ", font)[0]
 
 
-def draw_progress_bar(draw, progress, t):
-    bar_h  = 12
+def draw_progress_bar(img, progress, t):
+    draw   = ImageDraw.Draw(img)
+    bar_h  = 14
     y_bar  = H - bar_h
     filled = int(W * max(0, min(1, progress)))
-    draw.rectangle([0, y_bar, W, H], fill=(0, 0, 0))
+    draw.rectangle([0, y_bar, W, H], fill=(0,0,0))
     if filled > 4:
-        # Gradient de couleur sur la progression
-        for x in range(filled):
-            hue = (x / W * 180 + t * 30) % 360
-            r = int(127 + 127 * math.cos(math.radians(hue)))
-            g = int(127 + 127 * math.cos(math.radians(hue + 120)))
-            b = int(127 + 127 * math.cos(math.radians(hue + 240)))
-            draw.line([(x, y_bar), (x, H)], fill=(r, g, b))
-        # Reflet
-        draw.rectangle([0, y_bar, filled, y_bar + 4], fill=(255, 255, 200))
-        # Point lumineux au bout
-        pr = int(10 + 3 * abs(math.sin(t * 5)))
-        draw.ellipse([filled - pr, y_bar - pr, filled + pr, H + pr],
-                     fill=(255, 255, 200))
+        for x2 in range(filled):
+            hue = (x2/W*180 + t*32) % 360
+            r2 = int(127+127*math.cos(math.radians(hue)))
+            g2 = int(127+127*math.cos(math.radians(hue+120)))
+            b2 = int(127+127*math.cos(math.radians(hue+240)))
+            draw.line([(x2, y_bar), (x2, H)], fill=(r2, g2, b2))
+        draw.rectangle([0, y_bar, filled, y_bar+4], fill=(255,255,195))
+        pr = int(10+3*abs(math.sin(t*5)))
+        draw.ellipse([filled-pr, y_bar-pr, filled+pr, H+pr], fill=(255,255,195))
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# RENDU D'UNE FRAME
+# FRAME COMPLÈTE
 # ══════════════════════════════════════════════════════════════════════════════
 
-def make_frame(title, lyric, word_idx, t, progress, scene_idx):
-    """Génère une frame PIL complète."""
-    scene_fn = SCENES[scene_idx % len(SCENES)]
-    img  = scene_fn(t)
-    draw = ImageDraw.Draw(img)
+def make_frame(title, lyric_text, word_idx, t, progress, scene_type, ctx=None):
+    img = get_scene_img(scene_type, t, ctx)
 
-    # Personnage central (décalé selon la scène pour laisser la place)
-    char_cx = W // 2
-    char_cy = H // 2 - 60
+    # Personnage à gauche, taille 0.72
+    cx2, cy2 = CHAR_POS.get(scene_type, (145, H//2+20))
+    sc2      = SHIRT_MAP.get(scene_type, (220,50,50))
+    draw_kid(img, t, cx2, cy2, shirt=sc2, scale=0.72)
 
-    # Couleur du personnage selon la scène
-    char_colors = [
-        (255, 200, 150),  # sky — beige
-        (200, 160, 255),  # space — lilas
-        (255, 180, 180),  # rainbow — rose
-        (150, 230, 255),  # underwater — bleu clair
-        (200, 255, 180),  # forest — vert clair
-    ]
-    char_color = char_colors[scene_idx % len(char_colors)]
-    draw_character(draw, char_cx, char_cy, t, color=char_color, scale=0.95)
-
-    # Couleurs du panneau de paroles selon la scène
-    panel_colors = [
-        (0, 70, 20), (10, 0, 50), (80, 30, 0), (0, 50, 90), (20, 50, 0),
-    ]
-    panel_bg = panel_colors[scene_idx % len(panel_colors)]
-
-    draw_title_bar(img, draw, title, t)
-    draw_lyrics_panel(img, draw, lyric, word_idx, t, bg_color=panel_bg)
-    draw_progress_bar(ImageDraw.Draw(img), progress, t)
+    draw_title_bar(img, title, t)
+    draw_lyrics_panel(img, lyric_text, word_idx, t)
+    draw_progress_bar(img, progress, t)
 
     return np.array(img)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# AUDIO
+# TTS
 # ══════════════════════════════════════════════════════════════════════════════
 
-def strip_emoji(text):
+def _strip_emoji(text):
     import re
     return re.sub(r'[^\x00-\x7F]+', '', text).strip()
 
-
 def generate_tts(lyrics, path):
-    """Génère la voix TTS avec gTTS."""
-    full = " ... ".join(strip_emoji(l["text"]) for l in lyrics if l.get("text"))
+    full = " ... ".join(_strip_emoji(l["text"]) for l in lyrics if l.get("text"))
     try:
         from gtts import gTTS
-        tts = gTTS(text=full[:3000], lang="en", slow=False)
-        tts.save(str(path))
+        gTTS(text=full[:3000], lang="en", slow=False).save(str(path))
         return str(path)
     except Exception as e:
         print(f"     ⚠️  gTTS : {e}")
@@ -851,7 +975,7 @@ def generate_tts(lyrics, path):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# GÉNÉRATION VIDÉO PRINCIPALE
+# PIPELINE PRINCIPAL
 # ══════════════════════════════════════════════════════════════════════════════
 
 def generate_video(filename, song_data, output_path, force=False):
@@ -862,160 +986,137 @@ def generate_video(filename, song_data, output_path, force=False):
     title  = song_data["title"]
     lyrics = song_data["lyrics"]
     bpm    = song_data.get("bpm", 120)
+    scene  = song_data.get("scene") or _infer_scene(filename + " " + title)
 
-    total_dur = 3.0 + sum(l["duration"] for l in lyrics)  # 3s intro
+    total_dur = 3.0 + sum(l["duration"] for l in lyrics)
     n_frames  = int(total_dur * FPS)
-    print(f"  🎬 {title}  ({total_dur:.0f}s / {n_frames} frames / BPM {bpm})")
+    melody_k  = "bus" if scene == "bus" else ("abc" if scene == "abc" else "default")
 
-    # ── 1. Vidéo muette en streaming ─────────────────────────────────────────
-    silent_path = output_path.with_suffix(".silent.mp4")
-    writer = imageio.get_writer(
-        str(silent_path), fps=FPS, macro_block_size=None,
-        ffmpeg_params=["-preset", "ultrafast", "-crf", "20", "-pix_fmt", "yuv420p"],
-    )
+    print(f"  🎬 {title}  ({total_dur:.0f}s / {n_frames} frames) — scène: {scene}")
+
+    # ── 1. Frames en streaming ────────────────────────────────────────────
+    silent = output_path.with_suffix(".silent.mp4")
+    writer = imageio.get_writer(str(silent), fps=FPS, macro_block_size=None,
+        ffmpeg_params=["-preset", "ultrafast", "-crf", "20", "-pix_fmt", "yuv420p"])
+
     t_cur = 0.0
     written = 0
-    scene_duration = 12.0  # change de scène toutes les 12 secondes
+    scene_dur = 14.0   # change de scène toutes les 14s
 
-    # Intro 3s — titre affiché
+    # Intro 3s
     for i in range(int(3.0 * FPS)):
-        t        = t_cur + i / FPS
-        scene_i  = int(t / scene_duration)
-        frame    = make_frame(title, "♪  " + title + "  ♪", 0,
-                              t, t / total_dur, scene_i)
-        writer.append_data(frame)
+        t2 = t_cur + i / FPS
+        ctx2 = {}
+        writer.append_data(make_frame(title, "♪  " + title + "  ♪", 0,
+                                      t2, t2/total_dur, scene, ctx2))
         written += 1
     t_cur += 3.0
 
     # Paroles
     for lyric in lyrics:
-        words    = lyric["text"].split()
-        n_f      = max(int(lyric["duration"] * FPS), 1)
+        words2 = lyric["text"].split()
+        n_f    = max(int(lyric["duration"] * FPS), 1)
         for i in range(n_f):
-            frac     = i / max(n_f - 1, 1)
-            t        = t_cur + i / FPS
-            progress = t / total_dur
-            word_idx = int(frac * len(words)) if words else 0
-            scene_i  = int(t / scene_duration)
-            frame    = make_frame(title, lyric["text"], word_idx,
-                                  t, progress, scene_i)
-            writer.append_data(frame)
+            frac     = i / max(n_f-1, 1)
+            t2       = t_cur + i/FPS
+            word_idx = int(frac * len(words2)) if words2 else 0
+            ctx2     = {"active_letter": words2[word_idx][0] if words2 else "A",
+                        "count_num": word_idx+1}
+            writer.append_data(make_frame(title, lyric["text"], word_idx,
+                                          t2, t2/total_dur, scene, ctx2))
             written += 1
         t_cur += lyric["duration"]
 
     writer.close()
     print(f"     ✅ {written} frames encodées")
 
-    # ── 2. Musique de fond ────────────────────────────────────────────────────
+    # ── 2. Musique ────────────────────────────────────────────────────────
     music_path = VIDEOS_DIR / (output_path.stem + "_music.wav")
-    print(f"     🎵  Génération mélodie ({total_dur:.0f}s, BPM {bpm})...")
-    music = generate_background_music(total_dur + 2, bpm=bpm)
-    save_wav(music, music_path)
+    print(f"     🎵 Mélodie ({total_dur:.0f}s, BPM {bpm})...")
+    save_wav(generate_background_music(total_dur+2, bpm=bpm, melody_key=melody_k), music_path)
 
-    # ── 3. TTS (voix) ─────────────────────────────────────────────────────────
+    # ── 3. TTS ────────────────────────────────────────────────────────────
     tts_path = VIDEOS_DIR / (output_path.stem + "_voice.mp3")
-    print(f"     🎙  Génération voix TTS...")
-    tts_result = generate_tts(lyrics, tts_path)
+    print(f"     🎙 Voix TTS...")
+    tts_ok = generate_tts(lyrics, tts_path)
 
-    # ── 4. Mix musique + voix ─────────────────────────────────────────────────
+    # ── 4. Mix ────────────────────────────────────────────────────────────
     mixed_path = VIDEOS_DIR / (output_path.stem + "_audio.aac")
-    if tts_result and Path(tts_result).exists():
-        print(f"     🎚  Mixage voix + mélodie...")
+    if tts_ok and Path(tts_ok).exists():
+        print(f"     🎚 Mix voix + mélodie...")
         mix_audio(music_path, tts_path, mixed_path)
     else:
-        # Juste la musique
         shutil.copy(str(music_path), str(mixed_path.with_suffix(".wav")))
         mixed_path = mixed_path.with_suffix(".wav")
 
-    # ── 5. Fusion vidéo + audio ───────────────────────────────────────────────
+    # ── 5. Fusion finale ──────────────────────────────────────────────────
     ff = _ffmpeg()
-    print(f"     💾  Fusion finale...")
+    print(f"     💾 Fusion finale...")
     if ff and mixed_path.exists():
-        proc = subprocess.Popen(
-            [ff, "-y",
-             "-i", str(silent_path),
-             "-i", str(mixed_path),
+        p = subprocess.Popen(
+            [ff, "-y", "-i", str(silent), "-i", str(mixed_path),
              "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest",
              str(output_path)],
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-        )
-        proc.wait()
-        if proc.returncode == 0 and output_path.exists():
-            os.unlink(str(silent_path))
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        p.wait()
+        if p.returncode == 0 and output_path.exists():
+            try: os.unlink(str(silent))
+            except: pass
         else:
-            shutil.move(str(silent_path), str(output_path))
+            shutil.move(str(silent), str(output_path))
     else:
-        shutil.move(str(silent_path), str(output_path))
+        shutil.move(str(silent), str(output_path))
 
-    # Nettoyage fichiers temporaires
-    for p in [music_path, tts_path, mixed_path]:
-        try:
-            os.unlink(str(p))
-        except Exception:
-            pass
+    for p2 in [music_path, tts_path, mixed_path]:
+        try: os.unlink(str(p2))
+        except: pass
 
     size_kb = output_path.stat().st_size // 1024
-    print(f"     🎉  {output_path.name}  ({size_kb:,} Ko)")
+    print(f"     🎉 {output_path.name}  ({size_kb:,} Ko)")
     return True
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# COMPILATION LONGUE
+# COMPILATIONS
 # ══════════════════════════════════════════════════════════════════════════════
 
 def generate_compilation_video(filename, comp_data, all_songs, output_path, force=False):
-    try:
-        from moviepy import VideoFileClip
-    except ImportError:
-        from moviepy.editor import VideoFileClip
-
     if output_path.exists() and not force:
         print(f"  ⏭  Déjà générée : {filename}")
         return True
-
-    title = comp_data["title"]
-    clips = []
-    for song_entry in comp_data["songs"]:
-        fname   = song_entry["file"]
-        repeats = song_entry.get("repeats", 1)
-        sp      = VIDEOS_DIR / fname
-        if not sp.exists():
-            if fname in all_songs:
-                print(f"     → Génération de {fname}...")
-                try:
-                    generate_video(fname, all_songs[fname], sp)
-                except Exception as e:
-                    print(f"     ⚠️  {fname} : {e}")
-                    continue
-            else:
-                print(f"     ⚠️  Ignoré : {fname}")
-                continue
-        for _ in range(repeats):
-            try:
-                clips.append(VideoFileClip(str(sp)))
-            except Exception as e:
-                print(f"     ⚠️  {fname} : {e}")
-
-    if not clips:
-        print("  ❌ Aucun clip disponible.")
-        return False
-
-    total_sec = sum(c.duration for c in clips)
-    print(f"     ⏱  {total_sec / 60:.1f} min — encodage...")
     try:
-        from moviepy import concatenate_videoclips
+        from moviepy import concatenate_videoclips, VideoFileClip
+    except ImportError:
+        from moviepy.editor import concatenate_videoclips, VideoFileClip
+
+    clips = []
+    for entry in comp_data["songs"]:
+        fname2 = entry["file"]
+        sp     = VIDEOS_DIR / fname2
+        if not sp.exists():
+            if fname2 in all_songs:
+                try: generate_video(fname2, all_songs[fname2], sp)
+                except Exception as e: print(f"     ⚠️  {fname2}: {e}"); continue
+            else: print(f"     ⚠️  Ignoré : {fname2}"); continue
+        for _ in range(entry.get("repeats", 1)):
+            try: clips.append(VideoFileClip(str(sp)))
+            except Exception as e: print(f"     ⚠️  {fname2}: {e}")
+
+    if not clips: print("  ❌ Aucun clip."); return False
+    total_sec = sum(c.duration for c in clips)
+    print(f"     ⏱ {total_sec/60:.1f} min — encodage...")
+    try:
         video = concatenate_videoclips(clips)
         video.write_videofile(str(output_path), fps=FPS, codec="libx264",
                               audio_codec="aac", logger=None, threads=4, preset="ultrafast")
-        print(f"     ✅ {output_path.name} — {total_sec / 60:.1f} min !")
+        print(f"     ✅ {output_path.name}")
         return True
     except Exception as e:
-        print(f"  ❌ {e}")
-        return False
+        print(f"  ❌ {e}"); return False
     finally:
         for c in clips:
             try: c.close()
-            except Exception: pass
+            except: pass
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1023,11 +1124,11 @@ def generate_compilation_video(filename, comp_data, all_songs, output_path, forc
 # ══════════════════════════════════════════════════════════════════════════════
 
 def main():
-    parser = argparse.ArgumentParser(description="Kids Songs — Générateur professionnel")
-    parser.add_argument("--song", help="Nom du fichier MP4 à générer")
-    parser.add_argument("--long", action="store_true")
-    parser.add_argument("--all",  action="store_true")
-    parser.add_argument("--list", action="store_true")
+    parser = argparse.ArgumentParser(description="Kids Songs — Générateur Pro")
+    parser.add_argument("--song",  help="Nom du fichier MP4 à générer")
+    parser.add_argument("--long",  action="store_true")
+    parser.add_argument("--all",   action="store_true")
+    parser.add_argument("--list",  action="store_true")
     args = parser.parse_args()
 
     with open(CONTENT_FILE, encoding="utf-8") as f:
@@ -1038,50 +1139,46 @@ def main():
     VIDEOS_DIR.mkdir(exist_ok=True)
 
     if args.list:
-        print(f"\n{'TYPE':<12} {'FICHIER':<50} {'TITRE'}")
-        print("-" * 100)
-        for fname, data in songs.items():
-            e = "✅" if (VIDEOS_DIR / fname).exists() else "⬜"
-            print(f"{e} {'Court':<10} {fname:<48} {data['title'][:40]}")
-        for fname, data in compilations.items():
-            e = "✅" if (VIDEOS_DIR / fname).exists() else "⬜"
-            print(f"{e} {'Long':<10} {fname:<48} {data['title'][:40]}")
+        print(f"\n{'TYPE':<10} {'FICHIER':<50} TITRE")
+        print("-"*100)
+        for fname2, data in songs.items():
+            sc2 = data.get("scene") or _infer_scene(fname2+" "+data["title"])
+            e = "✅" if (VIDEOS_DIR/fname2).exists() else "⬜"
+            print(f"{e} {'Court':<8} {fname2:<48} {data['title'][:40]}  [{sc2}]")
+        for fname2, data in compilations.items():
+            e = "✅" if (VIDEOS_DIR/fname2).exists() else "⬜"
+            print(f"{e} {'Long':<8} {fname2:<48} {data['title'][:40]}")
         return
 
     if args.song:
         if args.song in songs:
-            generate_video(args.song, songs[args.song], VIDEOS_DIR / args.song, force=True)
+            generate_video(args.song, songs[args.song], VIDEOS_DIR/args.song, force=True)
         elif args.song in compilations:
             generate_compilation_video(args.song, compilations[args.song],
-                                       songs, VIDEOS_DIR / args.song, force=True)
+                                       songs, VIDEOS_DIR/args.song, force=True)
         else:
-            print(f"❌ '{args.song}' introuvable dans songs_content.json")
-            sys.exit(1)
+            print(f"❌ '{args.song}' introuvable dans songs_content.json"); sys.exit(1)
         return
 
     done = 0
     if not args.long:
         total = len(songs)
-        for i, (fname, data) in enumerate(songs.items(), 1):
-            print(f"\n[{i}/{total}] {fname}")
+        for i, (fname2, data) in enumerate(songs.items(), 1):
+            print(f"\n[{i}/{total}] {fname2}")
             try:
-                if generate_video(fname, data, VIDEOS_DIR / fname, force=args.all):
-                    done += 1
-            except Exception as e:
-                print(f"  ❌ {e}")
+                if generate_video(fname2, data, VIDEOS_DIR/fname2, force=args.all): done += 1
+            except Exception as e: print(f"  ❌ {e}")
         print(f"\n✅ {done}/{total} vidéos prêtes dans {VIDEOS_DIR}/")
         done = 0
 
     if args.long or args.all:
         total = len(compilations)
-        for i, (fname, data) in enumerate(compilations.items(), 1):
-            print(f"\n[{i}/{total}] {fname}")
+        for i, (fname2, data) in enumerate(compilations.items(), 1):
+            print(f"\n[{i}/{total}] {fname2}")
             try:
-                if generate_compilation_video(fname, data, songs,
-                                               VIDEOS_DIR / fname, force=args.all):
-                    done += 1
-            except Exception as e:
-                print(f"  ❌ {e}")
+                if generate_compilation_video(fname2, data, songs,
+                                               VIDEOS_DIR/fname2, force=args.all): done += 1
+            except Exception as e: print(f"  ❌ {e}")
         print(f"\n✅ {done}/{total} compilations prêtes.")
 
 
