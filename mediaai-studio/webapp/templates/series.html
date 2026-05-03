@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block title %}Série de vidéos{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h4>🎨 Série de vidéos</html>
+  <p>Générez plusieurs vidéos automatiquement — topics × langues en une seule opération</p>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-collection-play-fill me-2"></i>Configurer la série</div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label class="form-label">Sujets <span style="color:#4b5563">(séparés par virgule)</span></label>
+          <input type="text" class="form-control" id="topics"
+                 placeholder="prayer, faith, healing, deliverance, courage"
+                 oninput="updateCalc()">
+          <div style="font-size:0.75rem;color:#4b5563;margin-top:4px">
+            Exemples : cats, dogs, birds — ou — prayer, faith, love
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Style</label>
+          <select class="form-select" id="series-style">
+            <option value="kids">🎵 Kids — Chansons éducatives</option>
+            <option value="motivational">💪 Motivational — Prières & foi</option>
+            <option value="african">🌍 African — Films & clips</option>
+            <option value="disney">✨ Disney — Animation magique</option>
+            <option value="3d">🎮 3D — Animation cinéma</option>
+            <option value="music">🎤 Music — Clips musicaux</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Langues <span style="color:#4b5563">(séparées par virgule)</span></label>
+          <input type="text" class="form-control" id="series-langs" value="en, fr"
+                 oninput="updateCalc()">
+          <div style="font-size:0.75rem;color:#4b5563;margin-top:4px">
+            Codes : en, fr, es, yo, sw, ha, ar, zh, pt...
+          </div>
+        </div>
+
+        <!-- Calculator -->
+        <div class="p-3 rounded mb-4" style="background:#0a0a1a;border:1px solid #1f2937">
+          <div id="calc-display" style="font-size:0.85rem;color:#6b7280;text-align:center">
+            Entrez vos sujets et langues pour calculer
+          </div>
+        </div>
+
+        <button class="btn btn-primary w-100 py-2" id="series-btn" onclick="startSeries()">
+          <i class="bi bi-play-fill me-2"></i>Lancer la série
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <!-- Progress -->
+    <div class="card mb-3" id="series-card" style="display:none">
+      <div class="card-header"><i class="bi bi-gear-fill me-2"></i>Progression</div>
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span style="font-size:0.8rem;color:#6b7280" id="progress-label">0%</span>
+          <span style="font-size:0.8rem;color:#6b7280" id="done-label"></span>
+        </div>
+        <div class="progress mb-3" style="height:8px">
+          <div class="progress-bar progress-bar-striped progress-bar-animated"
+               id="series-pbar" style="width:2%;background:#7c3aed;transition:width 0.5s"></div>
+        </div>
+        <div class="log-box" id="series-log"></div>
+      </div>
+    </div>
+
+    <!-- Presets -->
+    <div class="card">
+      <div class="card-header"><i class="bi bi-bookmark-star-fill text-warning me-2"></i>Séries prêtes à l'emploi</div>
+      <div class="card-body d-grid gap-2">
+        <button class="btn btn-outline-secondary text-start" onclick="loadPreset('prayer','motivational','en,fr,yo')">
+          <strong>🙏 Prières multilingues</strong>
+          <div style="font-size:0.75rem;color:#4b5563">prayer, faith, healing, deliverance — Motivational — EN/FR/YO</div>
+        </button>
+        <button class="btn btn-outline-secondary text-start" onclick="loadPreset('dinosaur,cats,dogs,birds','kids','en,fr')">
+          <strong>🎵 Kids Songs Collection</strong>
+          <div style="font-size:0.75rem;color:#4b5563">dinosaur, cats, dogs, birds — Kids — EN/FR</div>
+        </button>
+        <button class="btn btn-outline-secondary text-start" onclick="loadPreset('courage,success,faith,hope','motivational','fr,yo,sw')">
+          <strong>💪 Motivation Africaine</strong>
+          <div style="font-size:0.75rem;color:#4b5563">courage, success, faith, hope — Motivational — FR/YO/SW</div>
+        </button>
+        <button class="btn btn-outline-secondary text-start" onclick="loadPreset('love,dream,magic,adventure','disney','en,fr,es')">
+          <strong>✨ Disney Collection</strong>
+          <div style="font-size:0.75rem;color:#4b5563">love, dream, magic, adventure — Disney — EN/FR/ES</div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+function updateCalc() {
+  const topics = document.getElementById('topics').value.split(',').filter(t => t.trim()).length;
+  const langs  = document.getElementById('series-langs').value.split(',').filter(l => l.trim()).length;
+  const div    = document.getElementById('calc-display');
+  if (topics > 0 && langs > 0) {
+    const total = topics * langs;
+    div.innerHTML = `
+      <span style="color:#a78bfa;font-size:1.1rem;font-weight:700">${topics}</span>
+      <span style="color:#6b7280"> sujets × </span>
+      <span style="color:#67e8f9;font-size:1.1rem;font-weight:700">${langs}</span>
+      <span style="color:#6b7280"> langues = </span>
+      <span style="color:#4ade80;font-size:1.3rem;font-weight:800">${total}</span>
+      <span style="color:#6b7280"> vidéos</span>`;
+  } else {
+    div.innerHTML = '<span style="color:#4b5563">Entrez vos sujets et langues pour calculer</span>';
+  }
+}
+
+function loadPreset(topics, style, langs) {
+  document.getElementById('topics').value = topics;
+  document.getElementById('series-style').value = style;
+  document.getElementById('series-langs').value = langs;
+  updateCalc();
+}
+
+async function startSeries() {
+  const topics = document.getElementById('topics').value.trim();
+  if (!topics) { alert('Entrez au moins un sujet.'); return; }
+
+  const btn = document.getElementById('series-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Génération...';
+
+  const card = document.getElementById('series-card');
+  card.style.display = '';
+  const log   = document.getElementById('series-log');
+  const pbar  = document.getElementById('series-pbar');
+  const plbl  = document.getElementById('progress-label');
+  const dlbl  = document.getElementById('done-label');
+  log.innerHTML = '';
+
+  const r = await fetch('/api/create-series', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      topics,
+      style:     document.getElementById('series-style').value,
+      languages: document.getElementById('series-langs').value,
+    })
+  });
+  const { task_id, total } = await r.json();
+
+  const poll = setInterval(async () => {
+    const t = await (await fetch(`/api/task/${task_id}`)).json();
+    const pct = t.progress || 2;
+    pbar.style.width = pct + '%';
+    plbl.textContent = pct + '%';
+    if (t.log && t.log.length) {
+      log.innerHTML = t.log.map(l => `<div>${l}</div>`).join('');
+      log.scrollTop = log.scrollHeight;
+    }
+    if (t.status === 'done') {
+      clearInterval(poll);
+      pbar.style.width = '100%';
+      pbar.className = 'progress-bar bg-success';
+      plbl.textContent = '100%';
+      dlbl.textContent = `✅ ${t.result.success}/${t.result.total} vidéos`;
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-play-fill me-2"></i>Lancer une nouvelle série';
+    } else if (t.status === 'error') {
+      clearInterval(poll);
+      pbar.style.width = '100%';
+      pbar.className = 'progress-bar bg-danger';
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-arrow-clockwise me-2"></i>Réessayer';
+    }
+  }, 3000);
+}
+</script>
+{% endblock %}

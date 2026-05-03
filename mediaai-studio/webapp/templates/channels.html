@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Chaînes YouTube{% endblock %}
+{% block content %}
+
+<div class="page-header d-flex justify-content-between align-items-start">
+  <div>
+    <h4>📺 Chaînes YouTube</h4>
+    <p>{{ channels|length }} chaînes connectées — {{ channels|sum(attribute='subscribers') | int | default(0) }} abonnés au total</p>
+  </div>
+  <a href="/create" class="btn btn-primary">
+    <i class="bi bi-camera-video-fill me-2"></i>Créer une vidéo
+  </a>
+</div>
+
+{% set niche_emoji = {'kids':'🎵','3d':'🎮','motivational':'💪','african':'🌍','disney':'✨','music':'🎤','news':'📰','comedy':'😂'} %}
+{% set niche_colors = {'kids':'#7c3aed','3d':'#0891b2','motivational':'#d97706','african':'#059669','disney':'#db2777','music':'#dc2626','news':'#475569','comedy':'#ea580c'} %}
+
+<div class="row g-3">
+{% for ch in channels %}
+<div class="col-md-6">
+  <div class="card h-100">
+    <div class="card-body">
+      <div class="d-flex gap-3 mb-3">
+        <div style="font-size:2.2rem;line-height:1">{{ niche_emoji.get(ch.niche,'🎬') }}</div>
+        <div class="flex-grow-1 min-w-0">
+          <div class="fw-700" style="font-size:0.95rem">{{ ch.name }}</div>
+          <div style="font-size:0.72rem;color:#4b5563;font-family:monospace">{{ ch.id }}</div>
+          <div class="d-flex flex-wrap gap-1 mt-1">
+            <span class="badge" style="background:rgba(124,58,237,0.15);color:#a78bfa;font-size:0.7rem">
+              {{ ch.niche }}
+            </span>
+            <span class="badge" style="background:#1f2937;color:#6b7280;font-size:0.68rem">
+              🌍 {{ ch.language }}
+            </span>
+            <span class="badge" style="background:#1f2937;color:#6b7280;font-size:0.68rem">
+              🕐 {{ ch.publish_hour }}h00
+            </span>
+          </div>
+        </div>
+        <div>
+          <span class="badge" style="background:#052e16;color:#4ade80;font-size:0.75rem">
+            🟢 Actif
+          </span>
+        </div>
+      </div>
+
+      <div class="row text-center mb-3 g-0" style="border:1px solid #1f2937;border-radius:8px;overflow:hidden">
+        <div class="col-4 py-2" style="border-right:1px solid #1f2937">
+          <div class="fw-700">{{ "{:,}".format(ch.get('subscribers',0)) }}</div>
+          <div style="font-size:0.7rem;color:#4b5563">Abonnés</div>
+        </div>
+        <div class="col-4 py-2" style="border-right:1px solid #1f2937">
+          <div class="fw-700">{{ "{:,}".format(ch.get('views',0)) }}</div>
+          <div style="font-size:0.7rem;color:#4b5563">Vues</div>
+        </div>
+        <div class="col-4 py-2">
+          <div class="fw-700">{{ ch.get('videos',0) }}</div>
+          <div style="font-size:0.7rem;color:#4b5563">Vidéos</div>
+        </div>
+      </div>
+
+      <a href="/create" class="btn btn-outline-primary btn-sm w-100" style="font-size:0.82rem">
+        <i class="bi bi-plus me-1"></i>Créer une vidéo pour cette chaîne
+      </a>
+    </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+
+<!-- Keywords per channel -->
+<div class="card mt-4">
+  <div class="card-header"><i class="bi bi-tags-fill me-2 text-warning"></i>Mots-clés configurés par chaîne</div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th class="ps-4">Chaîne</th>
+          <th>Mots-clés principaux</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for ch in channels %}
+      <tr>
+        <td class="ps-4" style="font-size:0.875rem;font-weight:600">{{ ch.name }}</td>
+        <td>
+          {% for kw in ch.get('keywords', [])[:6] %}
+          <span class="badge me-1" style="background:#1f2937;color:#94a3b8;font-size:0.72rem">{{ kw }}</span>
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

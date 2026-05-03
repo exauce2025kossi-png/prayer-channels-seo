@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Créer une vidéo{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h4>🎬 Créer une vidéo</h4>
+  <p>Générez une vidéo MP4 optimisée SEO — script + audio + encodage automatiques</p>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-body">
+        <form id="create-form" autocomplete="off">
+
+          <div class="mb-4">
+            <label class="form-label">Sujet de la vidéo *</label>
+            <input type="text" class="form-control" id="topic" placeholder="ex: dinosaurs, prayer, love, money, courage..." required>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Style vidéo</label>
+            <div class="row g-2" id="style-grid">
+              {% set styles = [
+                ('kids','🎵','Kids'),('disney','✨','Disney'),('african','🌍','African'),
+                ('3d','🎮','3D'),('music','🎤','Music'),('motivational','💪','Motivation'),
+                ('news','📰','News'),('comedy','😂','Comedy')
+              ] %}
+              {% for val, emoji, label in styles %}
+              <div class="col-3">
+                <div class="style-card {% if val=='kids' %}selected{% endif %}" data-style="{{ val }}">
+                  <div class="emoji">{{ emoji }}</div>
+                  <div class="lbl">{{ label }}</div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <input type="hidden" id="style-val" value="kids">
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label">Langue</label>
+              <select class="form-select" id="language">
+                <option value="en">🇺🇸 English</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="pt">🇧🇷 Português</option>
+                <option value="ar">🇸🇦 العربية</option>
+                <option value="yo">🇳🇬 Yorùbá</option>
+                <option value="sw">🇰🇪 Swahili</option>
+                <option value="ha">🇳🇬 Hausa</option>
+                <option value="zh">🇨🇳 中文</option>
+                <option value="ja">🇯🇵 日本語</option>
+                <option value="hi">🇮🇳 हिंदी</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Durée</label>
+              <select class="form-select" id="duration">
+                <option value="1">1 minute</option>
+                <option value="2">2 minutes</option>
+                <option value="3">3 minutes</option>
+                <option value="5">5 minutes</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 py-2" id="submit-btn">
+            <i class="bi bi-play-fill me-2"></i>Générer la vidéo
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <!-- Progress card (hidden until submit) -->
+    <div class="card mb-3" id="progress-card" style="display:none">
+      <div class="card-header"><i class="bi bi-gear-fill me-2"></i>Progression</div>
+      <div class="card-body">
+        <div class="progress mb-3" style="height:6px">
+          <div class="progress-bar progress-bar-striped progress-bar-animated"
+               id="pbar" style="width:5%;background:#7c3aed;transition:width 0.5s"></div>
+        </div>
+        <div class="log-box" id="log-box"></div>
+        <div id="result-box" class="mt-3" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- Tips -->
+    <div class="card">
+      <div class="card-header"><i class="bi bi-lightbulb-fill text-warning me-2"></i>Conseils par style</div>
+      <div class="card-body">
+        <div style="font-size:0.82rem;color:#6b7280;line-height:1.9">
+          <div>🎵 <strong style="color:#a78bfa">Kids</strong> — Comptines, ABC, chiffres, animaux</div>
+          <div>✨ <strong style="color:#a78bfa">Disney</strong> — Contes, magie, princesses</div>
+          <div>🌍 <strong style="color:#a78bfa">African</strong> — Films et clips culturels</div>
+          <div>🎮 <strong style="color:#a78bfa">3D</strong> — Animation cinématographique</div>
+          <div>💪 <strong style="color:#a78bfa">Motivation</strong> — Prières, foi, succès</div>
+          <div>📰 <strong style="color:#a78bfa">News</strong> — Explications, actualités</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+// Style card selection
+document.querySelectorAll('.style-card').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.style-card').forEach(x => x.classList.remove('selected'));
+    c.classList.add('selected');
+    document.getElementById('style-val').value = c.dataset.style;
+  });
+});
+
+document.getElementById('create-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Génération en cours...';
+
+  const card = document.getElementById('progress-card');
+  card.style.display = '';
+  const log  = document.getElementById('log-box');
+  const pbar = document.getElementById('pbar');
+  const res  = document.getElementById('result-box');
+
+  log.innerHTML = '';
+  res.style.display = 'none';
+  pbar.style.width = '5%';
+  pbar.className = 'progress-bar progress-bar-striped progress-bar-animated';
+
+  const r = await fetch('/api/create-video', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      topic:    document.getElementById('topic').value,
+      style:    document.getElementById('style-val').value,
+      language: document.getElementById('language').value,
+      duration: document.getElementById('duration').value,
+    })
+  });
+  const { task_id } = await r.json();
+
+  const poll = setInterval(async () => {
+    const t = await (await fetch(`/api/task/${task_id}`)).json();
+    if (t.log && t.log.length) {
+      log.innerHTML = t.log.map(l => `<div>${l}</div>`).join('');
+      log.scrollTop = log.scrollHeight;
+    }
+    pbar.style.width = (t.progress || 5) + '%';
+
+    if (t.status === 'done') {
+      clearInterval(poll);
+      pbar.style.width = '100%';
+      pbar.className = 'progress-bar bg-success';
+      res.style.display = '';
+      res.innerHTML = `
+        <div class="p-3 rounded" style="background:rgba(16,185,129,0.1);border:1px solid #065f46">
+          <div class="fw-600 mb-1" style="color:#34d399">✅ Vidéo créée avec succès !</div>
+          <div style="font-size:0.8rem;color:#6b7280">${t.result.title}</div>
+          <div style="font-size:0.8rem;color:#6b7280">SEO Score : <strong style="color:#a78bfa">${t.result.seo_score}/100</strong></div>
+          <div style="font-size:0.78rem;color:#4b5563;margin-top:0.3rem">Tags : ${t.result.tags.join(', ')}</div>
+        </div>`;
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-plus me-2"></i>Créer une autre vidéo';
+    } else if (t.status === 'error') {
+      clearInterval(poll);
+      pbar.style.width = '100%';
+      pbar.className = 'progress-bar bg-danger';
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-arrow-clockwise me-2"></i>Réessayer';
+    }
+  }, 2000);
+});
+</script>
+{% endblock %}

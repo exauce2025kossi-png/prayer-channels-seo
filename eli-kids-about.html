@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ℹ️ Eli Kids – À propos | 20M Subscribers | Chaîne YouTube Officielle</title>
+  <meta name="description" content="Tout sur la chaîne Eli Kids – Cartoons & Songs : 20 millions d'abonnés, 8.99 milliards de vues, 10 playlists officielles, application iOS, description complète." />
+  <meta name="keywords" content="Eli Kids about, chaîne YouTube enfants, playlists Eli Kids, 20 millions abonnés, nursery rhymes educational" />
+  <meta name="robots" content="index, follow" />
+  <style>
+    :root { --red:#ff4444; --bg:#f9f9f9; --card:#fff; --border:#e0e0e0; --text:#222; --muted:#777; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--text); }
+    .navbar { background:#0f0f0f; height:56px; display:flex; align-items:center; padding:0 24px; gap:16px; position:sticky; top:0; z-index:200; }
+    .nav-logo { color:#fff; font-size:1.1rem; font-weight:900; text-decoration:none; }
+    .nav-logo span { color:var(--red); }
+    .nav-links { display:flex; gap:4px; margin-left:auto; }
+    .nav-links a { color:#ccc; text-decoration:none; font-size:.83rem; padding:5px 12px; border-radius:20px; transition:background .2s; }
+    .nav-links a:hover, .nav-links a.active { background:rgba(255,255,255,.12); color:#fff; }
+    .nav-sub { background:var(--red); color:#fff; font-weight:700; font-size:.83rem; padding:7px 16px; border-radius:20px; text-decoration:none; }
+
+    .hero { background:linear-gradient(135deg,#0f0f0f,#1a1a2e); padding:48px 32px; display:flex; align-items:center; justify-content:center; gap:28px; flex-wrap:wrap; }
+    .hero-avatar { width:110px; height:110px; border-radius:50%; border:4px solid var(--red); object-fit:cover; }
+    .hero-info { color:#fff; }
+    .hero-info h1 { font-size:1.8rem; font-weight:900; }
+    .hero-info p { color:#aaa; margin-top:6px; font-size:.9rem; }
+    .hero-stats { display:flex; gap:24px; margin-top:16px; flex-wrap:wrap; }
+    .hstat { text-align:center; }
+    .hstat .val { font-size:1.6rem; font-weight:900; color:var(--red); line-height:1; }
+    .hstat .lbl { font-size:.75rem; color:#aaa; margin-top:3px; }
+
+    .content { max-width:1100px; margin:0 auto; padding:40px 24px 60px; }
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:28px; }
+    .box { background:var(--card); border-radius:14px; padding:24px; box-shadow:0 2px 10px rgba(0,0,0,.07); margin-bottom:28px; }
+    .box h2 { font-size:1rem; font-weight:800; margin-bottom:16px; color:var(--red); display:flex; align-items:center; gap:8px; }
+    .box p { line-height:1.75; font-size:.9rem; color:#444; }
+    .box p + p { margin-top:10px; }
+
+    .stat-table { width:100%; border-collapse:collapse; }
+    .stat-table tr { border-bottom:1px solid var(--border); }
+    .stat-table tr:last-child { border-bottom:none; }
+    .stat-table td { padding:9px 4px; font-size:.88rem; }
+    .stat-table td:first-child { color:var(--muted); }
+    .stat-table td:last-child { font-weight:700; text-align:right; }
+
+    .playlist-list { list-style:none; }
+    .playlist-list li { border-bottom:1px solid var(--border); }
+    .playlist-list li:last-child { border-bottom:none; }
+    .playlist-list a { display:flex; align-items:center; gap:10px; padding:9px 4px; color:#1565c0; text-decoration:none; font-size:.88rem; font-weight:600; transition:color .2s; }
+    .playlist-list a:hover { color:var(--red); }
+    .playlist-list a .arrow { margin-left:auto; font-size:.75rem; color:#aaa; }
+
+    .cat-links { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .cat-link { display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:10px; text-decoration:none; color:#fff; font-weight:700; font-size:.88rem; transition:opacity .2s; }
+    .cat-link:hover { opacity:.88; }
+    .cat-dino { background:linear-gradient(135deg,#388e3c,#66bb6a); }
+    .cat-veh  { background:linear-gradient(135deg,#1565c0,#42a5f5); }
+    .cat-bebe { background:linear-gradient(135deg,#c62828,#ef5350); }
+    .cat-abc  { background:linear-gradient(135deg,#e65100,#ffa726); }
+
+    .tag-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+    .tag { background:var(--bg); border:1.5px solid var(--border); border-radius:20px; padding:4px 12px; font-size:.78rem; font-weight:600; }
+
+    .app-cta { display:flex; align-items:center; gap:16px; background:#000; border-radius:14px; padding:20px 24px; margin-top:20px; flex-wrap:wrap; }
+    .app-cta img { width:52px; height:52px; border-radius:10px; }
+    .app-cta div { color:#fff; flex:1; }
+    .app-cta h3 { font-size:1rem; font-weight:800; }
+    .app-cta p { font-size:.82rem; color:#aaa; margin-top:3px; }
+    .app-btn { background:var(--red); color:#fff; font-weight:700; padding:10px 20px; border-radius:10px; text-decoration:none; font-size:.85rem; white-space:nowrap; }
+    .app-btn:hover { opacity:.88; }
+
+    .sub-cta { background:linear-gradient(135deg,#ff5252,#ff9800); border-radius:16px; padding:32px; text-align:center; margin-top:12px; }
+    .sub-cta h2 { color:#fff; font-size:1.4rem; font-weight:900; }
+    .sub-cta p { color:rgba(255,255,255,.85); margin:10px 0 20px; }
+    .sub-cta a { background:#fff; color:#e53935; font-weight:800; padding:12px 32px; border-radius:20px; text-decoration:none; font-size:1rem; }
+    .sub-cta a:hover { background:#f5f5f5; }
+
+    footer { background:#0f0f0f; color:#888; text-align:center; padding:18px; font-size:.78rem; }
+    footer a { color:var(--red); text-decoration:none; }
+    @media(max-width:768px) { .grid2 { grid-template-columns:1fr; } .cat-links { grid-template-columns:1fr 1fr; } }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="nav-logo" href="eli-kids-channel.html">🎵 Eli <span>Kids</span></a>
+  <div class="nav-links">
+    <a href="eli-kids-dinosaures.html">🦕 Dinosaures</a>
+    <a href="eli-kids-vehicules.html">🚌 Véhicules</a>
+    <a href="eli-kids-bebes.html">👶 Bébé</a>
+    <a href="eli-kids-abc.html">🔤 ABC</a>
+    <a href="eli-kids-about.html" class="active">ℹ️ À propos</a>
+  </div>
+  <a class="nav-sub" href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA?sub_confirmation=1" target="_blank" rel="noopener">▶ S'abonner</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <img class="hero-avatar"
+    src="https://yt3.ggpht.com/ytc/AIdro_njfSblKWPsnVC-76o1NyiTGwq3bwEycmDNmAXm-7hWXKY=s240-c-k-c0x00ffffff-no-rj"
+    alt="Eli Kids avatar" />
+  <div class="hero-info">
+    <h1>Eli Kids – Cartoons &amp; Songs</h1>
+    <p>@EliKids · 🇺🇸 États-Unis · Chaîne créée le 16 janv. 2018</p>
+    <div class="hero-stats">
+      <div class="hstat"><div class="val">20M</div><div class="lbl">Abonnés</div></div>
+      <div class="hstat"><div class="val">8,99B</div><div class="lbl">Vues totales</div></div>
+      <div class="hstat"><div class="val">1 316</div><div class="lbl">Vidéos</div></div>
+      <div class="hstat"><div class="val">+100K</div><div class="lbl">Abonnés / mois</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="grid2">
+
+    <!-- LEFT COLUMN -->
+    <div>
+      <div class="box">
+        <h2>📝 Description de la chaîne</h2>
+        <p>
+          <strong>Eli Kids</strong> est une chaîne YouTube éducative dédiée aux bébés, tout-petits
+          et enfants d'âge préscolaire. La chaîne propose des chansons pour enfants incluant des
+          comptines, des berceuses, des chansons phonétiques et des contes de fées qui aident les
+          enfants à apprendre les lettres de l'alphabet, les chiffres, les formes, les couleurs
+          et bien plus encore.
+        </p>
+        <p>
+          Rencontrez <strong>Abi et ses amis</strong> à travers de nombreuses vidéos animées
+          amusantes et excitantes ! Eli Kids est votre destination unique pour que vos enfants
+          apprennent les comptines. Les comptines aident à accélérer la conscience phonétique
+          ainsi que les compétences en lecture et en écriture.
+        </p>
+        <div class="tag-list">
+          <span class="tag">#elikids</span>
+          <span class="tag">#nurseryrhymes</span>
+          <span class="tag">#kidssongs</span>
+          <span class="tag">#childrenmusic</span>
+          <span class="tag">#educational</span>
+          <span class="tag">#abcphonics</span>
+          <span class="tag">#dinosaursong</span>
+          <span class="tag">#babysong</span>
+          <span class="tag">#toysong</span>
+          <span class="tag">#familysong</span>
+        </div>
+      </div>
+
+      <div class="box">
+        <h2>📊 Statistiques</h2>
+        <table class="stat-table">
+          <tr><td>👥 Abonnés</td><td>20 000 000</td></tr>
+          <tr><td>👁 Vues totales</td><td>8 994 052 886</td></tr>
+          <tr><td>🎬 Vidéos publiées</td><td>1 316</td></tr>
+          <tr><td>📅 Date de création</td><td>16 janv. 2018</td></tr>
+          <tr><td>🌍 Pays</td><td>🇺🇸 États-Unis</td></tr>
+          <tr><td>🗣 Langue</td><td>Anglais</td></tr>
+          <tr><td>📈 Abonnés gagnés (30j)</td><td>+100 000</td></tr>
+          <tr><td>👁 Vues gagnées (30j)</td><td>+97 407 124</td></tr>
+          <tr><td>📹 Vidéos publiées (30j)</td><td>17</td></tr>
+          <tr><td>🎵 Thématiques</td><td>Musique · Éducation · Film</td></tr>
+        </table>
+      </div>
+
+      <div class="box">
+        <h2>📂 Catégories du site</h2>
+        <div class="cat-links">
+          <a class="cat-link cat-dino" href="eli-kids-dinosaures.html"><span>🦕</span> Dinosaures</a>
+          <a class="cat-link cat-veh"  href="eli-kids-vehicules.html"><span>🚌</span> Véhicules</a>
+          <a class="cat-link cat-bebe" href="eli-kids-bebes.html"><span>👶</span> Bébé &amp; Famille</a>
+          <a class="cat-link cat-abc"  href="eli-kids-abc.html"><span>🔤</span> ABC &amp; Éducation</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div>
+      <div class="box">
+        <h2>🎵 Playlists officielles YouTube</h2>
+        <ul class="playlist-list">
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPNHh7w06Zp8izKKT-KjbXCH" target="_blank" rel="noopener">🎵 Best Kids Songs<span class="arrow">↗</span></a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPOCyBv7N9U2kO04Ns1_wDw5" target="_blank" rel="noopener">📖 Nursery Rhymes Compilations<span class="arrow">↗</span></a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPNwSC6cdhSR4VuckC14qz6E" target="_blank" rel="noopener">🎭 Abi Stories – Educational Cartoon<span class="arrow">↗</span></a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPOmJlQkqk-8TwLAoTmQJYw5" target="_blank" rel="noopener">⭐ Popular Kids Songs &amp; Nursery Rhymes<span class="arrow">↗</span></a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPOlkTvanYorRs-pmcyTy6pW" target="_blank" rel="noopener">🔤 Alphabet | ABC &amp; Phonics Songs<span class="arrow">↗</span></a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPPzGVwTNSzWzPN5q0CmVAJF" target="_blank" rel="noopener">🌈 Color &amp; Shape Songs For Kids<span class="arrow">↗</span></a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPOB8C3VkxEM8wwTDgrzOK14" target="_blank" rel="noopener">🐾 Animal Songs &amp; Nursery Rhymes<span class="arrow">↗</span></a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPNKW-jSWp8QA259Estja9YL" target="_blank" rel="noopener">🦆 Funny Cartoon | CoCoDuck<span class="arrow">↗</span></a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPMbB_ItgRra-izCY486ezbj" target="_blank" rel="noopener">✏️ 2D Nursery Rhymes for Kids<span class="arrow">↗</span></a></li>
+          <li><a href="https://www.youtube.com/playlist?list=PL1CL84BdBuPN6mUMeJbrWNfkrFKQ_k7zS" target="_blank" rel="noopener">🔢 Numbers 1-10 | Counting for Kids<span class="arrow">↗</span></a></li>
+        </ul>
+      </div>
+
+      <div class="box">
+        <h2>📱 Application Eli Kids</h2>
+        <p>Regardez vos comptines préférées hors ligne avec l'application officielle Eli Kids !</p>
+        <div class="app-cta">
+          <div>
+            <h3>Eli Kids App</h3>
+            <p>Chansons éducatives · Hors ligne · Sans pub</p>
+          </div>
+          <a class="app-btn" href="https://apps.apple.com/gb/app/eli-kids/id1383129134" target="_blank" rel="noopener">📱 Télécharger iOS</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUBSCRIBE CTA -->
+  <div class="sub-cta">
+    <h2>🎵 Ne manquez aucune vidéo !</h2>
+    <p>Abonnez-vous à Eli Kids sur YouTube et activez les notifications 🔔</p>
+    <a href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA?sub_confirmation=1" target="_blank" rel="noopener">
+      ▶ S'abonner maintenant – C'est gratuit !
+    </a>
+  </div>
+
+</div>
+
+<footer>
+  Fan site non officiel. Toutes les vidéos appartiennent à
+  <a href="https://www.youtube.com/channel/UCVi_GtP-1stDmhPuWCCQ5KA" target="_blank" rel="noopener">Eli Kids – Cartoons &amp; Songs</a>.
+  &copy; 2026
+</footer>
+</body>
+</html>

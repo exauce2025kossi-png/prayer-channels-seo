@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block title %}Ma Voix{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h4>🎙️ Clonage de Voix</h4>
+  <p>Configurez votre voix personnalisée pour <strong>Autel de Prière</strong> et <strong>Altar of Prayer</strong></p>
+</div>
+
+<div class="row g-4">
+
+  <!-- Statut des voix -->
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-mic-fill text-danger me-2"></i>État des voix configurées</div>
+      <div class="card-body p-0">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th class="ps-4">Chaîne</th>
+              <th>Langue</th>
+              <th>Fichier attendu</th>
+              <th>Statut</th>
+              <th class="pe-4">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for ch, info in voices.items() %}
+          <tr>
+            <td class="ps-4 fw-600">{{ ch }}</td>
+            <td><span class="badge bg-secondary">{{ info.lang }}</span></td>
+            <td style="font-family:monospace;font-size:0.78rem;color:#6b7280">{{ info.file }}</td>
+            <td>
+              {% if info.ready %}
+                <span class="badge" style="background:#052e16;color:#4ade80">🟢 Prête</span>
+              {% else %}
+                <span class="badge" style="background:#3b0c0c;color:#fca5a5">🔴 En attente</span>
+              {% endif %}
+            </td>
+            <td class="pe-4">
+              <form action="/api/upload-voice" method="post" enctype="multipart/form-data"
+                    class="d-flex gap-2 align-items-center">
+                <input type="hidden" name="channel" value="{{ ch }}">
+                <input type="file" name="voice_file" accept=".wav,.mp3,.m4a"
+                       class="form-control form-control-sm" style="max-width:200px">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <i class="bi bi-upload me-1"></i>Uploader
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instructions -->
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-list-ol me-2"></i>Comment enregistrer votre voix</div>
+      <div class="card-body">
+        <div class="d-flex flex-column gap-3">
+
+          <div class="d-flex gap-3">
+            <div style="width:28px;height:28px;background:#7c3aed;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">1</div>
+            <div>
+              <div class="fw-600" style="font-size:0.9rem">Enregistrez ce texte à voix haute</div>
+              <div style="font-size:0.8rem;color:#6b7280">Durée : 2-5 minutes • Voix claire • Sans bruit de fond</div>
+            </div>
+          </div>
+
+          <div class="p-3 rounded" style="background:#0a0a1a;border:1px solid #1f2937;font-style:italic;font-size:0.82rem;color:#94a3b8;line-height:1.8">
+            « Père céleste, je te rends grâce pour ce jour béni.
+            Ta parole dit dans Matthieu 21 verset 22 : tout ce que vous demanderez en priant avec foi, vous le recevrez.
+            Je déclare aujourd'hui que chaque prière est entendue et exaucée au nom de Jésus-Christ.
+            Brise toutes les chaînes, détruis tous les obstacles.
+            Que ta gloire soit révélée dans chaque vie.
+            Je suis délivré, libéré et victorieux par le sang de Jésus.
+            Aucune arme forgée contre moi ne prospérera.
+            Je t'adore Seigneur, Amen. »
+          </div>
+
+          <div class="d-flex gap-3">
+            <div style="width:28px;height:28px;background:#0891b2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">2</div>
+            <div>
+              <div class="fw-600" style="font-size:0.9rem">Enregistrez avec votre téléphone</div>
+              <div style="font-size:0.8rem;color:#6b7280">iPhone : Voice Memos • Android : Enregistreur vocal</div>
+              <div style="font-size:0.8rem;color:#6b7280">Format : WAV ou MP3</div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-3">
+            <div style="width:28px;height:28px;background:#059669;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">3</div>
+            <div>
+              <div class="fw-600" style="font-size:0.9rem">Uploadez ci-dessus</div>
+              <div style="font-size:0.8rem;color:#6b7280">Sélectionnez la chaîne, choisissez le fichier, cliquez Uploader</div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-3">
+            <div style="width:28px;height:28px;background:#d97706;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">4</div>
+            <div>
+              <div class="fw-600" style="font-size:0.9rem">Installez Coqui TTS (une seule fois)</div>
+              <div class="p-2 rounded mt-1" style="background:#0a0a1a;font-family:monospace;font-size:0.78rem;color:#67e8f9">
+                pip install TTS
+              </div>
+              <div style="font-size:0.78rem;color:#4b5563;margin-top:4px">⚠️ Télécharge ~2 Go au premier lancement</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test voix -->
+  <div class="col-lg-6">
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-play-circle-fill text-success me-2"></i>Tester votre voix clonée</div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label class="form-label">Chaîne</label>
+          <select class="form-select" id="test-channel">
+            {% for ch in voices.keys() %}
+            <option value="{{ ch }}">{{ ch }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Texte à prononcer</label>
+          <textarea class="form-control" id="test-text" rows="3">
+Père, je te remercie pour ta grâce. Au nom de Jésus, je déclare la victoire !</textarea>
+        </div>
+        <button class="btn btn-primary w-100" onclick="testVoice()" id="test-btn">
+          <i class="bi bi-play-fill me-2"></i>Tester la voix
+        </button>
+        <div id="test-result" class="mt-3" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="bi bi-info-circle me-2"></i>Comment ça fonctionne</div>
+      <div class="card-body" style="font-size:0.82rem;color:#6b7280;line-height:1.8">
+        <div>🎙️ <strong style="color:#a78bfa">Coqui XTTS v2</strong> — IA de clonage vocal open source</div>
+        <div>🔒 <strong style="color:#a78bfa">100% privé</strong> — fonctionne hors ligne sur votre PC</div>
+        <div>🌍 <strong style="color:#a78bfa">Multilingue</strong> — FR et EN avec la même voix</div>
+        <div>⚡ <strong style="color:#a78bfa">Automatique</strong> — toutes les vidéos prayer utilisent votre voix</div>
+        <div class="mt-2 p-2 rounded" style="background:#0a0a1a;border:1px solid #1f2937">
+          Après configuration : créez une vidéo pour <em>Autel de Prière</em> → votre voix sera utilisée automatiquement
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function testVoice() {
+  const btn = document.getElementById('test-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Génération...';
+
+  const r = await fetch('/api/test-voice', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      channel: document.getElementById('test-channel').value,
+      text:    document.getElementById('test-text').value,
+    })
+  });
+  const d = await r.json();
+  const box = document.getElementById('test-result');
+  box.style.display = '';
+
+  if (d.success) {
+    box.innerHTML = `
+      <div class="p-3 rounded" style="background:rgba(16,185,129,0.1);border:1px solid #065f46">
+        <div style="color:#34d399;font-weight:600">✅ Audio généré !</div>
+        <audio controls class="w-100 mt-2" src="/api/audio/${d.filename}"></audio>
+      </div>`;
+  } else {
+    box.innerHTML = `
+      <div class="p-3 rounded" style="background:rgba(239,68,68,0.1);border:1px solid #7f1d1d">
+        <div style="color:#fca5a5">⚠️ ${d.message}</div>
+      </div>`;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="bi bi-play-fill me-2"></i>Tester la voix';
+}
+</script>
+{% endblock %}
