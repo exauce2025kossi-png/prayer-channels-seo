@@ -978,6 +978,77 @@ def generate_tts(lyrics, path):
 # PIPELINE PRINCIPAL
 # ══════════════════════════════════════════════════════════════════════════════
 
+def generate_audio_only(filename, song_data, force=False):
+    """Génère uniquement l'audio MP3 + fichier SRT pour CapCut."""
+    title  = song_data["title"]
+    lyrics = song_data["lyrics"]
+    bpm    = song_data.get("bpm", 120)
+    scene  = song_data.get("scene") or _infer_scene(filename + " " + title)
+    melody_k = "bus" if scene == "bus" else ("abc" if scene == "abc" else "default")
+
+    stem       = Path(filename).stem
+    audio_out  = VIDEOS_DIR / (stem + "_AUDIO.mp3")
+    srt_out    = VIDEOS_DIR / (stem + "_CAPTIONS.srt")
+    script_out = VIDEOS_DIR / (stem + "_SCRIPT.txt")
+
+    if audio_out.exists() and not force:
+        print(f"  ⏭  Audio déjà générée : {audio_out.name}")
+        return audio_out
+
+    total_dur = 3.0 + sum(l["duration"] for l in lyrics)
+    print(f"  🎵 {title}  ({total_dur:.0f}s) — génération audio...")
+
+    # Musique
+    music_path = VIDEOS_DIR / (stem + "_tmp_music.wav")
+    save_wav(generate_background_music(total_dur+2, bpm=bpm, melody_key=melody_k), music_path)
+
+    # TTS
+    tts_path = VIDEOS_DIR / (stem + "_tmp_voice.mp3")
+    tts_ok = generate_tts(lyrics, tts_path)
+
+    # Mix
+    if tts_ok and Path(tts_ok).exists():
+        mix_audio(music_path, tts_path, audio_out)
+    else:
+        shutil.copy(str(music_path), str(audio_out))
+
+    for p in [music_path, tts_path]:
+        try: os.unlink(str(p))
+        except: pass
+
+    # ── Fichier SRT (sous-titres pour CapCut) ────────────────────────────
+    lines = []
+    t_cur = 3.0  # intro 3s
+    for i, lyric in enumerate(lyrics, 1):
+        start = _srt_time(t_cur)
+        end   = _srt_time(t_cur + lyric["duration"])
+        lines.append(f"{i}\n{start} --> {end}\n{lyric['text']}\n")
+        t_cur += lyric["duration"]
+    srt_out.write_text("\n".join(lines), encoding="utf-8")
+
+    # ── Script texte complet (pour CapCut "Script to Video") ─────────────
+    script_lines = [f"🎵 {title} 🎵", ""]
+    for lyric in lyrics:
+        script_lines.append(lyric["text"])
+    script_lines += ["", f"Style: cartoon kids animation, bright colors, happy mood",
+                     f"Characters: cute cartoon child dancing and singing"]
+    script_out.write_text("\n".join(script_lines), encoding="utf-8")
+
+    size_kb = audio_out.stat().st_size // 1024
+    print(f"     ✅ Audio : {audio_out.name} ({size_kb} Ko)")
+    print(f"     ✅ Sous-titres : {srt_out.name}")
+    print(f"     ✅ Script : {script_out.name}")
+    return audio_out
+
+
+def _srt_time(sec):
+    h = int(sec // 3600)
+    m = int((sec % 3600) // 60)
+    s = int(sec % 60)
+    ms = int((sec % 1) * 1000)
+    return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
+
+
 def generate_video(filename, song_data, output_path, force=False):
     if output_path.exists() and not force:
         print(f"  ⏭  Déjà générée : {filename}")
@@ -1129,6 +1200,8 @@ def main():
     parser.add_argument("--long",  action="store_true")
     parser.add_argument("--all",   action="store_true")
     parser.add_argument("--list",  action="store_true")
+    parser.add_argument("--audio", action="store_true",
+                        help="Génère uniquement l'audio MP3 + SRT pour CapCut (rapide)")
     args = parser.parse_args()
 
     with open(CONTENT_FILE, encoding="utf-8") as f:
@@ -1148,6 +1221,18 @@ def main():
         for fname2, data in compilations.items():
             e = "✅" if (VIDEOS_DIR/fname2).exists() else "⬜"
             print(f"{e} {'Long':<8} {fname2:<48} {data['title'][:40]}")
+        return
+
+    if args.audio:
+        # Mode CapCut : génère audio + SRT pour toutes les chansons (ou une seule)
+        targets = {args.song: songs[args.song]} if args.song and args.song in songs else songs
+        print(f"\n🎵 Mode CapCut — génération audio+SRT pour {len(targets)} chanson(s)\n")
+        for i, (fname2, data) in enumerate(targets.items(), 1):
+            print(f"[{i}/{len(targets)}] {fname2}")
+            try: generate_audio_only(fname2, data, force=True)
+            except Exception as e: print(f"  ❌ {e}")
+        print(f"\n✅ Fichiers prêts dans : {VIDEOS_DIR}/")
+        print("→ Ouvre CapCut, importe le fichier _AUDIO.mp3 et le _CAPTIONS.srt")
         return
 
     if args.song:
